@@ -1,0 +1,21 @@
+#!/bin/sh
+
+export HOME="/afs/cern.ch/exp/totem/scratch/jkaspar"
+
+# CMSSW configuration
+source "/cvmfs/cms.cern.ch/cmsset_default.sh"
+cd "$CMSSW_BASE/src"
+cmsenv
+
+cd "$JOB_DIR"
+
+(
+	echo "executed:"
+	date
+
+	$COMMAND
+
+	echo "finished:"
+	date
+
+) &> "$JOB_LOG_FILE"

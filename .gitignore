@@ -1,0 +1,14 @@
+*.swp
+*.swo
+
+*.pyc
+*.root
+*.log
+*.out
+*.pdf
+
+.*
+!.gitignore
+
+distributions
+match

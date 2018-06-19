@@ -1,0 +1,156 @@
+#!/bin/bash
+
+#----------------------------------------------------------------------------------------------------
+
+function PrintUsage()
+{
+	echo -e "USAGE: run <option> <src file> <option> <dir> <dir> ... <option> ..."
+	echo -e "OPTIONS:"
+
+	echo -e "	-h, --help		print this help and exit"
+	echo -e "	-O <option>		pass the option to the program"
+	echo -e "	-lxbatch		prepare job for LXBATCH instead of executing locally"
+	echo -e "	-submit			submit job to LXBATCH, implies -lxbatch option"
+}
+
+#----------------------------------------------------------------------------------------------------
+
+# defaults
+
+src_file=""
+
+work_dirs=()
+
+run_options=""
+
+lxbatch="n"
+submit="n"
+
+bsub_options="pool>5000"
+bsub_queue="1nh"
+
+#----------------------------------------------------------------------------------------------------
+
+# parse command line input
+
+if [ $# -le 0 ]
+then
+	PrintUsage
+	exit 1
+fi
+
+while [ -n "$1" ]
+do
+	case "$1" in
+		"-h" | "--help")
+			PrintUsage
+			exit 1
+			;;
+
+		"-O")
+			shift
+			run_options="$1"
+			;;
+
+		"-lxbatch")
+			lxbatch="y"
+			;;
+
+		"-submit")
+			lxbatch="y"
+			submit="y"
+			;;
+
+		*)
+			if [ ! -d "$1" ]
+			then
+				if [ -s "$1" ]
+				then
+					if [ -n "$src_file" ]
+					then
+						echo "ERROR: multiple definition of source file. Previous '$src_file', current '$1'."
+						PrintUsage
+						exit 1
+					fi
+					src_file="$1"
+				else
+					echo "ERROR: '$1' is neither source file, neither directory neither parameter."
+					PrintUsage
+					exit 1
+				fi
+			else
+				if [ -f "$1/config.py" ]
+				then
+					work_dirs+=("$1")
+				else
+					echo "ERROR: directory '$1' does not have config.py."
+					PrintUsage
+					exit 1
+				fi
+			fi
+			;;
+	esac
+
+	shift
+done
+
+#----------------------------------------------------------------------------------------------------
+# build
+
+src_file=${src_file%.*}
+
+make "$src_file" || exit 2
+
+#----------------------------------------------------------------------------------------------------
+# execute
+
+function ExecuteOneWithStatus()
+{
+	echo "* $label: running"
+
+	cd "$d"
+	"$cwd/$src_file" $run_options &> "$src_file.log"
+	if [ $? -ne 0 ]
+	then
+		echo "* $label: run error"
+	else
+		echo "* $label: done"
+	fi
+	cd - > /dev/null
+}
+
+function ExecuteOne()
+{
+	dir="$1"
+
+	cwd="`pwd -P`"
+
+	label="'$src_file' in '$d'"
+
+	if [ "$lxbatch" == "n" ]
+	then
+		ExecuteOneWithStatus &
+	else
+		cat "job_template" | sed " \
+				s|\$CMSSW_BASE|$CMSSW_BASE|;\
+				s|\$JOB_DIR|$cwd/$dir|;\
+				s|\$COMMAND|{ time \"$cwd/$src_file\" ; } \&> \"$src_file.log\"|;\
+				s|\$JOB_LOG_FILE|.$src_file.job_log|;\
+			" > "$dir/.$src_file.job"
+
+		chmod u+x "$dir/.$src_file.job"
+
+		if [ "$submit" == "y" ]
+		then
+			result=`bsub -R "$bsub_options" -q "$bsub_queue" -o /dev/null -e /dev/null "$cwd/$dir/.$src_file.job"`
+			echo "* $label: $result"
+		else
+			echo "* $label: would be submitted ($bsub_queue)"
+		fi
+	fi
+}
+
+for d in ${work_dirs[*]}
+do
+	ExecuteOne "$d"
+done
