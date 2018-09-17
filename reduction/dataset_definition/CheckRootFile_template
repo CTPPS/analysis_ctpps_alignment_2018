@@ -1,0 +1,13 @@
+int CheckRootFile()
+{
+	TFile *f = TFile::Open("$file");
+	if (f) {
+		printf(">> CheckRootFile > $file is OK\n");
+		return 0;
+	} else {
+		printf(">> CheckRootFile > $file is corrupted\n");
+		return 1;
+	}
+}
+
+// vim:set ft=cpp

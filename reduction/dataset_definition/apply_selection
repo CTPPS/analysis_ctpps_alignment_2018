@@ -1,0 +1,12 @@
+#!/bin/bash
+
+for f in json/*.json
+do
+	f_out=${f#*/}
+	f_out="json_selected/$f_out"
+
+	echo "$f --> $f_out"
+
+	#compareJSON.py --and "$f" "combined_RPIN_CMS.json" "$f_out"
+	cp "$f" "$f_out"
+done

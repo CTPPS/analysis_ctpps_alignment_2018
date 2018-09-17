@@ -1,0 +1,18 @@
+0. get the mapping files
+	Go to: https://ctppsmon.web.cern.ch/ctppsmon/query.py
+	and use queries like
+		SELECT DISTINCT FILL_NUMBER, RUN_NUMBER, LUMI_SECTION,
+		XING_ANGLE_URAD, BETA_STAR_CMS, LHC_STATE
+		FROM CMS_CTP_CTPPS_VIEW.CTPPS_LHC_PARAMS_DCS_V_RH
+		WHERE FILL_NUMBER>='6570' AND FILL_NUMBER<='6670' AND LHC_STATE LIKE 'STABLE%'
+		ORDER BY FILL_NUMBER, RUN_NUMBER, LUMI_SECTION
+
+1. process mapping files
+	mkdir json
+	make && ./process_mapping
+
+2. apply RP in & CMS selection
+	./apply_selection
+
+3. build reduction jobs
+	./build_jobs
