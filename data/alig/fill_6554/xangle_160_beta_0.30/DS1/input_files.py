@@ -29,6 +29,7 @@ input_files.append("root://eostotem.cern.ch//eos/totem/data/ctpps/reconstruction
 input_files.append("root://eostotem.cern.ch//eos/totem/data/ctpps/reconstruction/2018/alignment_run_April/version5/run_314247.32_re_reco.root")
 input_files.append("root://eostotem.cern.ch//eos/totem/data/ctpps/reconstruction/2018/alignment_run_April/version5/run_314247.33_re_reco.root")
 input_files.append("root://eostotem.cern.ch//eos/totem/data/ctpps/reconstruction/2018/alignment_run_April/version5/run_314247.34_re_reco.root")
+input_files.append("root://eostotem.cern.ch//eos/totem/data/ctpps/reconstruction/2018/alignment_run_April/version5/run_314247.35_re_reco.root")
 input_files.append("root://eostotem.cern.ch//eos/totem/data/ctpps/reconstruction/2018/alignment_run_April/version5/run_314247.3_re_reco.root")
 input_files.append("root://eostotem.cern.ch//eos/totem/data/ctpps/reconstruction/2018/alignment_run_April/version5/run_314247.4_re_reco.root")
 input_files.append("root://eostotem.cern.ch//eos/totem/data/ctpps/reconstruction/2018/alignment_run_April/version5/run_314247.5_re_reco.root")
