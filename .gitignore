@@ -10,5 +10,7 @@
 .*
 !.gitignore
 
+data/phys/fill*/xangle*
+
 distributions
 match
