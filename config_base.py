@@ -135,6 +135,32 @@ config = cms.PSet(
 
 #----------------------------------------------------------------------------------------------------
 
+def ApplyDefaultSettingsAlignment():
+  config.sector_45.cut_h_a = -1
+  config.sector_45.cut_h_c = 0.
+
+  config.sector_45.cut_v_a = -1
+  config.sector_45.cut_v_c = 0.
+
+  config.sector_56.cut_h_a = -1
+  config.sector_56.cut_h_c = 0.16
+
+  config.sector_56.cut_v_a = -1
+  config.sector_56.cut_v_c = -0.13
+
+  config.matching_1d.rp_L_2_F.x_min = 2.
+  config.matching_1d.rp_L_2_F.x_max = 15.
+
+  config.matching_1d.rp_L_1_F.x_min = 2.
+  config.matching_1d.rp_L_1_F.x_max = 15.
+
+  config.matching_1d.rp_R_1_F.x_min = 3.
+  config.matching_1d.rp_R_1_F.x_max = 16.
+
+  config.matching_1d.rp_R_2_F.x_min = 3.
+  config.matching_1d.rp_R_2_F.x_max = 16.
+
+
 def ApplyDefaultSettings1():
   config.sector_45.cut_h_c = -38.55 + 0.35
   config.sector_45.cut_v_c = 1.63 - 0.20
