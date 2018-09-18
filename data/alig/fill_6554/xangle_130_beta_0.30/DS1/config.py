@@ -23,8 +23,8 @@ config.sector_45.cut_h_a = -1
 config.sector_45.cut_v_c = 0.
 config.sector_45.cut_v_a = -1
 
-config.sector_56.cut_h_c = 0.
+config.sector_56.cut_h_c = 0.16
 config.sector_56.cut_h_a = -1
 
-config.sector_56.cut_v_c = 0.
+config.sector_56.cut_v_c = -0.13
 config.sector_56.cut_v_a = -1
