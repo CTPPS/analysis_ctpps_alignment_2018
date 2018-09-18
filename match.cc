@@ -281,6 +281,7 @@ void DoMatchMethodY(TGraph *g_test, const SelectionRange &r_test, TGraph *g_ref,
 {
 	printf("        test range: %.3f to %.3f\n", r_test.x_min, r_test.x_max);
 	printf("        ref range: %.3f to %.3f\n", r_ref.x_min, r_ref.x_max);
+	printf("        shift range: %.3f to %.3f\n", sh_min, sh_max);
 
 	// prepare reference histogram
 	TH1D *h_ref = new TH1D("h_ref", ";x", 140, 2., 16.);
@@ -436,20 +437,18 @@ int main()
 	printf("--------------------------------------------------\n");
 
 	// list of RPs and their settings
-	// TODO: remove unused data?
 	struct RPData
 	{
 		string name;
 		unsigned int id;
-		double sh_min, sh_max;	// in mm
-		double x_cut_off;		// in mm
+		string sectorName;
 	};
 
 	vector<RPData> rpData = {
-		{ "L_2_F", 23,   -70, 0, 130 },
-		{ "L_1_F", 3,   -10, 0, 130 },
-		{ "R_1_F", 103, -10, 0, 130 },
-		{ "R_2_F", 123, -70, 0, 130 }
+		{ "L_2_F", 23,  "sector 45" },
+		{ "L_1_F", 3,   "sector 45" },
+		{ "R_1_F", 103, "sector 56" },
+		{ "R_2_F", 123, "sector 56" }
 	};
 
 	// get input
@@ -462,8 +461,15 @@ int main()
 	AlignmentResultsCollection results;
 
 	// processing
-	for (const auto &ref : cfg.matching_1d_reference_datasets)
+	for (auto &ref : cfg.matching_1d_reference_datasets)
 	{
+		if (ref == "default")
+		{
+			char buf[100];
+			sprintf(buf, "data/alig/fill_6554/xangle_%u_beta_%.2f/DS1", cfg.xangle, cfg.beta);
+			ref = buf;
+		}
+
 		printf("-------------------- reference dataset: %s\n", ref.c_str());
 
 		const string &ref_tag = ReplaceAll(ref, "/", "_");
@@ -481,8 +487,20 @@ int main()
 
 			TDirectory *rp_dir = ref_dir->mkdir(rpd.name.c_str());
 			
-			TGraph *g_ref = (TGraph *) f_ref->Get(("after selection/g_y_vs_x_" + rpd.name + "_sel").c_str());
-			TGraph *g_test = (TGraph *) f_in->Get(("after selection/g_y_vs_x_" + rpd.name + "_sel").c_str());
+			TGraph *g_ref = (TGraph *) f_ref->Get((rpd.sectorName + "/after selection/" + rpd.name + "/g_y_vs_x").c_str());
+			TGraph *g_test = (TGraph *) f_in->Get((rpd.sectorName + "/after selection/" + rpd.name + "/g_y_vs_x").c_str());
+
+			if (g_ref == NULL || g_test == NULL)
+			{
+				printf("    cannot load data, skipping\n");
+				continue;
+			}
+
+			if (g_ref->GetN() < 100 || g_test->GetN() < 100)
+			{
+				printf("    too little input data, skipping\n");
+				continue;
+			}
 
 			gDirectory = rp_dir;
 			double r_method_x = 0., r_method_y = 0.;
