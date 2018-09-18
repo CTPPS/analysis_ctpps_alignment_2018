@@ -28,12 +28,12 @@ config = cms.PSet(
     sector_45 = cms.PSet(
 	  cut_h_apply = cms.bool(True),
 	  cut_h_a = cms.double(-1),
-	  cut_h_c = cms.double(-38.55),
+	  cut_h_c = cms.double(0.),
 	  cut_h_si = cms.double(0.2),
 
 	  cut_v_apply = cms.bool(True),
 	  cut_v_a = cms.double(-1.07),
-	  cut_v_c = cms.double(1.63),
+	  cut_v_c = cms.double(0.),
 	  cut_v_si = cms.double(0.15),
 
       nr_x_slice_min = cms.double(6.5),
@@ -48,12 +48,12 @@ config = cms.PSet(
     sector_56 = cms.PSet(
 	  cut_h_apply = cms.bool(True),
 	  cut_h_a = cms.double(-1),
-	  cut_h_c = cms.double(-39.26),
+	  cut_h_c = cms.double(0.),
 	  cut_h_si = cms.double(0.2),
 
 	  cut_v_apply = cms.bool(True),
 	  cut_v_a = cms.double(-1.07),
-	  cut_v_c = cms.double(1.49),
+	  cut_v_c = cms.double(0.),
 	  cut_v_si = cms.double(0.15),
 
       nr_x_slice_min = cms.double(5.5),
@@ -132,3 +132,29 @@ config = cms.PSet(
       )
     )
 )
+
+#----------------------------------------------------------------------------------------------------
+
+def ApplyDefaultSettings1():
+  config.sector_45.cut_h_c = -38.55 + 0.35
+  config.sector_45.cut_v_c = 1.63 - 0.20
+  config.sector_56.cut_h_c = -39.26 - 0.35
+  config.sector_56.cut_v_c = 1.49 - 0.5
+
+def ApplyDefaultSettings2():
+  config.sector_45.cut_h_c = -38.55 + 0.35
+  config.sector_45.cut_v_c = 1.63 - 0.20
+  config.sector_56.cut_h_c = -39.26 - 0.35
+  config.sector_56.cut_v_c = 1.49 - 0.5
+
+def ApplyDefaultSettings3():
+  config.sector_45.cut_h_c = -38.55 + 0.35
+  config.sector_45.cut_v_c = 1.63 - 0.20
+  config.sector_56.cut_h_c = -39.26 + 0.20
+  config.sector_56.cut_v_c = 1.49 + 0.17
+
+def ApplyDefaultSettings4():
+  config.sector_45.cut_h_c = -38.55 + 0.5
+  config.sector_45.cut_v_c = 1.63 - 1.15
+  config.sector_56.cut_h_c = -39.26 + 0.25
+  config.sector_56.cut_v_c = 1.49 - 0.85
