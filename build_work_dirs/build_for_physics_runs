@@ -1,0 +1,59 @@
+#!/bin/bash
+
+top_dir="../data/phys"
+
+eos_dir="/eos/totem/data/ctpps/reconstruction/2018/physics_runs/version1"
+
+for f in `eos ls "$eos_dir"|grep ".root"`
+do
+	tag=${f%.*}
+
+	tag=${tag#fill}
+	fill=${tag%%_*}
+
+	tag=${tag#*_xangle}
+	xangle=${tag%%_*}
+
+	tag=${tag#*_beta}
+	beta=${tag%%_*}
+
+	tag=${tag#*_}
+	stream=${tag}
+
+	# skip datasets for which there are no corresponding alignment data
+	#if [ "$xangle" -ne "120" -a "$xangle" -ne "130" -a "$xangle" -ne "140" -a "$xangle" -ne "150" ]
+	#then
+	#	continue
+	#fi
+
+	echo "* $fill, $xangle, $beta, $stream"
+
+	# make work directory
+	dir="$top_dir/fill_$fill/xangle_${xangle}_beta_${beta}/$stream/"
+	mkdir -p "$dir"
+
+	# make config with input files
+	(
+		echo "import FWCore.ParameterSet.Config as cms"
+		echo ""
+		echo "input_files = cms.vstring("
+		echo "    \"root://eostotem.cern.ch/${eos_dir}/${f}\""
+		echo ")"
+	) > "$dir/input_files.py"
+
+	# if not present, make (default) configs
+	#if [ ! -f "$dir/config.py" ]
+	#then
+		cat "config_template.py" | sed "\
+				s|\$fill|$fill|;\
+				s|\$xangle|$xangle|;\
+				s|\$beta|$beta|;\
+				s|\$dataset|$stream|;\
+			" > "$dir/config.py"
+	#fi
+
+	if [ ! -f "$dir/../../config_common.py" ]
+	then
+		cp "config_common_template.py" "$dir/../../config_common.py"
+	fi
+done
