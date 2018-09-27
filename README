@@ -1,0 +1,30 @@
+----------------------------------------------------------------------------------------------------
+PREPARATION
+----------------------------------------------------------------------------------------------------
+
+1) Build working directories:
+  cd build_work_dirs
+  ./build_for_alignment_runs
+  ./build_for_physics_runs
+
+
+----------------------------------------------------------------------------------------------------
+ANALYSIS
+----------------------------------------------------------------------------------------------------
+
+1) Run distributions
+	./run distributions.cc data/alig/fill_*/xangle_*/DS? -submit
+	./run distributions.cc data/phys/fill_*/xangle_*/*/ -submit
+
+2) Horizontal alignment
+
+2.1) Run matching (methods "x" and "y", wrt. alig/fill_6228)
+	./run match data/phys/fill_*/xangle*/*/ -submit
+
+3) Vertical and tilt alignment
+
+3.1) Method "fit"
+	./run y_alignment data/phys/fill_*/xangle*/*/ -submit
+
+3.2) Method "s-curve"
+	./run y_alignment_alt data/phys/fill_*/xangle*/*/ -submit

@@ -314,11 +314,8 @@ unsigned int SectorData::Process(const vector<CTPPSLocalTrackLite> &tracks)
 
 				p_x_diffFN_vs_x_N->Fill(trUp.getX(), trDw.getX() - trUp.getX());
 
-				// TODO: remove hardcoded configuration
-				double x_min = 0., x_max = 0.;
-				if (name == "sector 45") { x_min = 7.8; x_max = 16.; }
-				if (name == "sector 56") { x_max = 5.8; x_max = 15.; }
-				if (trUp.getX() > x_min && trUp.getX() < x_max)
+				const auto &range = cfg.alignment_y_alt_ranges[rpIdUp];
+				if (trUp.getX() > range.x_min && trUp.getX() < range.x_max)
 				{
 					p_y_diffFN_vs_y_N->Fill(trUp.getY(), trDw.getY() - trUp.getY());
 					p_y_diffFN_vs_y_F->Fill(trDw.getY(), trDw.getY() - trUp.getY());
@@ -447,8 +444,8 @@ int main()
 	}
 
 	// TODO
-	if (cfg.input_files.size() > 15)
-		cfg.input_files.resize(15);
+	//if (cfg.input_files.size() > 15)
+	//	cfg.input_files.resize(15);
 
 	printf("-------------------- config ----------------------\n");
 	cfg.Print(true);

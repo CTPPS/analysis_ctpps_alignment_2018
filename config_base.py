@@ -65,32 +65,62 @@ config = cms.PSet(
       fr_x_slice_w = cms.double(0.2),
     ),
 
-    matching_1d = cms.PSet(
+    matching = cms.PSet(
       reference_datasets = cms.vstring("default"),
 
       rp_L_2_F = cms.PSet(
-        x_min = cms.double(46.5),
-        x_max = cms.double(57.),
         sh_min = cms.double(-43),
         sh_max = cms.double(-41)
       ),
       rp_L_1_F = cms.PSet(
-        x_min = cms.double(8.),
-        x_max = cms.double(18.),
         sh_min = cms.double(-4.2),
         sh_max = cms.double(-2.4)
       ),
       rp_R_1_F = cms.PSet(
-        x_min = cms.double(7.5),
-        x_max = cms.double(18.),
         sh_min = cms.double(-3.6),
         sh_max = cms.double(-1.8)
       ),
       rp_R_2_F = cms.PSet(
-        x_min = cms.double(47.),
-        x_max = cms.double(57.),
         sh_min = cms.double(-43.2),
         sh_max = cms.double(-41.2)
+      )
+    ),
+
+    x_alignment_meth_x = cms.PSet(
+      rp_L_2_F = cms.PSet(
+        x_min = cms.double(46.5),
+        x_max = cms.double(57.),
+      ),
+      rp_L_1_F = cms.PSet(
+        x_min = cms.double(8.),
+        x_max = cms.double(18.),
+      ),
+      rp_R_1_F = cms.PSet(
+        x_min = cms.double(7.5),
+        x_max = cms.double(18.),
+      ),
+      rp_R_2_F = cms.PSet(
+        x_min = cms.double(47.),
+        x_max = cms.double(57.),
+      )
+    ),
+
+    x_alignment_meth_y = cms.PSet(
+      rp_L_2_F = cms.PSet(
+        x_min = cms.double(46.5),
+        x_max = cms.double(57.),
+      ),
+      rp_L_1_F = cms.PSet(
+        x_min = cms.double(8.),
+        x_max = cms.double(18.),
+      ),
+      rp_R_1_F = cms.PSet(
+        x_min = cms.double(7.5),
+        x_max = cms.double(18.),
+      ),
+      rp_R_2_F = cms.PSet(
+        x_min = cms.double(47.),
+        x_max = cms.double(57.),
       )
     ),
 
@@ -113,7 +143,26 @@ config = cms.PSet(
       )
     ),
 
-    alignment_y = cms.PSet(
+    x_alignment_relative = cms.PSet(
+      rp_L_2_F = cms.PSet(
+        x_min = cms.double(0.),
+        x_max = cms.double(0.),
+      ),
+      rp_L_1_F = cms.PSet(
+        x_min = cms.double(8.),
+        x_max = cms.double(10.),
+      ),
+      rp_R_1_F = cms.PSet(
+        x_min = cms.double(7.),
+        x_max = cms.double(9.),
+      ),
+      rp_R_2_F = cms.PSet(
+        x_min = cms.double(0.),
+        x_max = cms.double(0.),
+      )
+    ),
+
+    y_alignment = cms.PSet(
       rp_L_2_F = cms.PSet(
         x_min = cms.double(45.5),
         x_max = cms.double(49.),
@@ -129,6 +178,25 @@ config = cms.PSet(
       rp_R_2_F = cms.PSet(
         x_min = cms.double(45.),
         x_max = cms.double(48.),
+      )
+    ),
+
+    y_alignment_alt = cms.PSet(
+      rp_L_2_F = cms.PSet(
+        x_min = cms.double(0.),
+        x_max = cms.double(0.),
+      ),
+      rp_L_1_F = cms.PSet(
+        x_min = cms.double(8.),
+        x_max = cms.double(18.),
+      ),
+      rp_R_1_F = cms.PSet(
+        x_min = cms.double(7.3),
+        x_max = cms.double(16.),
+      ),
+      rp_R_2_F = cms.PSet(
+        x_min = cms.double(0.),
+        x_max = cms.double(0.),
       )
     )
 )

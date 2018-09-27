@@ -121,13 +121,13 @@ void BuildStdDevProfile(TGraph *g_input, double x_shift, const SelectionRange &r
 //----------------------------------------------------------------------------------------------------
 
 void DoMatchMethodX(TGraph *g_test, const SelectionRange &r_test, TGraph *g_ref, const SelectionRange &r_ref, double sh_min, double sh_max,
-		double &result)
+		double &result, unsigned int n_bins)
 {
 	printf("        test range: %.3f to %.3f\n", r_test.x_min, r_test.x_max);
 	printf("        ref range: %.3f to %.3f\n", r_ref.x_min, r_ref.x_max);
 
 	// prepare reference histogram
-	TH1D *h_ref = new TH1D("h_ref", ";x", 140, 2., 16.);
+	TH1D *h_ref = new TH1D("h_ref", ";x", n_bins, 2., 16.);
 	BuildHistogram(g_ref, 0., r_ref, h_ref);
 
 	// book match-quality graphs
@@ -395,32 +395,6 @@ void DoMatchMethodY(TGraph *g_test, const SelectionRange &r_test, TGraph *g_ref,
 }
 
 //----------------------------------------------------------------------------------------------------
-
-void DoMatch(unsigned int /*rpId*/,
-		TGraph *g_test, const SelectionRange &r_test, TGraph *g_ref, const SelectionRange &r_ref,
-		double sh_min, double sh_max,
-		double &r_method_x, double &r_method_y)
-{
-	TDirectory *d_top = gDirectory;
-
-	// method x
-	r_method_x = 0.;
-	/*
-	gDirectory = d_top->mkdir("method x");
-	printf("    method x\n");
-	SelectionRange r_test_x = r_test;
-	DoMatchMethodX(g_test, r_test_x, g_ref, r_ref, sh_min, sh_max, r_method_x);
-	*/
-
-	// method y
-	gDirectory = d_top->mkdir("method y");
-	printf("    method y\n");
-	DoMatchMethodY(g_test, r_test, g_ref, r_ref, sh_min, sh_max, r_method_y);
-
-	gDirectory = d_top;
-}
-
-//----------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------
 
 int main()
@@ -461,7 +435,7 @@ int main()
 	AlignmentResultsCollection results;
 
 	// processing
-	for (auto &ref : cfg.matching_1d_reference_datasets)
+	for (auto &ref : cfg.matching_reference_datasets)
 	{
 		if (ref == "default")
 		{
@@ -502,16 +476,32 @@ int main()
 				continue;
 			}
 
-			gDirectory = rp_dir;
-			double r_method_x = 0., r_method_y = 0.;
-			const auto &shift_range = cfg.matching_1d_shift_ranges[rpd.id];
-			DoMatch(rpd.id,
-				g_test, cfg.matching_1d_ranges[rpd.id],
-				g_ref, cfg_ref.matching_1d_ranges[rpd.id],
-				shift_range.x_min, shift_range.x_max,
-				r_method_x, r_method_y);
-		
+			const auto &shift_range = cfg.matching_shift_ranges[rpd.id];
+
+			// run method x
+			gDirectory = rp_dir->mkdir("method x");
+			printf("    method x\n");
+
+			const auto &range_test_x = cfg.alignment_x_meth_x_ranges[rpd.id];
+			const auto &range_ref_x = cfg_ref.alignment_x_meth_x_ranges[rpd.id];
+
+			const unsigned int bin_number = (rpd.id == 23 || rpd.id == 123) ? 98 : 140;
+
+			double r_method_x = 0.;
+			DoMatchMethodX(g_test, range_test_x, g_ref, range_ref_x, shift_range.x_min, shift_range.x_max, r_method_x, bin_number);
+
 			results[ref + ", method x"][rpd.id] = AlignmentResult(r_method_x);
+
+			// run method y
+			gDirectory = rp_dir->mkdir("method y");
+			printf("    method y\n");
+
+			const auto &range_test_y = cfg.alignment_x_meth_y_ranges[rpd.id];
+			const auto &range_ref_y = cfg_ref.alignment_x_meth_y_ranges[rpd.id];
+
+			double r_method_y = 0.;
+			DoMatchMethodY(g_test, range_test_y, g_ref, range_ref_y, shift_range.x_min, shift_range.x_max, r_method_y);
+
 			results[ref + ", method y"][rpd.id] = AlignmentResult(r_method_y);
 		}
 		

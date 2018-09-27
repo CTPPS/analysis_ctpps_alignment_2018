@@ -59,14 +59,16 @@ struct Config
 
 	SectorConfig sectorConfig45, sectorConfig56;
 
-	vector<string> matching_1d_reference_datasets;
+	vector<string> matching_reference_datasets;
+	map<unsigned int, SelectionRange> matching_shift_ranges;
 
-	map<unsigned int, SelectionRange> matching_1d_ranges;
-	map<unsigned int, SelectionRange> matching_1d_shift_ranges;
-
+	map<unsigned int, SelectionRange> alignment_x_meth_x_ranges;
+	map<unsigned int, SelectionRange> alignment_x_meth_y_ranges;
 	map<unsigned int, SelectionRange> alignment_x_meth_o_ranges;
+	map<unsigned int, SelectionRange> alignment_x_relative_ranges;
 
 	map<unsigned int, SelectionRange> alignment_y_ranges;
+	map<unsigned int, SelectionRange> alignment_y_alt_ranges;
 
 	int LoadFrom(const string &f);
 
@@ -148,14 +150,27 @@ int Config::LoadFrom(const string &f_in)
 		sectorConfig56.fr_x_slice_n = ceil((sps.getParameter<double>("fr_x_slice_max") - sectorConfig56.fr_x_slice_min) / sectorConfig56.fr_x_slice_w);
 	}
 
-	const auto &c_m1d = config.getParameter<edm::ParameterSet>("matching_1d");
-	matching_1d_reference_datasets = c_m1d.getParameter<vector<string>>("reference_datasets");
+	const auto &c_m = config.getParameter<edm::ParameterSet>("matching");
+	matching_reference_datasets = c_m.getParameter<vector<string>>("reference_datasets");
 
 	for (const auto &p : rp_tags)
 	{
-		const auto &ps = c_m1d.getParameter<edm::ParameterSet>("rp_" + p.second);
-		matching_1d_ranges[p.first] = SelectionRange(ps.getParameter<double>("x_min"), ps.getParameter<double>("x_max"));
-		matching_1d_shift_ranges[p.first] = SelectionRange(ps.getParameter<double>("sh_min"), ps.getParameter<double>("sh_max"));
+		const auto &ps = c_m.getParameter<edm::ParameterSet>("rp_" + p.second);
+		matching_shift_ranges[p.first] = SelectionRange(ps.getParameter<double>("sh_min"), ps.getParameter<double>("sh_max"));
+	}
+
+	const auto &c_axx = config.getParameter<edm::ParameterSet>("x_alignment_meth_x");
+	for (const auto &p : rp_tags)
+	{
+		const auto &ps = c_axx.getParameter<edm::ParameterSet>("rp_" + p.second);
+		alignment_x_meth_x_ranges[p.first] = SelectionRange(ps.getParameter<double>("x_min"), ps.getParameter<double>("x_max"));
+	}
+
+	const auto &c_axy = config.getParameter<edm::ParameterSet>("x_alignment_meth_y");
+	for (const auto &p : rp_tags)
+	{
+		const auto &ps = c_axy.getParameter<edm::ParameterSet>("rp_" + p.second);
+		alignment_x_meth_y_ranges[p.first] = SelectionRange(ps.getParameter<double>("x_min"), ps.getParameter<double>("x_max"));
 	}
 
 	const auto &c_axo = config.getParameter<edm::ParameterSet>("x_alignment_meth_o");
@@ -165,11 +180,25 @@ int Config::LoadFrom(const string &f_in)
 		alignment_x_meth_o_ranges[p.first] = SelectionRange(ps.getParameter<double>("x_min"), ps.getParameter<double>("x_max"));
 	}
 
-	const auto &c_ay = config.getParameter<edm::ParameterSet>("alignment_y");
+	const auto &c_axr = config.getParameter<edm::ParameterSet>("x_alignment_relative");
+	for (const auto &p : rp_tags)
+	{
+		const auto &ps = c_axr.getParameter<edm::ParameterSet>("rp_" + p.second);
+		alignment_x_relative_ranges[p.first] = SelectionRange(ps.getParameter<double>("x_min"), ps.getParameter<double>("x_max"));
+	}
+
+	const auto &c_ay = config.getParameter<edm::ParameterSet>("y_alignment");
 	for (const auto &p : rp_tags)
 	{
 		const auto &ps = c_ay.getParameter<edm::ParameterSet>("rp_" + p.second);
 		alignment_y_ranges[p.first] = SelectionRange(ps.getParameter<double>("x_min"), ps.getParameter<double>("x_max"));
+	}
+
+	const auto &c_aya = config.getParameter<edm::ParameterSet>("y_alignment_alt");
+	for (const auto &p : rp_tags)
+	{
+		const auto &ps = c_aya.getParameter<edm::ParameterSet>("rp_" + p.second);
+		alignment_y_alt_ranges[p.first] = SelectionRange(ps.getParameter<double>("x_min"), ps.getParameter<double>("x_max"));
 	}
 
 	return 0;
@@ -219,23 +248,36 @@ void Config::Print(bool print_input_files) const
 	printf("    x slices, fr: min = %.2f, w = %.2f, n = %u\n", sectorConfig56.fr_x_slice_min, sectorConfig56.fr_x_slice_w, sectorConfig56.fr_x_slice_n);
 
 	printf("\n");
-	printf("* 1D matching\n");
-	printf("    reference datasets (%lu):\n", matching_1d_reference_datasets.size());
-	for (const auto &ds : matching_1d_reference_datasets)
+	printf("* matching\n");
+	printf("    reference datasets (%lu):\n", matching_reference_datasets.size());
+	for (const auto &ds : matching_reference_datasets)
 		printf("        %s\n", ds.c_str());
-	for (const auto &p : matching_1d_ranges)
-	{
-		const auto it_sh = matching_1d_shift_ranges.find(p.first);
-		printf("    RP %u: x_min = %.3f, x_max = %.3f, sh_min = %.3f, sh_max = %.3f\n",
-			p.first, p.second.x_min, p.second.x_max, it_sh->second.x_min, it_sh->second.x_max);
-	}
+	printf("    shift ranges:\n");
+	for (const auto &p : matching_shift_ranges)
+		printf("        RP %u: sh_min = %.3f, sh_max = %.3f\n", p.first, p.second.x_min, p.second.x_max);
+
+	printf("\n* alignment_x_meth_x\n");
+	for (const auto &p : alignment_x_meth_x_ranges)
+		printf("    RP %u: x_min = %.3f, x_max = %.3f\n", p.first, p.second.x_min, p.second.x_max);
+
+	printf("\n* alignment_x_meth_y\n");
+	for (const auto &p : alignment_x_meth_y_ranges)
+		printf("    RP %u: x_min = %.3f, x_max = %.3f\n", p.first, p.second.x_min, p.second.x_max);
 
 	printf("\n* alignment_x_meth_o\n");
 	for (const auto &p : alignment_x_meth_o_ranges)
 		printf("    RP %u: x_min = %.3f, x_max = %.3f\n", p.first, p.second.x_min, p.second.x_max);
 
+	printf("\n* alignment_x_relative\n");
+	for (const auto &p : alignment_x_relative_ranges)
+		printf("    RP %u: x_min = %.3f, x_max = %.3f\n", p.first, p.second.x_min, p.second.x_max);
+
 	printf("\n* alignment_y\n");
 	for (const auto &p : alignment_y_ranges)
+		printf("    RP %u: x_min = %.3f, x_max = %.3f\n", p.first, p.second.x_min, p.second.x_max);
+
+	printf("\n* alignment_y_alt\n");
+	for (const auto &p : alignment_y_alt_ranges)
 		printf("    RP %u: x_min = %.3f, x_max = %.3f\n", p.first, p.second.x_min, p.second.x_max);
 }
 
