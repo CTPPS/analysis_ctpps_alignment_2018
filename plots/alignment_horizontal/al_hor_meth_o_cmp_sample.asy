@@ -18,7 +18,7 @@ sample_labels.push("SingleMuon"); sample_pens.push(heavygreen);
 
 real sfa = 0.3;
 
-string method = "method y";
+string method = "method o";
 
 int xangle = 150;
 string ref_label = "data_alig_fill_6228_xangle_150_DS1";
@@ -93,18 +93,19 @@ for (int rpi : rps.keys)
 	
 			for (int sai : sample_labels.keys)
 			{
-				string f = topDir + dataset + "/" + sample_labels[sai] + "/match.root";	
-				RootObject obj = RootGetObject(f, ref_label + "/" + rps[rpi] + "/" + method + "/g_results", error = false);
+				string f = topDir + dataset + "/" + sample_labels[sai] + "/x_alignment_meth_o.root";	
+				RootObject obj = RootGetObject(f, ref_label + "/" + rps[rpi] + "/g_results", error = false);
 	
 				if (!obj.valid)
 					continue;
 	
 				real ax[] = { 0. };
 				real ay[] = { 0. };
-				obj.vExec("GetPoint", 0, ax, ay); real bsh = ay[0];
-				obj.vExec("GetPoint", 1, ax, ay); real bsh_unc = ay[0];
+				obj.vExec("GetPoint", 0, ax, ay); real bsh = ax[0], bsh_unc = ay[0];
 
-				real x = fdi + sai * sfa / (sample_labels.length - 1) - sfa/2;
+				real x = fdi;
+				if (sample_labels.length > 1)
+					x += sai * sfa / (sample_labels.length - 1) - sfa/2;
 
 				bool pointValid = (bsh == bsh && bsh_unc == bsh_unc && fabs(bsh) > 0.01);
 	

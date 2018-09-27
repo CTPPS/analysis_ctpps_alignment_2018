@@ -18,7 +18,7 @@ sample_labels.push("SingleMuon"); sample_pens.push(heavygreen);
 
 real sfa = 0.3;
 
-string method = "method y";
+string method = "method x";
 
 int xangle = 150;
 string ref_label = "data_alig_fill_6228_xangle_150_DS1";
