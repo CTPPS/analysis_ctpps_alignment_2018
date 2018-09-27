@@ -16,7 +16,7 @@
 
 using namespace std;
 
-bool debug_slope_fits = true;
+bool debug_slope_fits = false;
 
 //----------------------------------------------------------------------------------------------------
 
