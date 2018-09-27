@@ -1,25 +1,25 @@
 #!/bin/bash
 
 streams=(
-	#"SingleMuon"
-	#"EGamma"
-	"ZeroBias"
+	"SingleMuon"
+	"EGamma"
+	#"ZeroBias"
 	#"Commissioning"
 )
 
 dataset_exts=(
-	#"Commissioning2018-PromptReco-v1/MINIAOD"
+	"Commissioning2018-PromptReco-v1/MINIAOD"
 
-	#"Run2018A-PromptReco-v1/MINIAOD"
-	#"Run2018A-PromptReco-v2/MINIAOD"
-	#"Run2018A-PromptReco-v3/MINIAOD"
+	"Run2018A-PromptReco-v1/MINIAOD"
+	"Run2018A-PromptReco-v2/MINIAOD"
+	"Run2018A-PromptReco-v3/MINIAOD"
 
-	#"Run2018B-PromptReco-v1/MINIAOD"
-	#"Run2018B-PromptReco-v2/MINIAOD"
+	"Run2018B-PromptReco-v1/MINIAOD"
+	"Run2018B-PromptReco-v2/MINIAOD"
 
-	#"Run2018C-PromptReco-v1/MINIAOD"
+	"Run2018C-PromptReco-v1/MINIAOD"
 	"Run2018C-PromptReco-v2/MINIAOD"
-	#"Run2018C-PromptReco-v3/MINIAOD"
+	"Run2018C-PromptReco-v3/MINIAOD"
 
 	"Run2018D-PromptReco-v2/MINIAOD"
 )
@@ -73,7 +73,7 @@ function MakeInputFiles()
 	do
 		for ext in ${dataset_exts[*]}
 		do
-			echo "    dasgoclient --query \"file dataset=/$stream/$ext run=$run\""
+			#echo "    dasgoclient --query \"file dataset=/$stream/$ext run=$run\""
 			dasgoclient --query "file dataset=/$stream/$ext run=$run" >> "$dir_out/input_files"
 		done
 	done
