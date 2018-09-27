@@ -1,6 +1,8 @@
 import root;
 import pad_layout;
 
+include "../common.asy";
+
 string topDir = "../../data/phys/";
 
 include "../fills_samples.asy";
@@ -11,8 +13,8 @@ InitDataSets();
 string sample_labels[];
 pen sample_pens[];
 sample_labels.push("ZeroBias"); sample_pens.push(blue);
-//sample_labels.push("DoubleEG"); sample_pens.push(red);
-//sample_labels.push("SingleMuon"); sample_pens.push(heavygreen);
+sample_labels.push("EGamma"); sample_pens.push(red);
+sample_labels.push("SingleMuon"); sample_pens.push(heavygreen);
 
 int xangle = 160;
 real beta = 0.30;
@@ -27,7 +29,7 @@ rp_ids.push(3); rps.push("L_1_F"); rp_labels.push("L-210-fr"); rp_y_min.push(0);
 rp_ids.push(103); rps.push("R_1_F"); rp_labels.push("R-210-fr"); rp_y_min.push(0.); rp_y_max.push(0.3); rp_y_cen.push(0.16);
 rp_ids.push(123); rps.push("R_2_F"); rp_labels.push("R-220-fr"); rp_y_min.push(0.); rp_y_max.push(0.3); rp_y_cen.push(0.16);
 
-xSizeDef = 70cm;
+xSizeDef = x_size_fill_cmp;
 
 yTicksDef = RightTicks(0.02, 0.01);
 

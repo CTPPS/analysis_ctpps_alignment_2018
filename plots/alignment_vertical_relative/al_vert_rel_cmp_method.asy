@@ -13,10 +13,10 @@ InitDataSets();
 pen p_meth_fit = red;
 pen p_meth_s_curve = blue;
 
-string sample = "DoubleEG";
+string sample = "SingleMuon";
 
-int xangle = 150;
-string ref_label = "data_alig_fill_6228_xangle_150_DS1";
+int xangle = 160;
+real beta = 0.30;
 
 string sectors[], s_labels[];
 real s_y_mins[], s_y_maxs[], s_y_cens[];
@@ -26,7 +26,7 @@ sectors.push("56"); s_labels.push("sector 56"); s_y_mins.push(-1.5); s_y_maxs.pu
 
 yTicksDef = RightTicks(0.2, 0.1);
 
-xSizeDef = 40cm;
+xSizeDef = x_size_fill_cmp;
 
 //----------------------------------------------------------------------------------------------------
 
@@ -48,6 +48,7 @@ NewPad(false, 1, 1);
 
 AddToLegend("(" + sample + ")");
 AddToLegend(format("(xangle %u)", xangle));
+AddToLegend(format("(beta %#.2f)", beta));
 
 AddToLegend("method fit", mCi+2pt + p_meth_fit);
 AddToLegend("method s-curve", mCi+2pt + p_meth_s_curve);

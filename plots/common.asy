@@ -1,3 +1,7 @@
+real x_size_fill_cmp = 70cm;
+
+//----------------------------------------------------------------------------------------------------
+
 string reference_std = "data_alig_fill_6554_xangle_160_beta_0.30_DS1";
 string datasets_std[] = {
 	"fill_6583/xangle_160_beta_0.30/ZeroBias",
@@ -11,9 +15,9 @@ string datasets_std[] = {
 
 real GetMeanHorizontalAlignment(string rp)
 {
-	if (rp == "L_2_F") return -42.0;
-	if (rp == "L_1_F") return -3.6;
-	if (rp == "R_1_F") return -2.8;
+	if (rp == "L_2_F") return -41.4;
+	if (rp == "L_1_F") return -3.1;
+	if (rp == "R_1_F") return -2.6;
 	if (rp == "R_2_F") return -41.9;
 
 	return 0;

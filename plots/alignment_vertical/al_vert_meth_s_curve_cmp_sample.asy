@@ -13,10 +13,11 @@ InitDataSets();
 string sample_labels[];
 pen sample_pens[];
 sample_labels.push("ZeroBias"); sample_pens.push(blue);
-sample_labels.push("DoubleEG"); sample_pens.push(red);
+sample_labels.push("EGamma"); sample_pens.push(red);
 sample_labels.push("SingleMuon"); sample_pens.push(heavygreen);
 
-int xangle = 150;
+int xangle = 160;
+real beta = 0.30;
 
 real sfa = 0.3;
 
@@ -28,7 +29,7 @@ rp_ids.push(3); rps.push("L_1_F"); rp_labels.push("L-210-fr"); rp_y_min.push(3);
 rp_ids.push(103); rps.push("R_1_F"); rp_labels.push("R-210-fr"); rp_y_min.push(3); rp_y_max.push(5); rp_dirs.push("sector 56/N");
 rp_ids.push(123); rps.push("R_2_F"); rp_labels.push("R-220-fr"); rp_y_min.push(2); rp_y_max.push(4); rp_dirs.push("sector 56/F");
 
-xSizeDef = 40cm;
+xSizeDef = x_size_fill_cmp;
 
 yTicksDef = RightTicks(0.5, 0.1);
 
@@ -51,6 +52,7 @@ xTicksDef = LeftTicks(rotate(90)*Label(""), TickLabels, Step=1, step=0);
 NewPad(false, 1, 1);
 
 AddToLegend(format("xangle = %u", xangle));
+AddToLegend(format("(beta %#.2f)", beta));
 
 for (int sai : sample_labels.keys)
 {
@@ -80,6 +82,9 @@ for (int rpi : rps.keys)
 		for (int dsi : fill_data[fdi].datasets.keys)
 		{
 			if (fill_data[fdi].datasets[dsi].xangle != xangle)
+				continue;
+
+			if (fill_data[fdi].datasets[dsi].beta != beta)
 				continue;
 
 			string dataset = fill_data[fdi].datasets[dsi].tag;
@@ -116,7 +121,7 @@ for (int rpi : rps.keys)
 	real y_mean = GetMeanVerticalAlignment(rps[rpi]);
 	draw((-1, y_mean)--(fill_data.length, y_mean), black);
 
-	limits((-1, rp_y_min[rpi]), (fill_data.length, rp_y_max[rpi]), Crop);
+	limits((-1, y_mean-1.5), (fill_data.length, y_mean+1.5), Crop);
 
 	AttachLegend("{\SetFontSizesXX " + rp_labels[rpi] + "}");
 }

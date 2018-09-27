@@ -10,16 +10,17 @@ InitDataSets();
 
 //----------------------------------------------------------------------------------------------------
 
-string sample = "DoubleEG";
+string sample = "SingleMuon";
 
 string method = "method o";
 
 int xangles[];
+real betas[];
 string xangle_refs[];
 pen xangle_pens[];
-xangles.push(110); xangle_refs.push("data_alig_fill_6228_xangle_110_DS1"); xangle_pens.push(blue);
-xangles.push(130); xangle_refs.push("data_alig_fill_6228_xangle_130_DS1"); xangle_pens.push(red);
-xangles.push(150); xangle_refs.push("data_alig_fill_6228_xangle_150_DS1"); xangle_pens.push(heavygreen);
+xangles.push(130); betas.push(0.25); xangle_refs.push("data_alig_fill_6554_xangle_130_beta_0.25_DS1"); xangle_pens.push(blue);
+xangles.push(130); betas.push(0.30); xangle_refs.push("data_alig_fill_6554_xangle_130_beta_0.30_DS1"); xangle_pens.push(red);
+xangles.push(160); betas.push(0.30); xangle_refs.push("data_alig_fill_6554_xangle_160_beta_0.30_DS1"); xangle_pens.push(heavygreen);
 
 real xfa = 0.3;
 
@@ -33,7 +34,7 @@ rp_ids.push(123); rps.push("R_2_F"); rp_labels.push("R-220-fr"); rp_shift_m.push
 
 yTicksDef = RightTicks(0.2, 0.1);
 
-xSizeDef = 40cm;
+xSizeDef = x_size_fill_cmp;
 
 //----------------------------------------------------------------------------------------------------
 
@@ -58,7 +59,7 @@ AddToLegend("(" + sample + ")");
 
 for (int xai : xangles.keys)
 {
-	AddToLegend(format("xangle %u", xangles[xai]), xangle_pens[xai]);
+	AddToLegend(format("xangle %u", xangles[xai]) + format(", beta %#.2f", betas[xai]), xangle_pens[xai]);
 }
 
 AttachLegend();
@@ -93,6 +94,9 @@ for (int rpi : rps.keys)
 				if (fill_data[fdi].datasets[dsi].xangle != xangles[xai])
 					continue;
 
+				if (fill_data[fdi].datasets[dsi].beta != betas[xai])
+					continue;
+
 				string f = topDir + dataset + "/" + sample + "/x_alignment_meth_o.root";	
 				RootObject obj = RootGetObject(f, xangle_refs[xai] + "/" + rps[rpi] + "/g_results", error = false);
 	
@@ -124,7 +128,7 @@ for (int rpi : rps.keys)
 	draw((-1, y_mean)--(fill_data.length, y_mean), black);
 
 	//xlimits(-1, fill_data.length, Crop);
-	limits((-1, y_mean-1), (fill_data.length, y_mean+1), Crop);
+	limits((-1, y_mean-1), (fill_data.length, y_mean+2), Crop);
 
 	AttachLegend("{\SetFontSizesXX " + rp_labels[rpi] + "}");
 }

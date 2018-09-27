@@ -1,6 +1,8 @@
 import root;
 import pad_layout;
 
+include "../common.asy";
+
 string topDir = "../../data/phys/";
 
 include "../fills_samples.asy";
@@ -11,8 +13,8 @@ InitDataSets();
 string sample_labels[];
 pen sample_pens[];
 sample_labels.push("ZeroBias"); sample_pens.push(blue);
-//sample_labels.push("DoubleEG"); sample_pens.push(red);
-//sample_labels.push("SingleMuon"); sample_pens.push(heavygreen);
+sample_labels.push("EGamma"); sample_pens.push(red);
+sample_labels.push("SingleMuon"); sample_pens.push(heavygreen);
 
 int xangle = 160;
 real beta = 0.30;
@@ -24,7 +26,7 @@ real s_y_mins[], s_y_maxs[], s_y_cens[];
 sectors.push("45"); s_labels.push("sector 45"); s_y_mins.push(-0.02); s_y_maxs.push(+0.02); s_y_cens.push(+0.004);
 sectors.push("56"); s_labels.push("sector 56"); s_y_mins.push(-0.03); s_y_maxs.push(+0.01); s_y_cens.push(-0.014);
 
-xSizeDef = 70cm;
+xSizeDef = x_size_fill_cmp;
 
 //yTicksDef = RightTicks(0.02, 0.01);
 
@@ -47,7 +49,7 @@ xTicksDef = LeftTicks(rotate(90)*Label(""), TickLabels, Step=1, step=0);
 NewPad(false, 1, 1);
 
 AddToLegend(format("xangle = %u", xangle));
-AddToLegend(format("beta = %.2f", beta));
+AddToLegend(format("beta = %#.2f", beta));
 
 for (int sai : sample_labels.keys)
 {

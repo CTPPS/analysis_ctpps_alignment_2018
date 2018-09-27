@@ -30,7 +30,7 @@ rp_ids.push(3); rps.push("L_1_F"); rp_labels.push("L-210-fr"); rp_y_min.push(3);
 rp_ids.push(103); rps.push("R_1_F"); rp_labels.push("R-210-fr"); rp_y_min.push(3); rp_y_max.push(5); rp_dirs.push("sector 56/N"); rp_y_cen.push(4.0);
 rp_ids.push(123); rps.push("R_2_F"); rp_labels.push("R-220-fr"); rp_y_min.push(2); rp_y_max.push(4); rp_dirs.push("sector 56/F"); rp_y_cen.push(2.8);
 
-xSizeDef = 70cm;
+xSizeDef = x_size_fill_cmp;
 
 yTicksDef = RightTicks(0.5, 0.1);
 

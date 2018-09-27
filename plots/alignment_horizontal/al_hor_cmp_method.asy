@@ -10,7 +10,7 @@ InitDataSets();
 
 //----------------------------------------------------------------------------------------------------
 
-string sample = "ZeroBias";
+string sample = "SingleMuon";
 
 real mfa = 0.3;
 
@@ -34,7 +34,7 @@ rp_ids.push(123); rps.push("R_2_F"); rp_labels.push("R-220-fr"); rp_shift_m.push
 
 yTicksDef = RightTicks(0.2, 0.1);
 
-xSizeDef = 70cm;
+xSizeDef = x_size_fill_cmp;
 
 //----------------------------------------------------------------------------------------------------
 
@@ -144,7 +144,7 @@ for (int rpi : rps.keys)
 	draw((-1, y_mean)--(fill_data.length, y_mean), black);
 
 	//xlimits(-1, fill_data.length, Crop);
-	limits((-1, y_mean-1), (fill_data.length, y_mean+1), Crop);
+	limits((-1, y_mean-1), (fill_data.length, y_mean+2), Crop);
 
 	AttachLegend("{\SetFontSizesXX " + rp_labels[rpi] + "}");
 }

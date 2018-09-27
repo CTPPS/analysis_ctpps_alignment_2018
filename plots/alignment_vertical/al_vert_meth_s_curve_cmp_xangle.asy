@@ -10,16 +10,17 @@ InitDataSets();
 
 //----------------------------------------------------------------------------------------------------
 
-string sample = "ZeroBias";
+string sample = "SingleMuon";
 
 string method = "method y";
 
 int xangles[];
+real betas[];
 string xangle_refs[];
 pen xangle_pens[];
-xangles.push(110); xangle_refs.push("data_alig_fill_6228_xangle_110_DS1"); xangle_pens.push(blue);
-xangles.push(130); xangle_refs.push("data_alig_fill_6228_xangle_130_DS1"); xangle_pens.push(red);
-xangles.push(150); xangle_refs.push("data_alig_fill_6228_xangle_150_DS1"); xangle_pens.push(heavygreen);
+xangles.push(130); betas.push(0.25); xangle_refs.push("data_alig_fill_6554_xangle_130_beta_0.25_DS1"); xangle_pens.push(blue);
+xangles.push(130); betas.push(0.30); xangle_refs.push("data_alig_fill_6554_xangle_130_beta_0.30_DS1"); xangle_pens.push(red);
+xangles.push(160); betas.push(0.30); xangle_refs.push("data_alig_fill_6554_xangle_160_beta_0.30_DS1"); xangle_pens.push(heavygreen);
 
 int rp_ids[];
 string rps[], rp_labels[], rp_dirs[];
@@ -29,7 +30,7 @@ rp_ids.push(3); rps.push("L_1_F"); rp_labels.push("L-210-fr"); rp_y_min.push(3);
 rp_ids.push(103); rps.push("R_1_F"); rp_labels.push("R-210-fr"); rp_y_min.push(3); rp_y_max.push(5); rp_dirs.push("sector 56/N");
 rp_ids.push(123); rps.push("R_2_F"); rp_labels.push("R-220-fr"); rp_y_min.push(2); rp_y_max.push(4); rp_dirs.push("sector 56/F");
 
-xSizeDef = 40cm;
+xSizeDef = x_size_fill_cmp;
 
 yTicksDef = RightTicks(0.5, 0.1);
 
@@ -55,7 +56,7 @@ AddToLegend("(" + sample + ")");
 
 for (int xai : xangles.keys)
 {
-	AddToLegend(format("xangle %u", xangles[xai]), xangle_pens[xai]);
+	AddToLegend(format("xangle %u", xangles[xai]) + format(", beta %#.2f", betas[xai]), xangle_pens[xai]);
 }
 
 AttachLegend();
@@ -89,6 +90,9 @@ for (int rpi : rps.keys)
 			for (int xai : xangles.keys)
 			{
 				if (fill_data[fdi].datasets[dsi].xangle != xangles[xai])
+					continue;
+
+				if (fill_data[fdi].datasets[dsi].beta != betas[xai])
 					continue;
 
 				string f = topDir + dataset + "/" + sample + "/y_alignment_alt.root";

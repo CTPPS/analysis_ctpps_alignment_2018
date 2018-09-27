@@ -10,7 +10,7 @@ InitDataSets();
 
 //----------------------------------------------------------------------------------------------------
 
-string sample = "ZeroBias";
+string sample = "SingleMuon";
 
 real mfa = 0.3;
 
@@ -32,7 +32,7 @@ sectors.push("56"); s_labels.push("sector 56"); s_y_mins.push(38.8); s_y_maxs.pu
 
 yTicksDef = RightTicks(0.2, 0.1);
 
-xSizeDef = 70cm;
+xSizeDef = x_size_fill_cmp;
 
 //----------------------------------------------------------------------------------------------------
 
