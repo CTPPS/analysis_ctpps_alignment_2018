@@ -42,15 +42,15 @@ do
 	) > "$dir/input_files.py"
 
 	# if not present, make (default) configs
-	#if [ ! -f "$dir/config.py" ]
-	#then
-		cat "config_template.py" | sed "\
-				s|\$fill|$fill|;\
-				s|\$xangle|$xangle|;\
-				s|\$beta|$beta|;\
-				s|\$dataset|$stream|;\
-			" > "$dir/config.py"
-	#fi
+	if [ ! -f "$dir/config.py" ]
+	then
+	   cat "config_template.py" | sed "\
+	   		s|\$fill|$fill|;\
+	   		s|\$xangle|$xangle|;\
+	   		s|\$beta|$beta|;\
+	   		s|\$dataset|$stream|;\
+	   	" > "$dir/config.py"
+	fi
 
 	if [ ! -f "$dir/../../config_common.py" ]
 	then
