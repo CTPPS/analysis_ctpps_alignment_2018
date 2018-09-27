@@ -243,15 +243,20 @@ void DoMatchMethodX(TGraph *g_test, const SelectionRange &r_test, TGraph *g_ref,
 		S_ref += v_ref;
 	}
 
-	h_ref->Scale(1./S_ref);
-	h_test->Scale(1./S_test);
-	h_test_aft->Scale(1./S_test);
+	if (S_ref > 0. && S_test > 0.)
+	{
+		h_ref->Scale(1./S_ref);
+		h_test->Scale(1./S_test);
+		h_test_aft->Scale(1./S_test);
 
-	TCanvas *c_cmp = new TCanvas("c_cmp");
-	h_ref->SetLineColor(1); h_ref->SetName("h_ref_sel"); h_ref->Draw("");
-	h_test->SetLineColor(6); h_test->SetName("h_test_bef"); h_test->Draw("same");
-	h_test_aft->SetLineColor(2); h_test_aft->SetName("h_test_aft"); h_test_aft->Draw("same");
-	c_cmp->Write();
+		TCanvas *c_cmp = new TCanvas("c_cmp");
+		h_ref->SetLineColor(1); h_ref->SetName("h_ref_sel"); h_ref->Draw("");
+		h_test->SetLineColor(6); h_test->SetName("h_test_bef"); h_test->Draw("same");
+		h_test_aft->SetLineColor(2); h_test_aft->SetName("h_test_aft"); h_test_aft->Draw("same");
+		c_cmp->Write();
+	
+		delete c_cmp;
+	}
 
 	// save graphs
 	g_n_bins->Write();
@@ -271,7 +276,6 @@ void DoMatchMethodX(TGraph *g_test, const SelectionRange &r_test, TGraph *g_ref,
 	delete h_ref;
 	delete h_test;
 	delete h_test_aft;
-	delete c_cmp;
 }
 
 //----------------------------------------------------------------------------------------------------

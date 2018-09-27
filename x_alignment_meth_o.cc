@@ -43,17 +43,23 @@ TF1 *ff_pol2 = new TF1("ff_pol2", "[0] + [1]*x + [2]*x*x");
 
 int FitProfile(TProfile *p, bool aligned, double &sl, double &sl_unc)
 {
-	if (p->GetEntries() < 100)
+	if (p->GetEntries() < 50)
 		return 1;
 
+	unsigned int n_reasonable = 0;
 	for (int bi = 1; bi <= p->GetNbinsX(); ++bi)
 	{
-		if (p->GetBinEntries(bi) < 4)
+		if (p->GetBinEntries(bi) < 5)
 		{
 			p->SetBinContent(bi, 0.);
 			p->SetBinError(bi, 0.);
+		} else {
+			n_reasonable++;
 		}
 	}
+
+	if (n_reasonable < 10)
+		return 2;
 
 	double x_min = 1., x_max = 7.;
 	if (aligned) x_min = -3., x_max = +3.;
@@ -113,14 +119,9 @@ int DoMatch(TGraphErrors *g_ref, TGraphErrors *g_test, const SelectionRange &ran
 	if (g_ref->GetN() < 5 || g_test->GetN() < 5)
 		return 1;
 
-	// check actual range of test graph - TODO: needed ?
-	double x_min_g_test = +1E100, x_max_g_test = -1E100;
-	for (int i = 0; i < g_test->GetN(); ++i)
-	{
-		const double x = g_test->GetX()[i];
-		x_min_g_test = min(x_min_g_test, x);
-		x_max_g_test = max(x_max_g_test, x);
-	}
+	// print config
+	printf("        ref: x_min = %.3f, x_max = %.3f\n", range_ref.x_min, range_ref.x_max);
+	printf("        test: x_min = %.3f, x_max = %.3f\n", range_test.x_min, range_test.x_max);
 
 	// make spline from g_ref
 	TSpline3 *s_ref = new TSpline3("s_ref", g_ref->GetX(), g_ref->GetY(), g_ref->GetN());
@@ -286,7 +287,7 @@ int main()
 		if (ref == "default")
 		{
 			char buf[100];
-			sprintf(buf, "data/alig/fill_6228/xangle_%u/DS1", cfg.xangle);
+			sprintf(buf, "data/alig/fill_6554/xangle_%u_beta_%.2f/DS1", cfg.xangle, cfg.beta);
 			ref = buf;
 		}
 

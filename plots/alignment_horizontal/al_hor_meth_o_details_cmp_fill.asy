@@ -1,17 +1,12 @@
 import root;
 import pad_layout;
 
+include "../common.asy";
+
 string topDir = "../../data/phys/";
 
-string reference = "data_alig_fill_6228_xangle_150_DS1";
-
-string datasets[] = {
-	"fill_6239/xangle_150/DoubleEG",
-	"fill_6268/xangle_150/DoubleEG",
-	"fill_6287/xangle_150/DoubleEG",
-	"fill_6323/xangle_150/DoubleEG",
-	"fill_6371/xangle_150/DoubleEG",
-};
+string reference = reference_std;
+string datasets[] = datasets_std;
 
 string rps[], rp_labels[];
 rps.push("L_2_F"); rp_labels.push("L-220-fr");
@@ -74,7 +69,7 @@ for (int dsi : datasets.keys)
 		draw(RootGetObject(f, p_base + "#2"), "p,l", red);
 
 		//xlimits(0, 15., Crop);
-		limits((0, 0.05), (15, 0.2), Crop);
+		limits((0, 0.03), (15, 0.15), Crop);
 	}
 }
 

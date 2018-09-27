@@ -10,7 +10,7 @@ InitDataSets();
 
 //----------------------------------------------------------------------------------------------------
 
-string sample = "DoubleEG";
+string sample = "ZeroBias";
 
 real mfa = 0.3;
 
@@ -20,8 +20,9 @@ methods.push("method x"); m_pens.push(blue);
 methods.push("method y"); m_pens.push(red);
 methods.push("method o"); m_pens.push(heavygreen);
 
-int xangle = 150;
-string ref_label = "data_alig_fill_6228_xangle_150_DS1";
+int xangle = 160;
+real beta = 0.30;
+string ref_label = "data_alig_fill_6554_xangle_160_beta_0.30_DS1";
 
 int rp_ids[];
 string rps[], rp_labels[];
@@ -33,7 +34,7 @@ rp_ids.push(123); rps.push("R_2_F"); rp_labels.push("R-220-fr"); rp_shift_m.push
 
 yTicksDef = RightTicks(0.2, 0.1);
 
-xSizeDef = 40cm;
+xSizeDef = 70cm;
 
 //----------------------------------------------------------------------------------------------------
 
@@ -55,6 +56,7 @@ NewPad(false, 1, 1);
 
 AddToLegend("(" + sample + ")");
 AddToLegend(format("(xangle %u)", xangle));
+AddToLegend(format("(beta %.2f)", beta));
 
 for (int mi : methods.keys)
 	AddToLegend(methods[mi], mCi + 3pt + m_pens[mi]);
@@ -81,6 +83,9 @@ for (int rpi : rps.keys)
 		for (int dsi : fill_data[fdi].datasets.keys)
 		{
 			if (fill_data[fdi].datasets[dsi].xangle != xangle)
+				continue;
+
+			if (fill_data[fdi].datasets[dsi].beta != beta)
 				continue;
 
 			string dataset = fill_data[fdi].datasets[dsi].tag;

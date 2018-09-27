@@ -1,20 +1,19 @@
 import root;
 import pad_layout;
 
+include "../common.asy";
+
 string topDir = "../../data/phys/";
 
-string datasets[] = {
-	"fill_6239/xangle_150/DoubleEG",
-	"fill_6268/xangle_150/DoubleEG",
-	"fill_6287/xangle_150/DoubleEG",
-	"fill_6323/xangle_150/DoubleEG",
-	"fill_6371/xangle_150/DoubleEG",
-};
+string datasets[] = datasets_std;
+//string datasets[] = {
+//	"fill_6239/xangle_150/DoubleEG",
+//};
 
 string sectors[], s_labels[];
 real s_y_mins[], s_y_maxs[];
-sectors.push("45"); s_labels.push("sector 45"); s_y_mins.push(38.2); s_y_maxs.push(38.7);
-sectors.push("56"); s_labels.push("sector 56"); s_y_mins.push(39.1); s_y_maxs.push(39.6);
+sectors.push("45"); s_labels.push("sector 45"); s_y_mins.push(37.5); s_y_maxs.push(38.5);
+sectors.push("56"); s_labels.push("sector 56"); s_y_mins.push(38.5); s_y_maxs.push(39.5);
 
 ySizeDef = 5cm;
 

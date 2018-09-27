@@ -1,6 +1,8 @@
 import root;
 import pad_layout;
 
+include "../common.asy";
+
 string topDir = "../../data/phys/";
 
 string plots[], p_arms[], p_rps[], p_x_axis[], p_y_axis[];
@@ -14,21 +16,10 @@ xSizeDef = 9cm;
 xTicksDef = LeftTicks(1., 0.5);
 yTicksDef = RightTicks(0.1, 0.05);
 
-string datasets[] = {
-	"fill_6239/xangle_150/DoubleEG",
-	"fill_6268/xangle_150/DoubleEG",
-	"fill_6287/xangle_150/DoubleEG",
-	"fill_6323/xangle_150/DoubleEG",
-	"fill_6371/xangle_150/DoubleEG",
-};
-
-// TODO
-/*
-string datasets[] = {
-	"fill_6263/xangle_150/DoubleEG",
-	"fill_6266/xangle_150/DoubleEG",
-};
-*/
+string datasets[] = datasets_std;
+//string datasets[] = {
+//	"fill_6239/xangle_150/DoubleEG",
+//};
 
 //----------------------------------------------------------------------------------------------------
 

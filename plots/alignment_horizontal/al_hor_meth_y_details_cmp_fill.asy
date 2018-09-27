@@ -1,17 +1,12 @@
 import root;
 import pad_layout;
 
+include "../common.asy";
+
 string topDir = "../../data/phys/";
 
-string reference = "data_alig_fill_6228_xangle_150_DS1";
-
-string datasets[] = {
-	"fill_6239/xangle_150/DoubleEG",
-	"fill_6268/xangle_150/DoubleEG",
-	"fill_6287/xangle_150/DoubleEG",
-	"fill_6323/xangle_150/DoubleEG",
-	"fill_6371/xangle_150/DoubleEG",
-};
+string reference = reference_std;
+string datasets[] = datasets_std;
 
 string rps[], rp_labels[];
 rps.push("L_2_F"); rp_labels.push("L-220-fr");
@@ -31,6 +26,8 @@ for (int dsi : datasets.keys)
 {
 	string dataset = datasets[dsi];
 
+	write("* " + dataset);
+
 	NewRow();
 	NewPadLabel(replace(dataset, "_", "\_"));
 
@@ -41,7 +38,7 @@ for (int dsi : datasets.keys)
 
 		string f = topDir + dataset+"/match.root";
 		string p_base = reference + "/" + rps[rpi] + "/method y/c_cmp";
-		RootObject obj_base = RootGetObject(f, p_base, error=false);
+		RootObject obj_base = RootGetObject(f, p_base, error=true);
 		if (!obj_base.valid)
 			continue;
 
@@ -49,7 +46,7 @@ for (int dsi : datasets.keys)
 		draw(RootGetObject(f, p_base + "|h_test_bef"), "d0,eb", blue);
 		draw(RootGetObject(f, p_base + "|h_test_aft"), "d0,eb", red);
 
-		limits((2, 0), (15, 3.5), Crop);
+		limits((2, 0), (15, 4.), Crop);
 	}
 }
 

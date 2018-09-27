@@ -10,7 +10,7 @@ InitDataSets();
 
 //----------------------------------------------------------------------------------------------------
 
-string sample = "DoubleEG";
+string sample = "ZeroBias";
 
 real mfa = 0.3;
 
@@ -20,11 +20,9 @@ abs_methods.push("method x"); am_pens.push(blue);
 abs_methods.push("method y"); am_pens.push(red);
 abs_methods.push("method o"); am_pens.push(heavygreen);
 
-//int xangle = 120;
-//string ref_label = "data_alig_fill_6228_xangle_120_DS1";
-
-int xangle = 150;
-string ref_label = "data_alig_fill_6228_xangle_150_DS1";
+int xangle = 160;
+real beta = 0.30;
+string ref_label = "data_alig_fill_6554_xangle_160_beta_0.30_DS1";
 
 string sectors[], s_labels[];
 real s_y_mins[], s_y_maxs[], s_y_cens[];
@@ -34,7 +32,7 @@ sectors.push("56"); s_labels.push("sector 56"); s_y_mins.push(38.8); s_y_maxs.pu
 
 yTicksDef = RightTicks(0.2, 0.1);
 
-xSizeDef = 40cm;
+xSizeDef = 70cm;
 
 //----------------------------------------------------------------------------------------------------
 
@@ -56,6 +54,7 @@ NewPad(false, 1, 1);
 
 AddToLegend("(" + sample + ")");
 AddToLegend(format("(xangle %u)", xangle));
+AddToLegend(format("(beta %.2f)", beta));
 
 for (int mi : abs_methods.keys)
 	AddToLegend(abs_methods[mi], mCi + 3pt + am_pens[mi]);
@@ -83,6 +82,9 @@ for (int si : sectors.keys)
 		for (int dsi : fill_data[fdi].datasets.keys)
 		{
 			if (fill_data[fdi].datasets[dsi].xangle != xangle)
+				continue;
+
+			if (fill_data[fdi].datasets[dsi].beta != beta)
 				continue;
 
 			string dataset = fill_data[fdi].datasets[dsi].tag;
@@ -137,10 +139,10 @@ for (int si : sectors.keys)
 						obj_F.vExec("GetPoint", 0, ax, ay); c_F = ax[0]; c_F_unc = ay[0];
 					}
 
-					bool pointValid = (c_N == c_N && c_F == c_F && c_N_unc == c_N_unc && c_F_unc == c_F_unc);
-
 					real c_FN = - (c_F - c_N);
 					real c_FN_unc = sqrt(c_F_unc*c_F_unc + c_N_unc*c_N_unc);
+
+					bool pointValid = (c_N == c_N && c_F == c_F && c_N_unc == c_N_unc && c_F_unc == c_F_unc && c_FN_unc < 1);
 
 					pen p = am_pens[mi];
 	
@@ -151,7 +153,6 @@ for (int si : sectors.keys)
 					}
 				}
 			}
-
 
 			// relative methods
 			{
@@ -181,7 +182,7 @@ for (int si : sectors.keys)
 	draw((-1, y_mean)--(fill_data.length, y_mean), black);
 
 	//xlimits(-1, fill_data.length, Crop);
-	limits((-1, s_y_mins[si]), (fill_data.length, s_y_maxs[si]), Crop);
+	limits((-1, y_mean-0.5), (fill_data.length, y_mean+1), Crop);
 
 	AttachLegend("{\SetFontSizesXX " + s_labels[si] + "}");
 }

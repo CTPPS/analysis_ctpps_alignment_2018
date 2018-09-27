@@ -1,6 +1,8 @@
 import root;
 import pad_layout;
 
+include "../common.asy";
+
 string topDir = "../../data/phys/";
 
 int rp_ids[];
@@ -15,13 +17,7 @@ xSizeDef = 9cm;
 xTicksDef = LeftTicks(1., 0.5);
 yTicksDef = RightTicks(0.2, 0.1);
 
-string datasets[] = {
-	"fill_6239/xangle_150/DoubleEG",
-	"fill_6268/xangle_150/DoubleEG",
-	"fill_6287/xangle_150/DoubleEG",
-	"fill_6323/xangle_150/DoubleEG",
-	"fill_6371/xangle_150/DoubleEG",
-};
+string datasets[] = datasets_std;
 
 //----------------------------------------------------------------------------------------------------
 
@@ -32,7 +28,6 @@ for (int dsi : datasets.keys)
 	NewRow();
 
 	NewPadLabel(replace(dataset, "_", "\_"));
-
 
 	for (int rpi : rps.keys)
 	{

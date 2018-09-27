@@ -11,22 +11,23 @@ InitDataSets();
 string sample_labels[];
 pen sample_pens[];
 sample_labels.push("ZeroBias"); sample_pens.push(blue);
-sample_labels.push("DoubleEG"); sample_pens.push(red);
-sample_labels.push("SingleMuon"); sample_pens.push(heavygreen);
+//sample_labels.push("DoubleEG"); sample_pens.push(red);
+//sample_labels.push("SingleMuon"); sample_pens.push(heavygreen);
 
-int xangle = 150;
+int xangle = 160;
+real beta = 0.30;
 
 real sfa = 0.3;
 
 int rp_ids[];
 string rps[], rp_labels[];
 real rp_y_min[], rp_y_max[], rp_y_cen[];
-rp_ids.push(23); rps.push("L_2_F"); rp_labels.push("L-220-fr"); rp_y_min.push(0); rp_y_max.push(0.2); rp_y_cen.push(0.10);
-rp_ids.push(3); rps.push("L_1_F"); rp_labels.push("L-210-fr"); rp_y_min.push(0); rp_y_max.push(0.2); rp_y_cen.push(0.11);
-rp_ids.push(103); rps.push("R_1_F"); rp_labels.push("R-210-fr"); rp_y_min.push(0.); rp_y_max.push(0.2); rp_y_cen.push(0.08);
-rp_ids.push(123); rps.push("R_2_F"); rp_labels.push("R-220-fr"); rp_y_min.push(0.); rp_y_max.push(0.2); rp_y_cen.push(0.06);
+rp_ids.push(23); rps.push("L_2_F"); rp_labels.push("L-220-fr"); rp_y_min.push(0); rp_y_max.push(0.3); rp_y_cen.push(0.12);
+rp_ids.push(3); rps.push("L_1_F"); rp_labels.push("L-210-fr"); rp_y_min.push(0); rp_y_max.push(0.3); rp_y_cen.push(0.12);
+rp_ids.push(103); rps.push("R_1_F"); rp_labels.push("R-210-fr"); rp_y_min.push(0.); rp_y_max.push(0.3); rp_y_cen.push(0.16);
+rp_ids.push(123); rps.push("R_2_F"); rp_labels.push("R-220-fr"); rp_y_min.push(0.); rp_y_max.push(0.3); rp_y_cen.push(0.16);
 
-xSizeDef = 40cm;
+xSizeDef = 70cm;
 
 yTicksDef = RightTicks(0.02, 0.01);
 
@@ -49,6 +50,7 @@ xTicksDef = LeftTicks(rotate(90)*Label(""), TickLabels, Step=1, step=0);
 NewPad(false, 1, 1);
 
 AddToLegend(format("xangle = %u", xangle));
+AddToLegend(format("beta = %.2f", beta));
 
 for (int sai : sample_labels.keys)
 {
@@ -78,6 +80,9 @@ for (int rpi : rps.keys)
 		for (int dsi : fill_data[fdi].datasets.keys)
 		{
 			if (fill_data[fdi].datasets[dsi].xangle != xangle)
+				continue;
+
+			if (fill_data[fdi].datasets[dsi].beta != beta)
 				continue;
 
 			string dataset = fill_data[fdi].datasets[dsi].tag;

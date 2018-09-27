@@ -13,11 +13,12 @@ InitDataSets();
 pen p_meth_fit = red;
 pen p_meth_s_curve = blue;
 
-string sample = "DoubleEG";
+//string sample = "DoubleEG";
 //string sample = "SingleMuon";
-//string sample = "ZeroBias";
+string sample = "ZeroBias";
 
-int xangle = 150;
+int xangle = 160;
+real beta = 0.30;
 
 real sfa = 0.3;
 
@@ -29,7 +30,7 @@ rp_ids.push(3); rps.push("L_1_F"); rp_labels.push("L-210-fr"); rp_y_min.push(3);
 rp_ids.push(103); rps.push("R_1_F"); rp_labels.push("R-210-fr"); rp_y_min.push(3); rp_y_max.push(5); rp_dirs.push("sector 56/N"); rp_y_cen.push(4.0);
 rp_ids.push(123); rps.push("R_2_F"); rp_labels.push("R-220-fr"); rp_y_min.push(2); rp_y_max.push(4); rp_dirs.push("sector 56/F"); rp_y_cen.push(2.8);
 
-xSizeDef = 40cm;
+xSizeDef = 70cm;
 
 yTicksDef = RightTicks(0.5, 0.1);
 
@@ -53,6 +54,7 @@ NewPad(false, 1, 1);
 
 AddToLegend(sample);
 AddToLegend(format("xangle = %u", xangle));
+AddToLegend(format("beta = %.2f", beta));
 
 AddToLegend("method ``fit''", mCi+3pt+p_meth_fit);
 AddToLegend("method ``s-curve''", mCi+3pt+p_meth_s_curve);
@@ -80,6 +82,9 @@ for (int rpi : rps.keys)
 		for (int dsi : fill_data[fdi].datasets.keys)
 		{
 			if (fill_data[fdi].datasets[dsi].xangle != xangle)
+				continue;
+
+			if (fill_data[fdi].datasets[dsi].beta != beta)
 				continue;
 
 			string dataset = fill_data[fdi].datasets[dsi].tag;
@@ -141,7 +146,7 @@ for (int rpi : rps.keys)
 	real y_mean = GetMeanVerticalAlignment(rps[rpi]);
 	draw((-1, y_mean)--(fill_data.length, y_mean), black);
 
-	limits((-1, rp_y_min[rpi]), (fill_data.length, rp_y_max[rpi]), Crop);
+	limits((-1, y_mean-1.5), (fill_data.length, y_mean+1.5), Crop);
 
 	AttachLegend("{\SetFontSizesXX " + rp_labels[rpi] + "}");
 }

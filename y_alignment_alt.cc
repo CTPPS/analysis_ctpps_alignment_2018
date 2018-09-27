@@ -78,11 +78,13 @@ int main()
 				continue;
 			}
 
-			double p0_init = (ad.name == "sector 45") ? -1.3 : -1.2;
+			int cbi = p_y_diffFN_vs_y->GetXaxis()->FindBin(3.5);
+
+			double p0_init = p_y_diffFN_vs_y->GetBinContent(cbi);
 			double p1_init = 0.05;
 			double p2_init = 0.05;
 			double p3_init = (rp == "N") ? 4.0 : 2.8;
-			double p4_init = (ad.name == "sector 45") ? 1.0 : 0.7;
+			double p4_init = (ad.name == "sector 45") ? 1.0 : 2.0;
 
 			ff->SetParameters(p0_init, p1_init, p2_init, p3_init, p4_init);
 
