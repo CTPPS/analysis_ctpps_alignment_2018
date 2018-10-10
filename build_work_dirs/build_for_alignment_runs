@@ -45,7 +45,7 @@ function GetOne()
 
 # alignment run April 2018
 top_dir="../data/alig"
-eos_dir="/eos/totem/data/ctpps/reconstruction/2018/alignment_run_September/version2"
+eos_dir="/eos/totem/data/ctpps/reconstruction/2018/alignment_run_September/version4"
 
 GetOne "7206" "130" "0.27" "DS1" "run_323311\|run_323312"
 GetOne "7206" "130" "0.25" "DS1" "run_323316"

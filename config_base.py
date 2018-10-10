@@ -267,10 +267,10 @@ def ApplyDefaultSettingsAlignmentApril():
 
 def ApplyDefaultSettingsAlignmentSeptember():
   ApplyDefaultSettingsAlignmentApril()
-  config.sector_45.cut_h_c = +0.10
-  config.sector_45.cut_v_c = -0.60
-  config.sector_56.cut_h_c = +0.30
-  config.sector_56.cut_v_c = -0.90
+  config.sector_45.cut_h_c = -0.06
+  config.sector_45.cut_v_c = +0.03
+  config.sector_56.cut_h_c = +0.08
+  config.sector_56.cut_v_c = +0.09
 
 
 def ApplyDefaultSettings1():
