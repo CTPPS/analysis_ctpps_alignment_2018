@@ -13,4 +13,8 @@ config.xangle = 130
 config.beta = 0.25
 config.dataset = "DS1"
 
+config.aligned = True
+
 config.input_files = input_files
+
+ApplyDefaultSettingsAlignmentSeptember()

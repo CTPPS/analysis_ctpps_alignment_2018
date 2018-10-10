@@ -17,4 +17,4 @@ config.xangle = 130
 config.beta = 0.25
 config.dataset = "DS1"
 
-ApplyDefaultSettingsAlignment()
+ApplyDefaultSettingsAlignmentApril()

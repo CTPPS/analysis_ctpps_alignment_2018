@@ -203,7 +203,7 @@ config = cms.PSet(
 
 #----------------------------------------------------------------------------------------------------
 
-def ApplyDefaultSettingsAlignment():
+def ApplyDefaultSettingsAlignmentApril():
   config.sector_45.cut_h_a = -1
   config.sector_45.cut_h_c = 0.
 
@@ -263,6 +263,14 @@ def ApplyDefaultSettingsAlignment():
 
   config.x_alignment_meth_o.rp_R_2_F.x_min = 5.
   config.x_alignment_meth_o.rp_R_2_F.x_max = 14.
+
+
+def ApplyDefaultSettingsAlignmentSeptember():
+  ApplyDefaultSettingsAlignmentApril()
+  config.sector_45.cut_h_c = +0.10
+  config.sector_45.cut_v_c = -0.60
+  config.sector_56.cut_h_c = +0.30
+  config.sector_56.cut_v_c = -0.90
 
 
 def ApplyDefaultSettings1():
