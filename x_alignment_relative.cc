@@ -70,6 +70,12 @@ int main()
 			continue;
 		}
 
+		if (p_x_diffFN_vs_x_N->GetEntries() < 100)
+		{
+			printf("    insufficient data, skipping\n");
+			continue;
+		}
+
 		const double x_min = cfg.alignment_x_relative_ranges[sd.id_N].x_min;
 		const double x_max = cfg.alignment_x_relative_ranges[sd.id_N].x_max;
 
@@ -82,8 +88,8 @@ int main()
 		const double a = ff->GetParameter(1), a_unc = ff->GetParError(1);
 		const double b = ff->GetParameter(0), b_unc = ff->GetParError(0);
 
-		results["x_alignment_relative"][sd.id_N] = AlignmentResult(0., 0., +b/2., b_unc/2., 0., 0.);
-		results["x_alignment_relative"][sd.id_F] = AlignmentResult(0., 0., -b/2., b_unc/2., 0., 0.);
+		results["x_alignment_relative"][sd.id_N] = AlignmentResult(+b/2., b_unc/2., 0., 0., 0., 0.);
+		results["x_alignment_relative"][sd.id_F] = AlignmentResult(-b/2., b_unc/2., 0., 0., 0., 0.);
 
 		ff_sl_fix->SetParameters(0., sd.slope);
 		ff_sl_fix->FixParameter(1, sd.slope);
@@ -92,8 +98,8 @@ int main()
 
 		const double b_fs = ff_sl_fix->GetParameter(0), b_fs_unc = ff_sl_fix->GetParError(0);
 
-		results["x_alignment_relative_sl_fix"][sd.id_N] = AlignmentResult(0., 0., +b_fs/2., b_fs_unc/2., 0., 0.);
-		results["x_alignment_relative_sl_fix"][sd.id_F] = AlignmentResult(0., 0., -b_fs/2., b_fs_unc/2., 0., 0.);
+		results["x_alignment_relative_sl_fix"][sd.id_N] = AlignmentResult(+b_fs/2., b_fs_unc/2., 0., 0., 0., 0.);
+		results["x_alignment_relative_sl_fix"][sd.id_F] = AlignmentResult(-b_fs/2., b_fs_unc/2., 0., 0., 0., 0.);
 
 		p_x_diffFN_vs_x_N->Write("p_x_diffFN_vs_x_N");
 

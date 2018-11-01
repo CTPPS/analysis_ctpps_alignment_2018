@@ -40,8 +40,8 @@ int main()
 	};
 
 	vector<ArmData> armData = {
-		{ "sector 45", 2, 3, 0., 0. },
-		{ "sector 56", 102, 103, 0.2, 0.2 },
+		{ "sector 45", 3, 23, 0., 0. },
+		{ "sector 56", 103, 123, 0., 0. },
 	};
 
 	// get input
@@ -59,10 +59,13 @@ int main()
 	for (const auto &ad : armData)
 	{
 		TDirectory *arm_dir = f_out->mkdir(ad.name.c_str());
+
+		bool fit_valid_N = false, fit_valid_F = false;
 		
 		double y0_N = 0., y0_N_unc = 0., yd_N = 0., yd_N_unc = 0.;
 		double y0_F = 0., y0_F_unc = 0., yd_F = 0., yd_F_unc = 0.;
 
+		// make fits for each RP
 		for (const string rp : { "N", "F"} )
 		{
 			TDirectory *rp_dir = arm_dir->mkdir(rp.c_str());
@@ -70,6 +73,7 @@ int main()
 
 			printf("* %s, rp %s\n", ad.name.c_str(), rp.c_str());
 			
+			// load input
 			TProfile *p_y_diffFN_vs_y = (TProfile *) f_in->Get((ad.name + "/near_far/p_y_diffFN_vs_y_" + rp).c_str());
 
 			if (p_y_diffFN_vs_y == NULL)
@@ -78,6 +82,13 @@ int main()
 				continue;
 			}
 
+			if (p_y_diffFN_vs_y->GetEntries() < 100)
+			{
+				printf("    insufficient data, skipping\n");
+				continue;
+			}
+
+			// do fits
 			int cbi = p_y_diffFN_vs_y->GetXaxis()->FindBin(3.5);
 
 			double p0_init = p_y_diffFN_vs_y->GetBinContent(cbi);
@@ -103,10 +114,15 @@ int main()
 
 			p_y_diffFN_vs_y->Write("p_y_diffFN_vs_y");
 
-			if (rp == "N") y0_N = ff->GetParameter(3), y0_N_unc = ff->GetParError(3), yd_N = ff->GetParameter(0), yd_N_unc = ff->GetParError(0);
-			if (rp == "F") y0_F = ff->GetParameter(3), y0_F_unc = ff->GetParError(3), yd_F = ff->GetParameter(0), yd_F_unc = ff->GetParError(0);
+			if (rp == "N") fit_valid_N = true, y0_N = ff->GetParameter(3), y0_N_unc = ff->GetParError(3), yd_N = ff->GetParameter(0), yd_N_unc = ff->GetParError(0);
+			if (rp == "F") fit_valid_F = true, y0_F = ff->GetParameter(3), y0_F_unc = ff->GetParError(3), yd_F = ff->GetParameter(0), yd_F_unc = ff->GetParError(0);
 		}
 
+		// stop if any fit is not valid
+		if (!fit_valid_N || !fit_valid_F)
+			continue;
+
+		// combine fit results
 		printf("* %s\n", ad.name.c_str());
 
 		printf("    N: y0 = %.3f +- %.3f, yd = %.3f +- %.3f\n", y0_N, y0_N_unc, yd_N, yd_N_unc);
@@ -122,6 +138,7 @@ int main()
 		results["y_alignment_alt"][ad.rp_id_N] = AlignmentResult(0., 0., sh_y_N, y0_N_unc, 0., 0.);
 		results["y_alignment_alt"][ad.rp_id_F] = AlignmentResult(0., 0., sh_y_F, y0_F_unc, 0., 0.);
 
+		// save combined results
 		for (const string rp : { "N", "F"} )
 		{
 			TDirectory *rp_dir = (TDirectory *) arm_dir->Get(rp.c_str());

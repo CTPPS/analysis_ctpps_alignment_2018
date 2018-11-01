@@ -328,12 +328,13 @@ int main()
 			// do match
 			const auto &shift_range = cfg.matching_shift_ranges[rpd.id];
 			double sh=0., sh_unc=0.;
-			DoMatch(g_ref, g_test,
+			int r = DoMatch(g_ref, g_test,
 				cfg_ref.alignment_x_meth_o_ranges[rpd.id], cfg.alignment_x_meth_o_ranges[rpd.id],
 				shift_range.x_min, shift_range.x_max, sh, sh_unc);
 
 			// save results
-			results[ref + ", method o"][rpd.id] = AlignmentResult(sh, sh_unc);
+			if (r == 0)
+				results["x_alignment_meth_o"][rpd.id] = AlignmentResult(sh, sh_unc);
 		}
 		
 		delete f_ref;
