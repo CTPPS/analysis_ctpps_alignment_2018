@@ -20,8 +20,8 @@ real sfa = 0.3;
 
 string method = "method o";
 
-int xangle = 160;
-real beta = 0.30;
+string xangle = "160";
+string beta = "0.30";
 string ref_label = "data_alig_fill_6554_xangle_160_beta_0.30_DS1";
 
 int rp_ids[];
@@ -54,9 +54,9 @@ xTicksDef = LeftTicks(rotate(90)*Label(""), TickLabels, Step=1, step=0);
 
 NewPad(false, 1, 1);
 
-AddToLegend("(" + method + ")");
-AddToLegend(format("(xangle %u)", xangle));
-AddToLegend(format("(beta %#.2f)", beta));
+AddToLegend("method = " + method);
+AddToLegend("xangle = " + xangle);
+AddToLegend("beta = " + beta);
 
 for (int sai : sample_labels.keys)
 {

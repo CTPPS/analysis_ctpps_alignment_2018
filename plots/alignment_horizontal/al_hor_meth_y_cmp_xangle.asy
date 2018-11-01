@@ -14,13 +14,14 @@ string sample = "SingleMuon";
 
 string method = "method y";
 
-int xangles[];
-real betas[];
+string xangles[];
+string betas[];
 string xangle_refs[];
 pen xangle_pens[];
-xangles.push(130); betas.push(0.25); xangle_refs.push("data_alig_fill_6554_xangle_130_beta_0.25_DS1"); xangle_pens.push(blue);
-xangles.push(130); betas.push(0.30); xangle_refs.push("data_alig_fill_6554_xangle_130_beta_0.30_DS1"); xangle_pens.push(red);
-xangles.push(160); betas.push(0.30); xangle_refs.push("data_alig_fill_6554_xangle_160_beta_0.30_DS1"); xangle_pens.push(heavygreen);
+xangles.push("130"); betas.push("0.25"); xangle_refs.push("data_alig_fill_6554_xangle_130_beta_0.25_DS1"); xangle_pens.push(blue);
+xangles.push("130"); betas.push("0.30"); xangle_refs.push("data_alig_fill_6554_xangle_130_beta_0.30_DS1"); xangle_pens.push(red);
+xangles.push("160"); betas.push("0.30"); xangle_refs.push("data_alig_fill_6554_xangle_160_beta_0.30_DS1"); xangle_pens.push(heavygreen);
+xangles.push("ALL"); betas.push("ALL"); xangle_refs.push("data_alig_fill_6554_xangle_160_beta_0.30_DS1"); xangle_pens.push(magenta);
 
 real xfa = 0.3;
 
@@ -54,12 +55,12 @@ xTicksDef = LeftTicks(rotate(90)*Label(""), TickLabels, Step=1, step=0);
 
 NewPad(false, 1, 1);
 
-AddToLegend("(" + method + ")");
-AddToLegend("(" + sample + ")");
+AddToLegend("method = " + method);
+AddToLegend("sample = " + sample);
 
 for (int xai : xangles.keys)
 {
-	AddToLegend(format("xangle %u", xangles[xai]) + format(", beta %#.2f", betas[xai]), xangle_pens[xai]);
+	AddToLegend("xangle = " + xangles[xai] + ", beta = " + betas[xai], xangle_pens[xai]);
 }
 
 AttachLegend();

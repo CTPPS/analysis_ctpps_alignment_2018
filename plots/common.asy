@@ -1,4 +1,4 @@
-real x_size_fill_cmp = 70cm;
+real x_size_fill_cmp = 75cm;
 
 //----------------------------------------------------------------------------------------------------
 
@@ -9,6 +9,16 @@ string datasets_std[] = {
 	"fill_6860/xangle_160_beta_0.30/ZeroBias",
 	"fill_7005/xangle_160_beta_0.30/ZeroBias",
 	"fill_7145/xangle_160_beta_0.30/ZeroBias",
+	"fill_7334/xangle_160_beta_0.30/ZeroBias",
+};
+
+string datasets_std_ALL[] = {
+	"fill_6583/xangle_ALL_beta_ALL/ZeroBias",
+	"fill_6719/xangle_ALL_beta_ALL/ZeroBias",
+	"fill_6860/xangle_ALL_beta_ALL/ZeroBias",
+	"fill_7005/xangle_ALL_beta_ALL/ZeroBias",
+	"fill_7145/xangle_ALL_beta_ALL/ZeroBias",
+	"fill_7334/xangle_ALL_beta_ALL/ZeroBias",
 };
 
 //----------------------------------------------------------------------------------------------------

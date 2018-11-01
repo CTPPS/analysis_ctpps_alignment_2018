@@ -38,7 +38,7 @@ for (int dsi : datasets.keys)
 
 		string f = topDir + dataset+"/match.root";
 		string p_base = reference + "/" + rps[rpi] + "/method y/c_cmp";
-		RootObject obj_base = RootGetObject(f, p_base, error=true);
+		RootObject obj_base = RootGetObject(f, p_base, error=false);
 		if (!obj_base.valid)
 			continue;
 

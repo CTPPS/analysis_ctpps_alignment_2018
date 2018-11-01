@@ -6,7 +6,7 @@ include "../common.asy";
 string topDir = "../../data/phys/";
 
 string reference = reference_std;
-string datasets[] = datasets_std;
+string datasets[] = datasets_std_ALL;
 
 string rps[], rp_labels[];
 rps.push("L_2_F"); rp_labels.push("L-220-fr");

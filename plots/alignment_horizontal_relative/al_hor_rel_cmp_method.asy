@@ -20,8 +20,8 @@ abs_methods.push("method x"); am_pens.push(blue);
 abs_methods.push("method y"); am_pens.push(red);
 abs_methods.push("method o"); am_pens.push(heavygreen);
 
-int xangle = 160;
-real beta = 0.30;
+string xangle = "160";
+string beta = "0.30";
 string ref_label = "data_alig_fill_6554_xangle_160_beta_0.30_DS1";
 
 string sectors[], s_labels[];
@@ -52,9 +52,9 @@ xTicksDef = LeftTicks(rotate(90)*Label(""), TickLabels, Step=1, step=0);
 
 NewPad(false, 1, 1);
 
-AddToLegend("(" + sample + ")");
-AddToLegend(format("(xangle %u)", xangle));
-AddToLegend(format("(beta %.2f)", beta));
+AddToLegend("sample = " + sample);
+AddToLegend("xangle = " + xangle);
+AddToLegend("beta = " + beta);
 
 for (int mi : abs_methods.keys)
 	AddToLegend(abs_methods[mi], mCi + 3pt + am_pens[mi]);

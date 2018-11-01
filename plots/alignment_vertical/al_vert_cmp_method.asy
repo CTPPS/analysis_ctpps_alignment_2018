@@ -17,8 +17,8 @@ pen p_meth_s_curve = blue;
 //string sample = "SingleMuon";
 string sample = "ZeroBias";
 
-int xangle = 160;
-real beta = 0.30;
+string xangle = "160";
+string beta = "0.30";
 
 real sfa = 0.3;
 
@@ -52,9 +52,9 @@ xTicksDef = LeftTicks(rotate(90)*Label(""), TickLabels, Step=1, step=0);
 
 NewPad(false, 1, 1);
 
-AddToLegend(sample);
-AddToLegend(format("xangle = %u", xangle));
-AddToLegend(format("beta = %.2f", beta));
+AddToLegend("sample = " + sample);
+AddToLegend("xangle = " + xangle);
+AddToLegend("beta = " + beta);
 
 AddToLegend("method ``fit''", mCi+3pt+p_meth_fit);
 AddToLegend("method ``s-curve''", mCi+3pt+p_meth_s_curve);

@@ -16,8 +16,8 @@ sample_labels.push("ZeroBias"); sample_pens.push(blue);
 sample_labels.push("EGamma"); sample_pens.push(red);
 sample_labels.push("SingleMuon"); sample_pens.push(heavygreen);
 
-int xangle = 160;
-real beta = 0.30;
+string xangle = "160";
+string beta = "0.30";
 
 real sfa = 0.3;
 
@@ -48,8 +48,8 @@ xTicksDef = LeftTicks(rotate(90)*Label(""), TickLabels, Step=1, step=0);
 
 NewPad(false, 1, 1);
 
-AddToLegend(format("xangle = %u", xangle));
-AddToLegend(format("beta = %#.2f", beta));
+AddToLegend("xangle = " + xangle);
+AddToLegend("beta = " + beta);
 
 for (int sai : sample_labels.keys)
 {
