@@ -1,27 +1,28 @@
 #!/bin/bash
 
 streams=(
-	"SingleMuon"
-	"EGamma"
-	#"ZeroBias"
 	#"Commissioning"
+	"EGamma"
+	"SingleMuon"
+	"ZeroBias"
 )
 
 dataset_exts=(
 	"Commissioning2018-PromptReco-v1/MINIAOD"
 
-	"Run2018A-PromptReco-v1/MINIAOD"
-	"Run2018A-PromptReco-v2/MINIAOD"
 	"Run2018A-PromptReco-v3/MINIAOD"
+	"Run2018A-PromptReco-v2/MINIAOD"
+	"Run2018A-PromptReco-v1/MINIAOD"
 
-	"Run2018B-PromptReco-v1/MINIAOD"
 	"Run2018B-PromptReco-v2/MINIAOD"
+	"Run2018B-PromptReco-v1/MINIAOD"
 
-	"Run2018C-PromptReco-v1/MINIAOD"
-	"Run2018C-PromptReco-v2/MINIAOD"
 	"Run2018C-PromptReco-v3/MINIAOD"
+	"Run2018C-PromptReco-v2/MINIAOD"
+	"Run2018C-PromptReco-v1/MINIAOD"
 
 	"Run2018D-PromptReco-v2/MINIAOD"
+	"Run2018D-PromptReco-v1/MINIAOD"
 )
 
 template_file="job_template.py"
@@ -39,28 +40,6 @@ success_file="success"
 
 function MakeInputFiles()
 {
-#	# get run list
-#	runs=""
-#	for run in `cat "$dir_out/run_ls_selection.json" | grep -Po '".*?"' | sed 's/"//g'`
-#	do
-#		if [ -n "$runs" ]
-#		then
-#			runs="$runs,"
-#		fi
-#
-#		runs="$runs$run"
-#	done
-#
-#	# reset list of files
-#	rm -f "$dir_out/input_files"
-#
-#	# get list of files
-#	for ext in ${dataset_exts[*]}
-#	do
-#		echo "dasgoclient --query \"file dataset=/$stream/$ext run in [$runs]\" >> \"$dir_out/input_files\""
-#		dasgoclient --query "file dataset=/$stream/$ext run in [$runs]" >> "$dir_out/input_files"
-#	done
-
 	# TODO: currently, there is a problem in DAS which doesn't seem to account for the "run in [...]" statement
 	# a workaround below
 
@@ -71,11 +50,27 @@ function MakeInputFiles()
 	runs=""
 	for run in `cat "$dir_out/run_ls_selection.json" | grep -Po '".*?"' | sed 's/"//g'`
 	do
-		for ext in ${dataset_exts[*]}
-		do
-			#echo "    dasgoclient --query \"file dataset=/$stream/$ext run=$run\""
-			dasgoclient --query "file dataset=/$stream/$ext run=$run" >> "$dir_out/input_files"
-		done
+		cache_file="input_file_cache/${stream}_${run}"
+		if [ ! -f "$cache_file" ]
+		then
+			for ext in ${dataset_exts[*]}
+			do
+				#echo "    dasgoclient --query \"file dataset=/$stream/$ext run=$run\""
+				dasgoclient --query "file dataset=/$stream/$ext run=$run" > "$cache_file"
+
+				if [ -s "$cache_file" ]
+				then
+					break
+				fi
+			done
+		fi
+
+		if [ ! -s "$cache_file" ]
+		then
+			echo "WARNING: empty cache file $cache_file"
+		fi
+
+		cat "$cache_file" >> "$dir_out/input_files"
 	done
 }
 
@@ -179,7 +174,7 @@ function ProcessOne()
 	execute_dir="`pwd -P`/$dir_out"
 	reco_dir="/pool"
 
-	storage_dir="/eos/totem/data/ctpps/reconstruction/2018/physics_runs/version1"
+	storage_dir="/eos/totem/data/ctpps/reconstruction/2018/physics_runs/version2"
 
 	output_file="$reco_dir/fill${fill}_xangle${xangle}_beta${beta}_$stream.root"
 	output_tag="fill${fill}_xangle${xangle}_beta${beta}_$stream"
@@ -188,9 +183,15 @@ function ProcessOne()
    	cp "$f_in" "$dir_out/run_ls_selection.json"
    
 	# get input-file list
-	if [ ! -f "$dir_out/input_files" -o ! -s "$dir_out/input_files" ]
-	then
+	#if [ ! -f "$dir_out/input_files" ]
+	#if [ ! -f "$dir_out/input_files" -o ! -s "$dir_out/input_files" ]
+	#then
 		MakeInputFiles
+	#fi
+
+	if [ ! -s "$dir_out/input_files" ]
+	then
+		echo "ERROR: input_files empty in $dir_out"
 	fi
 
 	# process input files
@@ -214,6 +215,8 @@ function ProcessOne()
 
 #----------------------------------------------------------------------------------------------------
 
+mkdir -p "input_file_cache"
+
 for f_in in json_selected/*
 do
 	size=$(wc -c <"$f_in")
@@ -222,8 +225,6 @@ do
 	then
 		continue
 	fi
-	
-	echo "$f_in"
 
 	tag=${f_in#*/}
 	tag=${tag%.*}
@@ -236,6 +237,8 @@ do
 
 	tag=${tag#*_betast_}
 	beta=${tag%%_*}
+
+	echo "$f_in"
 
 	for stream in ${streams[*]}
 	do
