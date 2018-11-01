@@ -21,6 +21,7 @@ struct Key
 		if ( (xangle == 130 && fabs(beta_st - 0.25) < 1e-5)
 				|| (xangle == 130 && fabs(beta_st - 0.27) < 1e-5)
 				|| (xangle == 130 && fabs(beta_st - 0.30) < 1e-5)
+				|| (xangle == 140 && fabs(beta_st - 0.30) < 1e-5)
 				|| (xangle == 160 && fabs(beta_st - 0.30) < 1e-5) )
 			return true;
 		return false;
@@ -63,6 +64,7 @@ struct Stat
 	map<unsigned int, map<unsigned int, MinMax>> fill_run_ls;
 };
 
+Stat global_data;
 map<Key, Stat> data_collection;
 
 set<unsigned int> fills;
@@ -114,6 +116,8 @@ void Load(const string &fn)
 		stat.fills.insert(fill);
 		stat.fill_run_ls[fill][run].Update(ls);
 
+		global_data.fill_run_ls[fill][run].Update(ls);
+
 		fills.insert(fill);
 		
 		if (key.Selected())
@@ -125,6 +129,29 @@ void Load(const string &fn)
 
 //----------------------------------------------------------------------------------------------------
 
+void WriteJSON(const string &fn, const map<unsigned int, MinMax> &data)
+{
+	FILE *f_out = fopen(fn.c_str(), "w");
+
+	fprintf(f_out, "{\n");
+
+	bool start = true;
+	for (const auto &ri : data)
+	{
+		if (!start)
+			fprintf(f_out, ",\n");
+		start = false;
+
+		fprintf(f_out, "  \"%u\": [[%u, %u]]", ri.first, ri.second.v_min, ri.second.v_max);
+	}
+
+	fprintf(f_out, "\n}\n");
+
+	fclose(f_out);
+}
+
+//----------------------------------------------------------------------------------------------------
+
 int main()
 {
 	Load("mapping/output_6570_6670.txt");
@@ -132,9 +159,12 @@ int main()
 	Load("mapping/output_6871_6970.txt");
 	Load("mapping/output_6971_7070.txt");
 	Load("mapping/output_7071_7270.txt");
+	Load("mapping/output_7271_7299.txt");
+	Load("mapping/output_7300_7334.txt");
 
 	printf("* fills: total=%lu, selected=%lu\n", fills.size(), fills_selected.size());
 
+	// save per-condition JSONs
 	printf("\n");
 	for (const auto &p : data_collection)
 	{
@@ -150,25 +180,19 @@ int main()
 				char fn[200];
 				sprintf(fn, "json/fill_%u_xangle_%i_betast_%.2f.json", fi.first, p.first.xangle, p.first.beta_st);
 
-				FILE *f_out = fopen(fn, "w");
-
-				fprintf(f_out, "{\n");
-
-				bool start = true;
-				for (const auto &ri : fi.second)
-				{
-					if (!start)
-						fprintf(f_out, ",\n");
-					start = false;
-
-					fprintf(f_out, "  \"%u\": [[%u, %u]]", ri.first, ri.second.v_min, ri.second.v_max);
-				}
-
-				fprintf(f_out, "\n}\n");
-
-				fclose(f_out);
+				WriteJSON(fn, fi.second);
 			}
 		}
+	}
+
+	// save per-fill JSONs
+	printf("\n");
+	for (const auto &p : global_data.fill_run_ls)
+	{
+		char fn[200];
+		sprintf(fn, "json/fill_%u_xangle_ALL_betast_ALL.json", p.first);
+
+		WriteJSON(fn, p.second);
 	}
 
 	return 0;
