@@ -6,4 +6,4 @@ sys.path.append(os.path.relpath("../../../../../"))
 
 from config_base import *
 
-ApplyDefaultSettings4()
+ApplyDefaultSettings5()
