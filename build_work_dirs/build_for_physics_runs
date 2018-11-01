@@ -2,7 +2,7 @@
 
 top_dir="../data/phys"
 
-eos_dir="/eos/totem/data/ctpps/reconstruction/2018/physics_runs/version1"
+eos_dir="/eos/totem/data/ctpps/reconstruction/2018/physics_runs/version2"
 
 for f in `eos ls "$eos_dir"|grep ".root"`
 do
@@ -41,15 +41,19 @@ do
 		echo ")"
 	) > "$dir/input_files.py"
 
+	# represent ALL with a numerical value
+	if [ "$xangle" == "ALL" ]; then xangle="0"; fi
+	if [ "$beta" == "ALL" ]; then beta="0"; fi
+
 	# if not present, make (default) configs
 	if [ ! -f "$dir/config.py" ]
 	then
-	   cat "config_template.py" | sed "\
-	   		s|\$fill|$fill|;\
-	   		s|\$xangle|$xangle|;\
-	   		s|\$beta|$beta|;\
-	   		s|\$dataset|$stream|;\
-	   	" > "$dir/config.py"
+		cat "config_template.py" | sed "\
+			s|\$fill|$fill|;\
+			s|\$xangle|$xangle|;\
+			s|\$beta|$beta|;\
+			s|\$dataset|$stream|;\
+		" > "$dir/config.py"
 	fi
 
 	if [ ! -f "$dir/../../config_common.py" ]
