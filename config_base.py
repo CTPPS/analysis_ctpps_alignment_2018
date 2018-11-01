@@ -135,11 +135,11 @@ config = cms.PSet(
       ),
       rp_R_1_F = cms.PSet(
         x_min = cms.double(8.),
-        x_max = cms.double(17.),
+        x_max = cms.double(14.),
       ),
       rp_R_2_F = cms.PSet(
         x_min = cms.double(47.),
-        x_max = cms.double(56.),
+        x_max = cms.double(53.),
       )
     ),
 
@@ -259,10 +259,10 @@ def ApplyDefaultSettingsAlignmentApril():
   config.x_alignment_meth_o.rp_L_1_F.x_max = 15.
 
   config.x_alignment_meth_o.rp_R_1_F.x_min = 5.
-  config.x_alignment_meth_o.rp_R_1_F.x_max = 14.
+  config.x_alignment_meth_o.rp_R_1_F.x_max = 11.
 
   config.x_alignment_meth_o.rp_R_2_F.x_min = 5.
-  config.x_alignment_meth_o.rp_R_2_F.x_max = 14.
+  config.x_alignment_meth_o.rp_R_2_F.x_max = 11.
 
 
 def ApplyDefaultSettingsAlignmentSeptember():
