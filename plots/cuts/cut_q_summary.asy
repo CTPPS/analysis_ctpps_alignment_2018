@@ -25,12 +25,13 @@ xSizeDef = 8cm;
 
 //----------------------------------------------------------------------------------------------------
 
-pen XangleBetaColor(int xangle, real beta)
+pen XangleBetaColor(string xangle, string beta)
 {
-	if (xangle == 160 && beta == 0.30) return red;
-	if (xangle == 130 && beta == 0.30) return blue;
-	if (xangle == 130 && beta == 0.27) return magenta;
-	if (xangle == 130 && beta == 0.25) return heavygreen;
+	if (xangle == "ALL" && beta == "ALL") return black + 1pt;
+	if (xangle == "160" && beta == "0.30") return red;
+	if (xangle == "130" && beta == "0.30") return blue;
+	if (xangle == "130" && beta == "0.27") return magenta;
+	if (xangle == "130" && beta == "0.25") return heavygreen;
 
 	return black;
 }
@@ -52,9 +53,11 @@ for (int fi : fill_data.keys)
 {
 	int fill = fill_data[fi].fill;
 	
-	if (fill < 6500 || fill > 6800)
+	//if (fill < 6500 || fill > 6800)
 	//if (fill < 6800 || fill > 7000)
 	//if (fill < 7000 || fill > 7200)
+	//if (fill < 7145 || fill > 7271)
+	if (fill != 7145 && fill != 7271 && fill != 7314 && fill != 7334)
 		continue;
 	
 	NewRow();
@@ -78,11 +81,11 @@ for (int fi : fill_data.keys)
 			for (int dsi : fill_data[fi].datasets.keys)
 			{
 				string dir_base = fill_data[fi].datasets[dsi].tag;
-				int xangle = fill_data[fi].datasets[dsi].xangle;
-				real beta = fill_data[fi].datasets[dsi].beta;
+				string xangle = fill_data[fi].datasets[dsi].xangle;
+				string beta = fill_data[fi].datasets[dsi].beta;
 
-				if (xangle != 160 || beta != 0.30)
-					continue;
+				//if (xangle != "160" || beta != "0.30")
+				//	continue;
 
 				string f = topDir + "data/phys/" + dir_base + "/" + dataset + "/distributions.root";
 				string obj_path = sectors[sci] + "/cuts/" + cuts[cti] + "/h_q_" + cuts[cti] + "_aft";
@@ -103,10 +106,11 @@ for (int fi : fill_data.keys)
 	if (fi == 0)
 	{
 		NewPad(false);
-		AddToLegend(format("xangle = %u", 160) + format(", $\be^* = %.2f$", 0.30), XangleBetaColor(160, 0.30));
-		AddToLegend(format("xangle = %u", 130) + format(", $\be^* = %.2f$", 0.30), XangleBetaColor(130, 0.30));
-		AddToLegend(format("xangle = %u", 130) + format(", $\be^* = %.2f$", 0.27), XangleBetaColor(130, 0.27));
-		AddToLegend(format("xangle = %u", 130) + format(", $\be^* = %.2f$", 0.25), XangleBetaColor(130, 0.25));
+		string xangle = "160", beta = "0.30"; AddToLegend("xangle = " + xangle + ", $\be^* = " + beta + "$", XangleBetaColor(xangle, beta));
+		string xangle = "130", beta = "0.30"; AddToLegend("xangle = " + xangle + ", $\be^* = " + beta + "$", XangleBetaColor(xangle, beta));
+		string xangle = "130", beta = "0.27"; AddToLegend("xangle = " + xangle + ", $\be^* = " + beta + "$", XangleBetaColor(xangle, beta));
+		string xangle = "130", beta = "0.25"; AddToLegend("xangle = " + xangle + ", $\be^* = " + beta + "$", XangleBetaColor(xangle, beta));
+		string xangle = "ALL", beta = "ALL"; AddToLegend("xangle = " + xangle + ", $\be^* = " + beta + "$", XangleBetaColor(xangle, beta));
 		AttachLegend();
 	}
 }
