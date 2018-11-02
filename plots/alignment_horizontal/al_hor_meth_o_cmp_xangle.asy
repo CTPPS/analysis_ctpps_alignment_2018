@@ -10,7 +10,7 @@ InitDataSets();
 
 //----------------------------------------------------------------------------------------------------
 
-string sample = "SingleMuon";
+string sample = "EGamma";
 
 string method = "method o";
 
@@ -18,8 +18,8 @@ string xangles[];
 string betas[];
 string xangle_refs[];
 pen xangle_pens[];
-xangles.push("130"); betas.push("0.25"); xangle_refs.push("data_alig_fill_6554_xangle_130_beta_0.25_DS1"); xangle_pens.push(blue);
-xangles.push("130"); betas.push("0.30"); xangle_refs.push("data_alig_fill_6554_xangle_130_beta_0.30_DS1"); xangle_pens.push(red);
+//xangles.push("130"); betas.push("0.25"); xangle_refs.push("data_alig_fill_6554_xangle_130_beta_0.25_DS1"); xangle_pens.push(blue);
+//xangles.push("130"); betas.push("0.30"); xangle_refs.push("data_alig_fill_6554_xangle_130_beta_0.30_DS1"); xangle_pens.push(red);
 xangles.push("160"); betas.push("0.30"); xangle_refs.push("data_alig_fill_6554_xangle_160_beta_0.30_DS1"); xangle_pens.push(heavygreen);
 xangles.push("ALL"); betas.push("ALL"); xangle_refs.push("data_alig_fill_6554_xangle_160_beta_0.30_DS1"); xangle_pens.push(magenta);
 

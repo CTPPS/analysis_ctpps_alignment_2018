@@ -8,6 +8,15 @@ string topDir = "../../data/phys/";
 string reference = reference_std;
 string datasets[] = datasets_std_ALL;
 
+// TODO
+/*
+string datasets[] = {
+	"fill_7331/xangle_ALL_beta_ALL/ZeroBias",
+	"fill_7333/xangle_ALL_beta_ALL/ZeroBias",
+	"fill_7334/xangle_ALL_beta_ALL/ZeroBias",
+};
+*/
+
 string rps[], rp_labels[];
 rps.push("L_2_F"); rp_labels.push("L-220-fr");
 rps.push("L_1_F"); rp_labels.push("L-210-fr");

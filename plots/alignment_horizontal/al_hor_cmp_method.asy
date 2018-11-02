@@ -16,7 +16,7 @@ real mfa = 0.3;
 
 string methods[];
 pen m_pens[];
-methods.push("method x"); m_pens.push(blue);
+//methods.push("method x"); m_pens.push(blue);
 methods.push("method y"); m_pens.push(red);
 methods.push("method o"); m_pens.push(heavygreen);
 

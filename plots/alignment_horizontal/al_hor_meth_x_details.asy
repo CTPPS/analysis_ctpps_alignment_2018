@@ -5,7 +5,7 @@ string topDir = "../../data/phys/";
 
 string reference = "data_alig_fill_6228_xangle_150_DS1";
 
-string dataset = "fill_6287/xangle_150/DoubleEG";
+string dataset = "fill_7334/xangle_160_beta_0.30/ZeroBias";
 
 string rps[], rp_labels[];
 rps.push("L_2_F"); rp_labels.push("L-220-fr");

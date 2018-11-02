@@ -4,21 +4,21 @@ real x_size_fill_cmp = 75cm;
 
 string reference_std = "data_alig_fill_6554_xangle_160_beta_0.30_DS1";
 string datasets_std[] = {
-	"fill_6583/xangle_160_beta_0.30/ZeroBias",
-	"fill_6719/xangle_160_beta_0.30/ZeroBias",
-	"fill_6860/xangle_160_beta_0.30/ZeroBias",
-	"fill_7005/xangle_160_beta_0.30/ZeroBias",
-	"fill_7145/xangle_160_beta_0.30/ZeroBias",
-	"fill_7334/xangle_160_beta_0.30/ZeroBias",
+	"fill_6583/xangle_160_beta_0.30/EGamma",
+	"fill_6719/xangle_160_beta_0.30/EGamma",
+	"fill_6860/xangle_160_beta_0.30/EGamma",
+	"fill_7005/xangle_160_beta_0.30/EGamma",
+	"fill_7145/xangle_160_beta_0.30/EGamma",
+	"fill_7334/xangle_160_beta_0.30/EGamma",
 };
 
 string datasets_std_ALL[] = {
-	"fill_6583/xangle_ALL_beta_ALL/ZeroBias",
-	"fill_6719/xangle_ALL_beta_ALL/ZeroBias",
-	"fill_6860/xangle_ALL_beta_ALL/ZeroBias",
-	"fill_7005/xangle_ALL_beta_ALL/ZeroBias",
-	"fill_7145/xangle_ALL_beta_ALL/ZeroBias",
-	"fill_7334/xangle_ALL_beta_ALL/ZeroBias",
+	"fill_6583/xangle_ALL_beta_ALL/EGamma",
+	"fill_6719/xangle_ALL_beta_ALL/EGamma",
+	"fill_6860/xangle_ALL_beta_ALL/EGamma",
+	"fill_7005/xangle_ALL_beta_ALL/EGamma",
+	"fill_7145/xangle_ALL_beta_ALL/EGamma",
+	"fill_7334/xangle_ALL_beta_ALL/EGamma",
 };
 
 //----------------------------------------------------------------------------------------------------
