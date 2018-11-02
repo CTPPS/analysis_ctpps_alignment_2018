@@ -485,6 +485,7 @@ int main()
 			const auto &shift_range = cfg.matching_shift_ranges[rpd.id];
 
 			// run method x
+			/*
 			gDirectory = rp_dir->mkdir("method x");
 			printf("    method x\n");
 
@@ -497,6 +498,7 @@ int main()
 			DoMatchMethodX(g_test, range_test_x, g_ref, range_ref_x, shift_range.x_min, shift_range.x_max, r_method_x, bin_number);
 
 			results[ref + ", method x"][rpd.id] = AlignmentResult(r_method_x);
+			*/
 
 			// run method y
 			gDirectory = rp_dir->mkdir("method y");
