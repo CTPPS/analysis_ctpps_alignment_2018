@@ -14,5 +14,5 @@
 2. apply RP in & CMS selection
 	./apply_selection
 
-3. build reduction jobs
-	./build_jobs
+3. use standard submission tool with config
+	/afs/cern.ch/work/j/jkaspar/software/ctpps/user/reconstruction/config/ctpps/2018/physics_fills/reduction
