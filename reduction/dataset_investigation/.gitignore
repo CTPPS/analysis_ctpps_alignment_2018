@@ -1,0 +1,6 @@
+*.csv
+*.ods
+
+process
+
+reco_info_*
