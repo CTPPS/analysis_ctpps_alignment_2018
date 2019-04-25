@@ -26,6 +26,8 @@ do
 	#	continue
 	#fi
 
+	stream="ALL"
+
 	echo "* $fill, $xangle, $beta, $stream"
 
 	# make work directory
@@ -37,7 +39,13 @@ do
 		echo "import FWCore.ParameterSet.Config as cms"
 		echo ""
 		echo "input_files = cms.vstring("
-		echo "    \"root://eostotem.cern.ch/${eos_dir}/${f}\""
+
+		search="fill${fill}_xangle${xangle}_beta${beta}"
+		for f_in in `eos ls "$eos_dir"|grep ".root"|grep "$search"`
+		do
+			echo "    \"root://eostotem.cern.ch/${eos_dir}/${f_in}\","
+		done
+
 		echo ")"
 	) > "$dir/input_files.py"
 
