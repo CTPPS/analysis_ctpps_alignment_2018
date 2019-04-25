@@ -9,13 +9,10 @@ cmsenv
 
 cd "$JOB_DIR"
 
-(
-	echo "executed:"
-	date
+echo "executed:"
+date
 
-	$COMMAND
+$COMMAND
 
-	echo "finished:"
-	date
-
-) &> "$JOB_LOG_FILE"
+echo "finished:"
+date

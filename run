@@ -9,8 +9,8 @@ function PrintUsage()
 
 	echo -e "	-h, --help		print this help and exit"
 	echo -e "	-O <option>		pass the option to the program"
-	echo -e "	-lxbatch		prepare job for LXBATCH instead of executing locally"
-	echo -e "	-submit			submit job to LXBATCH, implies -lxbatch option"
+	echo -e "	-batch			prepare job for BATCH instead of executing locally"
+	echo -e "	-submit			submit job to BATCH, implies -batch option"
 }
 
 #----------------------------------------------------------------------------------------------------
@@ -23,11 +23,10 @@ work_dirs=()
 
 run_options=""
 
-lxbatch="n"
+batch="n"
 submit="n"
 
-bsub_options="pool>5000"
-bsub_queue="1nh"
+condor_file_sub="condor.sub"
 
 #----------------------------------------------------------------------------------------------------
 
@@ -52,12 +51,12 @@ do
 			run_options="$1"
 			;;
 
-		"-lxbatch")
-			lxbatch="y"
+		"-batch")
+			batch="y"
 			;;
 
 		"-submit")
-			lxbatch="y"
+			batch="y"
 			submit="y"
 			;;
 
@@ -104,6 +103,25 @@ make "$src_file" || exit 2
 #----------------------------------------------------------------------------------------------------
 # execute
 
+if [ "$batch" == "y" ]
+then
+	# initiate submission script
+	(
+		base_dir_full="$(pwd -P)"
+		echo "executable = $base_dir_full/\$(dir)/.${src_file}.job"
+		echo "arguments = \$(ClusterId) \$(ProcId) \\\"\$(dir)\\\""
+		echo "output = $base_dir_full/\$(dir)/.${src_file}.out"
+		echo "error = $base_dir_full/\$(dir)/.${src_file}.err"
+		echo "log = $base_dir_full/condor.log"
+
+		echo "+MaxRuntime = 7200"
+		#echo "+JobBatchName = \"$job_name\""
+		echo "requirements = (OpSysAndVer =?= \"SLCern6\")"
+		#echo "requirements = (OpSysAndVer =?= \"CentOS7\")"
+
+	) > "$condor_file_sub"
+fi
+
 function ExecuteOneWithStatus()
 {
 	echo "* $label: running"
@@ -127,7 +145,7 @@ function ExecuteOne()
 
 	label="'$src_file' in '$d'"
 
-	if [ "$lxbatch" == "n" ]
+	if [ "$batch" == "n" ]
 	then
 		ExecuteOneWithStatus &
 	else
@@ -135,18 +153,15 @@ function ExecuteOne()
 				s|\$CMSSW_BASE|$CMSSW_BASE|;\
 				s|\$JOB_DIR|$cwd/$dir|;\
 				s|\$COMMAND|{ time \"$cwd/$src_file\" ; } \&> \"$src_file.log\"|;\
-				s|\$JOB_LOG_FILE|.$src_file.job_log|;\
-			" > "$dir/.$src_file.job"
+			" > "$dir/.${src_file}.job"
 
-		chmod u+x "$dir/.$src_file.job"
+		chmod u+x "$dir/.${src_file}.job"
 
-		if [ "$submit" == "y" ]
-		then
-			result=`bsub -R "$bsub_options" -q "$bsub_queue" -o /dev/null -e /dev/null "$cwd/$dir/.$src_file.job"`
-			echo "* $label: $result"
-		else
-			echo "* $label: would be submitted ($bsub_queue)"
-		fi
+		(
+			echo ""
+			echo "dir=$dir"
+			echo "queue"
+		) >> "$condor_file_sub"
 	fi
 }
 
@@ -154,3 +169,14 @@ for d in ${work_dirs[*]}
 do
 	ExecuteOne "$d"
 done
+
+if [ "$batch" == "y" ]
+then
+	if [ "$submit" == "y" ]
+	then
+		condor_submit "$condor_file_sub"
+	else
+		echo "In order to submit do:"
+		echo "    condor_submit \"$condor_file_sub"\"
+	fi
+fi
