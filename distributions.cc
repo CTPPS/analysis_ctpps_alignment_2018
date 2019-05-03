@@ -259,10 +259,10 @@ unsigned int SectorData::Process(const vector<CTPPSLocalTrackLite> &tracks)
 	}
 
 	// skip crowded events
-	if (tracksUp.size() > 1)
+	if (tracksUp.size() > 2)
 		return 0;
 
-	if (tracksDw.size() > 1)
+	if (tracksDw.size() > 2)
 		return 0;
 
 	// do the selection
