@@ -289,7 +289,7 @@ int main()
 			char buf[100];
 			unsigned int xangle_def = (cfg.xangle > 0) ? cfg.xangle : 160;
 			double beta_def = (cfg.beta > 0) ? cfg.beta : 0.3;
-			sprintf(buf, "data/alig/fill_6554/xangle_%u_beta_%.2f/DS1", xangle_def, beta_def);
+			sprintf(buf, "data/alig-version-old/fill_6554/xangle_%u_beta_%.2f/DS1", xangle_def, beta_def);
 			ref = buf;
 		}
 
