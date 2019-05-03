@@ -274,31 +274,31 @@ def ApplyDefaultSettingsAlignmentSeptember():
 
 
 def ApplyDefaultSettings1():
-  config.sector_45.cut_h_c = -38.55 + 0.35
-  config.sector_45.cut_v_c = 1.63 - 0.20
+  config.sector_45.cut_h_c = -38.55 + 0.35 - 0.08
+  config.sector_45.cut_v_c = 1.63 - 0.20 + 0.25
   config.sector_56.cut_h_c = -39.26 - 0.35
   config.sector_56.cut_v_c = 1.49 - 0.5
 
 def ApplyDefaultSettings2():
-  config.sector_45.cut_h_c = -38.55 + 0.35
-  config.sector_45.cut_v_c = 1.63 - 0.20
+  config.sector_45.cut_h_c = -38.55 + 0.35 - 0.08
+  config.sector_45.cut_v_c = 1.63 - 0.20 + 0.25
   config.sector_56.cut_h_c = -39.26 - 0.35
   config.sector_56.cut_v_c = 1.49 - 0.5
 
 def ApplyDefaultSettings3():
-  config.sector_45.cut_h_c = -38.55 + 0.35
-  config.sector_45.cut_v_c = 1.63 - 0.20
+  config.sector_45.cut_h_c = -38.55 + 0.35 - 0.08
+  config.sector_45.cut_v_c = 1.63 - 0.20 + 0.25
   config.sector_56.cut_h_c = -39.26 + 0.20
   config.sector_56.cut_v_c = 1.49 + 0.17
 
 def ApplyDefaultSettings4():
-  config.sector_45.cut_h_c = -38.55 + 0.5
-  config.sector_45.cut_v_c = 1.63 - 1.15
+  config.sector_45.cut_h_c = -38.55 + 0.5 - 0.08
+  config.sector_45.cut_v_c = 1.63 - 1.15 + 0.25
   config.sector_56.cut_h_c = -39.26 + 0.25
   config.sector_56.cut_v_c = 1.49 - 0.85
 
 def ApplyDefaultSettings5():
-  config.sector_45.cut_h_c = -38.55 + 0.57
-  config.sector_45.cut_v_c = 1.63 - 2.15
+  config.sector_45.cut_h_c = -38.55 + 0.57 - 0.08
+  config.sector_45.cut_v_c = 1.63 - 2.15 + 0.25
   config.sector_56.cut_h_c = -39.26 + 0.33
   config.sector_56.cut_v_c = 1.49 - 1.80
