@@ -3,7 +3,8 @@ import pad_layout;
 
 include "../common.asy";
 
-string topDir = "../../data/phys/";
+//string topDir = "../../data/phys-version-old/";
+string topDir = "../../data/phys-version1/";
 
 int rp_ids[];
 string rps[], rp_labels[];
@@ -33,9 +34,9 @@ for (int dsi : datasets.keys)
 	{
 		NewPad("$x\ung{mm}$", "mean of $y\ung{mm}$");
 	
-		RootObject profile = RootGetObject(topDir + dataset + "/y_alignment.root", rps[rpi] + "/p_y_vs_x");
+		RootObject profile = RootGetObject(topDir + dataset + "/y_alignment.root", rps[rpi] + "/p_y_vs_x", error=false);
 		RootObject fit = RootGetObject(topDir + dataset + "/y_alignment.root", rps[rpi] + "/p_y_vs_x|ff", error=false);
-		RootObject results = RootGetObject(topDir + dataset + "/y_alignment.root", rps[rpi] + "/g_results");
+		RootObject results = RootGetObject(topDir + dataset + "/y_alignment.root", rps[rpi] + "/g_results", error=false);
 
 		if (!fit.valid)
 			continue;

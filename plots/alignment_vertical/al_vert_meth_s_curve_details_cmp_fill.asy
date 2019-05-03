@@ -3,7 +3,7 @@ import pad_layout;
 
 include "../common.asy";
 
-string topDir = "../../data/phys/";
+string topDir = "../../data/phys-version1/";
 
 string plots[], p_arms[], p_rps[], p_x_axis[], p_y_axis[];
 plots.push("sector 45/N/p_y_diffFN_vs_y"); p_arms.push("sector 45"); p_rps.push("near"); p_x_axis.push("y_{LN}\ung{mm}"); p_y_axis.push("y_{LF} - y_{LN}\ung{mm}");

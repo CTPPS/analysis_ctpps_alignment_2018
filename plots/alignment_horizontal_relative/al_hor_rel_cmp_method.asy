@@ -3,26 +3,27 @@ import pad_layout;
 
 include "../common.asy";
 
-string topDir = "../../data/phys/";
+string topDir = "../../data/phys-version1/";
 
 include "../fills_samples.asy";
 InitDataSets();
 
 //----------------------------------------------------------------------------------------------------
 
-string sample = "SingleMuon";
+//string sample = "SingleMuon";
+string sample = "ALL";
 
 real mfa = 0.3;
 
 string abs_methods[];
 pen am_pens[];
-abs_methods.push("method x"); am_pens.push(blue);
-abs_methods.push("method y"); am_pens.push(red);
+//abs_methods.push("method x"); am_pens.push(blue);
+//abs_methods.push("method y"); am_pens.push(red);
 abs_methods.push("method o"); am_pens.push(heavygreen);
 
 string xangle = "160";
 string beta = "0.30";
-string ref_label = "data_alig_fill_6554_xangle_160_beta_0.30_DS1";
+string ref_label = "data_alig-version-old_fill_6554_xangle_160_beta_0.30_DS1";
 
 string sectors[], s_labels[];
 real s_y_mins[], s_y_maxs[], s_y_cens[];

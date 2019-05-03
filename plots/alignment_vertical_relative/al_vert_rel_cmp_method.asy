@@ -3,7 +3,7 @@ import pad_layout;
 
 include "../common.asy";
 
-string topDir = "../../data/phys/";
+string topDir = "../../data/phys-version1/";
 
 include "../fills_samples.asy";
 InitDataSets();
@@ -13,7 +13,8 @@ InitDataSets();
 pen p_meth_fit = red;
 pen p_meth_s_curve = blue;
 
-string sample = "SingleMuon";
+//string sample = "SingleMuon";
+string sample = "ALL";
 
 string xangle = "160";
 string beta = "0.30";
@@ -21,8 +22,8 @@ string beta = "0.30";
 string sectors[], s_labels[];
 real s_y_mins[], s_y_maxs[], s_y_cens[];
 string s_rp_Ns[], s_rp_Fs[];
-sectors.push("45"); s_labels.push("sector 45"); s_y_mins.push(-1.5); s_y_maxs.push(-0.5); s_y_cens.push(+0.008); s_rp_Ns.push("L_1_F"); s_rp_Fs.push("L_2_F");
-sectors.push("56"); s_labels.push("sector 56"); s_y_mins.push(-1.5); s_y_maxs.push(-0.5); s_y_cens.push(-0.012); s_rp_Ns.push("R_1_F"); s_rp_Fs.push("R_2_F");
+sectors.push("45"); s_labels.push("sector 45"); s_y_mins.push(-1.5); s_y_maxs.push(+1.0); s_y_cens.push(+0.008); s_rp_Ns.push("L_1_F"); s_rp_Fs.push("L_2_F");
+sectors.push("56"); s_labels.push("sector 56"); s_y_mins.push(-1.5); s_y_maxs.push(+1.0); s_y_cens.push(-0.012); s_rp_Ns.push("R_1_F"); s_rp_Fs.push("R_2_F");
 
 yTicksDef = RightTicks(0.2, 0.1);
 

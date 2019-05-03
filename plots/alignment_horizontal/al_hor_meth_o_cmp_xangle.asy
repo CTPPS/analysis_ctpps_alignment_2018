@@ -3,14 +3,15 @@ import pad_layout;
 
 include "../common.asy";
 
-string topDir = "../../data/phys/";
+string topDir = "../../data/phys-version1/";
 
 include "../fills_samples.asy";
 InitDataSets();
 
 //----------------------------------------------------------------------------------------------------
 
-string sample = "EGamma";
+//string sample = "EGamma";
+string sample = "ALL";
 
 string method = "method o";
 
@@ -20,8 +21,7 @@ string xangle_refs[];
 pen xangle_pens[];
 //xangles.push("130"); betas.push("0.25"); xangle_refs.push("data_alig_fill_6554_xangle_130_beta_0.25_DS1"); xangle_pens.push(blue);
 //xangles.push("130"); betas.push("0.30"); xangle_refs.push("data_alig_fill_6554_xangle_130_beta_0.30_DS1"); xangle_pens.push(red);
-xangles.push("160"); betas.push("0.30"); xangle_refs.push("data_alig_fill_6554_xangle_160_beta_0.30_DS1"); xangle_pens.push(heavygreen);
-xangles.push("ALL"); betas.push("ALL"); xangle_refs.push("data_alig_fill_6554_xangle_160_beta_0.30_DS1"); xangle_pens.push(magenta);
+xangles.push("160"); betas.push("0.30"); xangle_refs.push("data_alig-version-old_fill_6554_xangle_160_beta_0.30_DS1"); xangle_pens.push(heavygreen);
 
 real xfa = 0.3;
 
@@ -129,7 +129,7 @@ for (int rpi : rps.keys)
 	draw((-1, y_mean)--(fill_data.length, y_mean), black);
 
 	//xlimits(-1, fill_data.length, Crop);
-	limits((-1, y_mean-1), (fill_data.length, y_mean+2), Crop);
+	limits((-1, y_mean-1), (fill_data.length, y_mean+1), Crop);
 
 	AttachLegend("{\SetFontSizesXX " + rp_labels[rpi] + "}");
 }

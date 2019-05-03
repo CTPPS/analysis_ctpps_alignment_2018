@@ -19,7 +19,7 @@ cuts.push("cut_v"); c_labels.push("cut v"); c_mins.push(-0.5); c_maxs.push(+0.5)
 //cuts.push("cut_v"); c_labels.push("cut v"); c_mins.push(-0.5); c_maxs.push(+0.5); c_Ticks.push(0.2); c_ticks.push(0.1);
 //cuts.push("cut_v"); c_labels.push("cut v"); c_mins.push(0.5); c_maxs.push(1.5); c_Ticks.push(0.2); c_ticks.push(0.1);
 
-string dataset = "ZeroBias";
+string dataset = "ALL";
 
 xSizeDef = 8cm;
 
@@ -57,7 +57,7 @@ for (int fi : fill_data.keys)
 	//if (fill < 6800 || fill > 7000)
 	//if (fill < 7000 || fill > 7200)
 	//if (fill < 7145 || fill > 7271)
-	if (fill != 7145 && fill != 7271 && fill != 7314 && fill != 7334)
+	if (fill != 6617 && fill != 6662 && fill != 6773 && fill != 7005 && fill != 7334)
 		continue;
 	
 	NewRow();
@@ -87,7 +87,7 @@ for (int fi : fill_data.keys)
 				//if (xangle != "160" || beta != "0.30")
 				//	continue;
 
-				string f = topDir + "data/phys/" + dir_base + "/" + dataset + "/distributions.root";
+				string f = topDir + "data/phys-version1/" + dir_base + "/" + dataset + "/distributions.root";
 				string obj_path = sectors[sci] + "/cuts/" + cuts[cti] + "/h_q_" + cuts[cti] + "_aft";
 
 				pen p = XangleBetaColor(xangle, beta);

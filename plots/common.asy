@@ -4,12 +4,15 @@ real x_size_fill_cmp = 75cm;
 
 string reference_std = "data_alig_fill_6554_xangle_160_beta_0.30_DS1";
 string datasets_std[] = {
-	"fill_6583/xangle_160_beta_0.30/EGamma",
-	"fill_6719/xangle_160_beta_0.30/EGamma",
-	"fill_6860/xangle_160_beta_0.30/EGamma",
-	"fill_7005/xangle_160_beta_0.30/EGamma",
-	"fill_7145/xangle_160_beta_0.30/EGamma",
-	"fill_7334/xangle_160_beta_0.30/EGamma",
+	"fill_6583/xangle_160_beta_0.30/ALL",
+	"fill_6719/xangle_160_beta_0.30/ALL",
+
+	"fill_6860/xangle_160_beta_0.30/ALL",
+	"fill_7005/xangle_160_beta_0.30/ALL",
+	"fill_7145/xangle_160_beta_0.30/ALL",
+
+	"fill_7271/xangle_160_beta_0.30/ALL",
+	"fill_7334/xangle_160_beta_0.30/ALL",
 };
 
 string datasets_std_ALL[] = {
