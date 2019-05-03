@@ -16,6 +16,37 @@ using namespace std;
 
 //----------------------------------------------------------------------------------------------------
 
+double GetP3InitValue(const string &sector, const string &rp, unsigned int fill)
+{
+	if (fill >= 6583 && fill <= 6778)
+	{
+		if (sector == "sector 45" && rp == "F") return 3.4;
+		if (sector == "sector 45" && rp == "N") return 4.7;
+		if (sector == "sector 56" && rp == "N") return 4.5;
+		if (sector == "sector 56" && rp == "F") return 3.3;
+	}
+
+	if (fill >= 6843 && fill <= 7145)
+	{
+		if (sector == "sector 45" && rp == "F") return 4.0;
+		if (sector == "sector 45" && rp == "N") return 4.0;
+		if (sector == "sector 56" && rp == "N") return 4.1;
+		if (sector == "sector 56" && rp == "F") return 3.7;
+	}
+
+	if (fill >= 7271 && fill <= 7334)
+	{
+		if (sector == "sector 45" && rp == "F") return 4.5;
+		if (sector == "sector 45" && rp == "N") return 3.5;
+		if (sector == "sector 56" && rp == "N") return 3.7;
+		if (sector == "sector 56" && rp == "F") return 4.2;
+	}
+
+	return 0;
+}
+
+//----------------------------------------------------------------------------------------------------
+
 int main()
 {
 	// load config
@@ -94,7 +125,7 @@ int main()
 			double p0_init = p_y_diffFN_vs_y->GetBinContent(cbi);
 			double p1_init = 0.05;
 			double p2_init = 0.05;
-			double p3_init = (rp == "N") ? 4.0 : 2.8;
+			double p3_init = GetP3InitValue(ad.name, rp, cfg.fill);
 			double p4_init = (ad.name == "sector 45") ? 1.0 : 2.0;
 
 			ff->SetParameters(p0_init, p1_init, p2_init, p3_init, p4_init);
