@@ -253,27 +253,18 @@ void InitFillsRuns()
 	fills_runs[7333] = {325097, 325098, 325099, 325100, 325101, 325102, 325103, 325110, 325111, 325112, 325113, 325114, 325117};
 	fills_runs[7334] = {325159, 325168, 325169, 325170, 325172, 325173, 325174, 325175};
 
-	// TODO: fills to process (CMS golden & RPs inserted)
-	fills.push_back(6579);
+	// fills to process (from RP-valid JSON)
 	fills.push_back(6583);
 	fills.push_back(6584);
-	fills.push_back(6592);
-	fills.push_back(6594);
 	fills.push_back(6595);
 	fills.push_back(6611);
-	fills.push_back(6612);
-	fills.push_back(6613);
 	fills.push_back(6614);
 	fills.push_back(6615);
-	fills.push_back(6616);
 	fills.push_back(6617);
 	fills.push_back(6618);
-	fills.push_back(6620);
 	fills.push_back(6621);
 	fills.push_back(6624);
-	fills.push_back(6628);
 	fills.push_back(6629);
-	fills.push_back(6633);
 	fills.push_back(6636);
 	fills.push_back(6638);
 	fills.push_back(6639);
@@ -301,7 +292,6 @@ void InitFillsRuns()
 	fills.push_back(6693);
 	fills.push_back(6694);
 	fills.push_back(6696);
-	fills.push_back(6699);
 	fills.push_back(6700);
 	fills.push_back(6702);
 	fills.push_back(6706);
@@ -317,13 +307,13 @@ void InitFillsRuns()
 	fills.push_back(6733);
 	fills.push_back(6737);
 	fills.push_back(6738);
-	fills.push_back(6740);
 	fills.push_back(6741);
 	fills.push_back(6744);
 	fills.push_back(6747);
 	fills.push_back(6749);
 	fills.push_back(6751);
 	fills.push_back(6752);
+	fills.push_back(6755);
 	fills.push_back(6757);
 	fills.push_back(6759);
 	fills.push_back(6761);
@@ -336,9 +326,6 @@ void InitFillsRuns()
 	fills.push_back(6774);
 	fills.push_back(6776);
 	fills.push_back(6778);
-	fills.push_back(6843);
-	fills.push_back(6847);
-	fills.push_back(6850);
 	fills.push_back(6854);
 	fills.push_back(6858);
 	fills.push_back(6860);
@@ -348,7 +335,6 @@ void InitFillsRuns()
 	fills.push_back(6909);
 	fills.push_back(6911);
 	fills.push_back(6912);
-	fills.push_back(6913);
 	fills.push_back(6919);
 	fills.push_back(6921);
 	fills.push_back(6923);
@@ -367,7 +353,6 @@ void InitFillsRuns()
 	fills.push_back(6957);
 	fills.push_back(6960);
 	fills.push_back(6961);
-	fills.push_back(6966);
 	fills.push_back(6998);
 	fills.push_back(7003);
 	fills.push_back(7005);
@@ -393,7 +378,6 @@ void InitFillsRuns()
 	fills.push_back(7048);
 	fills.push_back(7052);
 	fills.push_back(7053);
-	fills.push_back(7054);
 	fills.push_back(7055);
 	fills.push_back(7056);
 	fills.push_back(7058);
@@ -435,12 +419,28 @@ void InitFillsRuns()
 	fills.push_back(7135);
 	fills.push_back(7137);
 	fills.push_back(7139);
-	fills.push_back(7142);
 	fills.push_back(7144);
 	fills.push_back(7145);
+	fills.push_back(7213);
+	fills.push_back(7217);
+	fills.push_back(7218);
+	fills.push_back(7221);
+	fills.push_back(7234);
+	fills.push_back(7236);
+	fills.push_back(7239);
+	fills.push_back(7240);
+	fills.push_back(7242);
+	fills.push_back(7245);
+	fills.push_back(7252);
+	fills.push_back(7253);
+	fills.push_back(7256);
+	fills.push_back(7259);
+	fills.push_back(7264);
+	fills.push_back(7265);
+	fills.push_back(7266);
+	fills.push_back(7270);
 	fills.push_back(7271);
 	fills.push_back(7274);
-	fills.push_back(7304);
 	fills.push_back(7308);
 	fills.push_back(7309);
 	fills.push_back(7310);
@@ -476,4 +476,36 @@ void PrintFillRunMapping()
 	{
 		printf("fillInfoCollection.push_back(FillInfo(%u, false, %u, %u, \"fill %u\"));\n", p.first, p.second.front(), p.second.back(), p.first);
 	}
+}
+
+//----------------------------------------------------------------------------------------------------
+
+void GetFillList()
+{
+	std::vector<unsigned int> runs = {
+	};
+
+	std::set<unsigned int> fills;
+
+	for (const auto &run : runs)
+	{
+		for (const auto &p : fills_runs)
+		{
+			bool found = false;
+			for (const auto &ref_run : p.second)
+			{
+				if (run == ref_run)
+				{
+					found = true;
+					break;
+				}
+			}
+
+			if (found)
+				fills.insert(p.first);
+		}
+	}
+
+	for (const auto &fill : fills)
+		printf("%u\n", fill);
 }
