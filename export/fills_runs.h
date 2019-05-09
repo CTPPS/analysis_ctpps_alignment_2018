@@ -12,7 +12,7 @@ struct FillReference
 
 std::map<unsigned int, FillReference> fills_reference;
 
-void InitFillsRuns()
+void InitFillsRuns(bool useExceptionList = true)
 {
 	// mapping fill -> runs, from FillReport
 	fills_runs[6579] = {314747, 314748, 314750, 314751, 314752, 314753, 314754, 314755, 314756, 314757, 314758, 314759, 314764};
@@ -460,9 +460,12 @@ void InitFillsRuns()
 	{
 		FillReference ref = { fill, fill };
 		
-		if (fill >= 6579 && fill <= 6778) ref = { 6724, 6724 };
-		if (fill >= 6843 && fill <= 7145) ref = { 7039, 7039 };
-		if (fill >= 7271 && fill <= 7334) ref = { 7309, 7309 };
+		if (useExceptionList)
+		{
+			if (fill >= 6579 && fill <= 6778) ref = { 6724, 6724 };
+			if (fill >= 6843 && fill <= 7145) ref = { 7039, 7039 };
+			if (fill >= 7271 && fill <= 7334) ref = { 7309, 7309 };
+		}
 
 		fills_reference[fill] = ref;
 	}
