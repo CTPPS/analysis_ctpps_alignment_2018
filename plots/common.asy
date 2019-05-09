@@ -2,13 +2,15 @@ real x_size_fill_cmp = 75cm;
 
 //----------------------------------------------------------------------------------------------------
 
-string reference_std = "data_alig_fill_6554_xangle_160_beta_0.30_DS1";
+string reference_std = "data_alig-version-old_fill_6554_xangle_160_beta_0.30_DS1";
 string datasets_std[] = {
-	"fill_6583/xangle_160_beta_0.30/ALL",
-	"fill_6719/xangle_160_beta_0.30/ALL",
+	"fill_6611/xangle_160_beta_0.30/ALL",
+	"fill_6639/xangle_160_beta_0.30/ALL",
+	"fill_6675/xangle_160_beta_0.30/ALL",
+	"fill_6778/xangle_160_beta_0.30/ALL",
 
-	"fill_6860/xangle_160_beta_0.30/ALL",
-	"fill_7005/xangle_160_beta_0.30/ALL",
+	"fill_6854/xangle_160_beta_0.30/ALL",
+	"fill_7048/xangle_160_beta_0.30/ALL",
 	"fill_7145/xangle_160_beta_0.30/ALL",
 
 	"fill_7271/xangle_160_beta_0.30/ALL",

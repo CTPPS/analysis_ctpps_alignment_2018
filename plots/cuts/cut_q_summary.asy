@@ -57,7 +57,8 @@ for (int fi : fill_data.keys)
 	//if (fill < 6800 || fill > 7000)
 	//if (fill < 7000 || fill > 7200)
 	//if (fill < 7145 || fill > 7271)
-	if (fill != 6617 && fill != 6662 && fill != 6773 && fill != 7005 && fill != 7334)
+	//if (fill != 6617 && fill != 6662 && fill != 6773 && fill != 7005 && fill != 7334)
+	if (fill > 6614)
 		continue;
 	
 	NewRow();

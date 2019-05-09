@@ -22,7 +22,7 @@ string method = "method o";
 
 string xangle = "160";
 string beta = "0.30";
-string ref_label = "data_alig_fill_6554_xangle_160_beta_0.30_DS1";
+string ref_label = "data_alig-version-old_fill_6554_xangle_160_beta_0.30_DS1";
 
 int rp_ids[];
 string rps[], rp_labels[];

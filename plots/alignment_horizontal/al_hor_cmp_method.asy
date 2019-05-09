@@ -3,26 +3,26 @@ import pad_layout;
 
 include "../common.asy";
 
-string topDir = "../../data/phys/";
+string topDir = "../../data/phys-version1/";
 
 include "../fills_samples.asy";
 InitDataSets();
 
 //----------------------------------------------------------------------------------------------------
 
-string sample = "SingleMuon";
+string sample = "ALL";
 
 real mfa = 0.3;
 
 string methods[];
 pen m_pens[];
 //methods.push("method x"); m_pens.push(blue);
-methods.push("method y"); m_pens.push(red);
+//methods.push("method y"); m_pens.push(red);
 methods.push("method o"); m_pens.push(heavygreen);
 
 string xangle = "160";
 string beta = "0.30";
-string ref_label = "data_alig_fill_6554_xangle_160_beta_0.30_DS1";
+string ref_label = "data_alig-version-old_fill_6554_xangle_160_beta_0.30_DS1";
 
 int rp_ids[];
 string rps[], rp_labels[];
@@ -144,7 +144,7 @@ for (int rpi : rps.keys)
 	draw((-1, y_mean)--(fill_data.length, y_mean), black);
 
 	//xlimits(-1, fill_data.length, Crop);
-	limits((-1, y_mean-1), (fill_data.length, y_mean+2), Crop);
+	limits((-1, y_mean-0.5), (fill_data.length, y_mean+1.0), Crop);
 
 	AttachLegend("{\SetFontSizesXX " + rp_labels[rpi] + "}");
 }

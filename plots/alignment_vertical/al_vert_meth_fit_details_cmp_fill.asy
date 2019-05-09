@@ -64,7 +64,7 @@ for (int dsi : datasets.keys)
 
 		draw((-sh_x, b), mCi+3pt+magenta);
 	
-		limits((x_min, y_cen - 0.7), (x_max, y_cen + 0.5), Crop);
+		limits((x_min, y_cen - 0.7), (x_max, y_cen + 0.7), Crop);
 
 		yaxis(XEquals(-sh_x, false), heavygreen);
 	

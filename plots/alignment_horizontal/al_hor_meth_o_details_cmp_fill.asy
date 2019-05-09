@@ -3,10 +3,10 @@ import pad_layout;
 
 include "../common.asy";
 
-string topDir = "../../data/phys/";
+string topDir = "../../data/phys-version1/";
 
 string reference = reference_std;
-string datasets[] = datasets_std_ALL;
+string datasets[] = datasets_std;
 
 // TODO
 /*
@@ -51,7 +51,7 @@ for (int dsi : datasets.keys)
 		string p_base = reference + "/" + rps[rpi] + "/c_cmp";
 		RootObject obj_base = RootGetObject(f, p_base, error=false);
 
-		RootObject results = RootGetObject(f, reference + "/" + rps[rpi] + "/g_results", error=false);
+		RootObject results = RootGetObject(f, reference + "/" + rps[rpi] + "/g_results", error=true);
 
 		if (!obj_base.valid || !results.valid)
 			continue;
@@ -78,7 +78,7 @@ for (int dsi : datasets.keys)
 		draw(RootGetObject(f, p_base + "#2"), "p,l", red);
 
 		//xlimits(0, 15., Crop);
-		limits((0, 0.03), (15, 0.15), Crop);
+		limits((0, 0.03), (18, 0.15), Crop);
 	}
 }
 
