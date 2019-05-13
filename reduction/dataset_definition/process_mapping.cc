@@ -158,7 +158,13 @@ int main()
 	Load("mapping/output_6671_6870.txt");
 	Load("mapping/output_6871_6970.txt");
 	Load("mapping/output_6971_7070.txt");
-	Load("mapping/output_7071_7270.txt");
+	Load("mapping/output_7071_7188.txt");
+	Load("mapping/output_7213_7221.txt");
+	Load("mapping/output_7234_7240.txt");
+	Load("mapping/output_7242_7256.txt");
+	Load("mapping/output_7259_7265.txt");
+	Load("mapping/output_7266.txt");
+	Load("mapping/output_7270.txt");
 	Load("mapping/output_7271_7299.txt");
 	Load("mapping/output_7300_7334.txt");
 
