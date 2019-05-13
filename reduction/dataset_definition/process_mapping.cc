@@ -18,12 +18,18 @@ struct Key
 
 	bool Selected() const
 	{
+		/*
 		if ( (xangle == 130 && fabs(beta_st - 0.25) < 1e-5)
 				//|| (xangle == 130 && fabs(beta_st - 0.27) < 1e-5)
 				|| (xangle == 130 && fabs(beta_st - 0.30) < 1e-5)
 				//|| (xangle == 140 && fabs(beta_st - 0.30) < 1e-5)
 				|| (xangle == 160 && fabs(beta_st - 0.30) < 1e-5) )
 			return true;
+		*/
+
+		if ((xangle == 160 || xangle == 150 || xangle == 140 || xangle == 130) && ( fabs(beta_st - 0.30) < 1e-5 ||  fabs(beta_st - 0.25) < 1e-5))
+			return true;
+
 		return false;
 	}
 };
