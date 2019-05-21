@@ -147,7 +147,12 @@ for (int rpi : rps.keys)
 	real y_mean = GetMeanVerticalAlignment(rps[rpi]);
 	draw((-1, y_mean)--(fill_data.length, y_mean), black);
 
-	limits((-1, y_mean-1.5), (fill_data.length, y_mean+1.5), Crop);
+	real y_min = y_mean-1.5;
+	real y_max = y_mean+1.5;
+
+	DrawFillMarkers(y_min, y_max);
+
+	limits((-1, y_min), (fill_data.length, y_max), Crop);
 
 	AttachLegend("{\SetFontSizesXX " + rp_labels[rpi] + "}");
 }

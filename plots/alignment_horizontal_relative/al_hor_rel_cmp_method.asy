@@ -182,8 +182,13 @@ for (int si : sectors.keys)
 	real y_mean = GetMeanHorizontalRelativeAlignment(sectors[si]);
 	draw((-1, y_mean)--(fill_data.length, y_mean), black);
 
+	real y_min = y_mean-0.5;
+	real y_max = y_mean+1.0;
+
+	DrawFillMarkers(y_min, y_max);
+
 	//xlimits(-1, fill_data.length, Crop);
-	limits((-1, y_mean-0.5), (fill_data.length, y_mean+1), Crop);
+	limits((-1, y_min), (fill_data.length, y_max), Crop);
 
 	AttachLegend("{\SetFontSizesXX " + s_labels[si] + "}");
 }

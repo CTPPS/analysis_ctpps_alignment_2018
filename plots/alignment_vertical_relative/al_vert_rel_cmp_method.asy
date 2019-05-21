@@ -141,6 +141,8 @@ for (int si : sectors.keys)
 	real y_mean = GetMeanVerticalRelativeAlignment(sectors[si]);
 	draw((-1, y_mean)--(fill_data.length, y_mean), black);
 
+	DrawFillMarkers(s_y_mins[si], s_y_maxs[si]);
+
 	limits((-1, s_y_mins[si]), (fill_data.length, s_y_maxs[si]), Crop);
 
 	AttachLegend("{\SetFontSizesXX " + s_labels[si] + "}");

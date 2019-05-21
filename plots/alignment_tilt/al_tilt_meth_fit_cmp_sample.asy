@@ -118,6 +118,8 @@ for (int rpi : rps.keys)
 		}
 	}
 
+	DrawFillMarkers(rp_y_min[rpi], rp_y_max[rpi]);
+
 	limits((-1, rp_y_min[rpi]), (fill_data.length, rp_y_max[rpi]), Crop);
 
 	xaxis(YEquals(rp_y_cen[rpi], false), black+1pt);
