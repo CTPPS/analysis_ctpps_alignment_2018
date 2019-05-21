@@ -34,7 +34,7 @@ double GetP3InitValue(const string &sector, const string &rp, unsigned int fill)
 		if (sector == "sector 56" && rp == "F") return 3.7;
 	}
 
-	if (fill >= 7271 && fill <= 7334)
+	if (fill >= 7213 && fill <= 7334)
 	{
 		if (sector == "sector 45" && rp == "F") return 4.5;
 		if (sector == "sector 45" && rp == "N") return 3.5;
