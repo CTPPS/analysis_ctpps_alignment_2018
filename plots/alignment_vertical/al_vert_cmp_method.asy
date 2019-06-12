@@ -11,6 +11,7 @@ InitDataSets();
 //----------------------------------------------------------------------------------------------------
 
 pen p_meth_fit = red;
+pen p_meth_fit_sl_fixed = heavygreen;
 pen p_meth_s_curve = blue;
 
 //string sample = "DoubleEG";
@@ -58,6 +59,7 @@ AddToLegend("xangle = " + xangle);
 AddToLegend("beta = " + beta);
 
 AddToLegend("method ``fit''", mCi+3pt+p_meth_fit);
+AddToLegend("method ``fit'' (slope fixed)", mCi+3pt+p_meth_fit_sl_fixed);
 AddToLegend("method ``s-curve''", mCi+3pt+p_meth_s_curve);
 
 AttachLegend();
@@ -112,16 +114,14 @@ for (int rpi : rps.keys)
 					results.vExec("GetPoint", 2, ax, ay); real b = ax[0], b_unc = ay[0];
 					results.vExec("GetPoint", 3, ax, ay); real b_fs = ax[0], b_fs_unc = ay[0];
 
-					bool valid = (b_unc > 0);
+					draw((x, b), m + p_meth_fit);
+					draw((x, b - b_unc)--(x, b + b_unc), p_meth_fit);
 
-					if (valid)
-					{
-						draw((x, b), m + p_meth_fit);
-						draw((x, b - b_unc)--(x, b + b_unc), p_meth_fit);
-					}
+					draw((x, b_fs), m + p_meth_fit_sl_fixed);
+					draw((x, b_fs - b_fs_unc)--(x, b_fs + b_fs_unc), p_meth_fit_sl_fixed);
 				}
 
-				// get "s curve" method result
+				// "s curve" method result
 
 				string f = topDir + dataset + "/" + sample + "/y_alignment_alt.root";
 				RootObject results = RootGetObject(f, rp_dirs[rpi] + "/g_results", error=false);

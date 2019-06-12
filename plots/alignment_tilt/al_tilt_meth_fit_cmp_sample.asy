@@ -98,7 +98,7 @@ for (int rpi : rps.keys)
 			{
 				string f = topDir + dataset + "/" + sample_labels[sai] + "/y_alignment.root";
 
-				RootObject obj = RootGetObject(f, rps[rpi] + "/p_y_vs_x|ff", error = false);
+				RootObject obj = RootGetObject(f, rps[rpi] + "/g_y_cen_vs_x|ff", error = false);
 		
 				if (!obj.valid)
 					continue;

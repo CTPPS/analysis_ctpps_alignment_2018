@@ -96,8 +96,13 @@ for (int si : sectors.keys)
 		
 				if (results_N.valid && results_F.valid)
 				{
-					results_N.vExec("GetPoint", 2, ax, ay); real b_N = ax[0], b_N_unc = ay[0];
-					results_F.vExec("GetPoint", 2, ax, ay); real b_F = ax[0], b_F_unc = ay[0];
+					// fit with slope free
+					//results_N.vExec("GetPoint", 2, ax, ay); real b_N = ax[0], b_N_unc = ay[0];
+					//results_F.vExec("GetPoint", 2, ax, ay); real b_F = ax[0], b_F_unc = ay[0];
+
+					// fit with slope fixed
+					results_N.vExec("GetPoint", 3, ax, ay); real b_N = ax[0], b_N_unc = ay[0];
+					results_F.vExec("GetPoint", 3, ax, ay); real b_F = ax[0], b_F_unc = ay[0];
 
 					real diff = b_F - b_N;
 					real diff_unc = sqrt(b_F_unc*b_F_unc + b_N_unc*b_N_unc);
