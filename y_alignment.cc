@@ -4,7 +4,8 @@
 
 #include "TFile.h"
 #include "TH1D.h"
-#include "TGraph.h"
+#include "TH2D.h"
+#include "TGraphErrors.h"
 #include "TCanvas.h"
 #include "TF1.h"
 #include "TProfile.h"
@@ -13,6 +14,69 @@
 #include <string>
 
 using namespace std;
+
+//----------------------------------------------------------------------------------------------------
+
+TF1 *ff_gauss = new TF1("ff_gauss", "[0] * exp(-(x-[1])*(x-[1])/2./[2]/[2]) + [3]");
+
+TGraphErrors* BuildModeGraph(const TH2D *h2_y_vs_x)
+{
+	TGraphErrors *g_y_mode_vs_x = new TGraphErrors();
+
+	for (int bix = 1; bix <= h2_y_vs_x->GetNbinsX(); ++bix)
+	{
+		const double x = h2_y_vs_x->GetXaxis()->GetBinCenter(bix);
+		const double x_unc = h2_y_vs_x->GetXaxis()->GetBinWidth(bix) / 2.;
+
+		char buf[100];
+		sprintf(buf, "h_y_x=%.3f", x);
+		TH1D *h_y = h2_y_vs_x->ProjectionY(buf, bix, bix);
+
+		if (h_y->GetEntries() < 300)
+			continue;
+
+		double con_max = -1.;
+		double con_max_x = 0.;
+		for (int biy = 1; biy < h_y->GetNbinsX(); ++biy)
+		{
+			if (h_y->GetBinContent(biy) > con_max)
+			{
+				con_max = h_y->GetBinContent(biy);
+				con_max_x = h_y->GetBinCenter(biy);
+			}
+		}
+
+		ff_gauss->SetParameters(con_max, con_max_x, h_y->GetRMS(), 0.);
+
+		h_y->Fit(ff_gauss, "Q", "", 3., +8.);
+		double w = min(2., 2. * ff_gauss->GetParameter(2));
+		h_y->Fit(ff_gauss, "Q", "", ff_gauss->GetParameter(1) - w, ff_gauss->GetParameter(1) + w);
+		/*
+		n_si = 2.;
+		h_y->Fit(ff_gauss, "Q", "", ff_gauss->GetParameter(1) - n_si*ff_gauss->GetParameter(2), ff_gauss->GetParameter(1) + n_si*ff_gauss->GetParameter(2));
+		n_si = 1.5;
+		h_y->Fit(ff_gauss, "Q", "", ff_gauss->GetParameter(1) - n_si*ff_gauss->GetParameter(2), ff_gauss->GetParameter(1) + n_si*ff_gauss->GetParameter(2));
+		n_si = 1.5;
+		h_y->Fit(ff_gauss, "Q", "", ff_gauss->GetParameter(1) - n_si*ff_gauss->GetParameter(2), ff_gauss->GetParameter(1) + n_si*ff_gauss->GetParameter(2));
+		*/
+
+		//h_y->Write();
+
+		//printf("x = %.3f mm, %f/%i = %.2f\n", x, ff_gauss->GetChisquare(), ff_gauss->GetNDF(), ff_gauss->GetChisquare() / ff_gauss->GetNDF());
+
+		double y_mode = ff_gauss->GetParameter(1);
+		double y_mode_unc = ff_gauss->GetParError(1);
+
+		if (fabs(y_mode_unc) > 1. || ff_gauss->GetChisquare() / ff_gauss->GetNDF() > 5.)
+			continue;
+
+		int idx = g_y_mode_vs_x->GetN();
+		g_y_mode_vs_x->SetPoint(idx, x, y_mode);
+		g_y_mode_vs_x->SetPointError(idx, x_unc, y_mode_unc);
+	}
+
+	return g_y_mode_vs_x;
+}
 
 //----------------------------------------------------------------------------------------------------
 
@@ -39,6 +103,8 @@ int main()
 		double sh_x;
 	};
 
+	// TODO: update sh_x
+	// TODO: update slopes, make them cfg.xangle dependent
 	vector<RPData> rpData = {
 		{ "L_2_F", 23,  "sector 45", 0.18, -42. },
 		{ "L_1_F",  3,  "sector 45", 0.18, -3.6 },
@@ -68,11 +134,18 @@ int main()
 		
 		TProfile *p_y_vs_x = (TProfile *) f_in->Get((rpd.sectorName + "/profiles/" + rpd.name + "/h_mean").c_str());
 
-		if (p_y_vs_x == NULL)
+		TH2D *h2_y_vs_x = (TH2D *) f_in->Get((rpd.sectorName + "/after selection/" + rpd.name + "/h2_y_vs_x").c_str());
+
+		if (p_y_vs_x == NULL || h2_y_vs_x == NULL)
 		{
 			printf("    cannot load data, skipping\n");
 			continue;
 		}
+
+		TGraphErrors *g_y_cen_vs_x = BuildModeGraph(h2_y_vs_x);
+
+		if (g_y_cen_vs_x->GetN() < 5)
+			continue;
 
 		const double sh_x = rpd.sh_x;
 
@@ -84,7 +157,7 @@ int main()
 		ff->SetParameters(0., 0., 0.);
 		ff->FixParameter(2, -sh_x);
 		ff->SetLineColor(2);
-		p_y_vs_x->Fit(ff, "Q", "", x_min, x_max);
+		g_y_cen_vs_x->Fit(ff, "Q", "", x_min, x_max);
 
 		const double a = ff->GetParameter(1), a_unc = ff->GetParError(1);
 		const double b = ff->GetParameter(0), b_unc = ff->GetParError(0);
@@ -95,13 +168,13 @@ int main()
 		ff_sl_fix->FixParameter(1, rpd.slope);
 		ff_sl_fix->FixParameter(2, -sh_x);
 		ff_sl_fix->SetLineColor(4);
-		p_y_vs_x->Fit(ff_sl_fix, "Q+", "", x_min, x_max);
+		g_y_cen_vs_x->Fit(ff_sl_fix, "Q+", "", x_min, x_max);
 
 		const double b_fs = ff_sl_fix->GetParameter(0), b_fs_unc = ff_sl_fix->GetParError(0);
 
 		results["y_alignment_sl_fix"][rpd.id] = AlignmentResult(0., 0., b_fs, b_fs_unc, 0., 0.);
 
-		p_y_vs_x->Write("p_y_vs_x");
+		g_y_cen_vs_x->Write("g_y_cen_vs_x");
 
 		TGraph *g_results = new TGraph();
 		g_results->SetPoint(0, sh_x, 0.);
