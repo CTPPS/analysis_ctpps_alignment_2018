@@ -35,17 +35,17 @@ function GetOne()
 }
 
 # alignment run April 2018
-###   top_dir="../data/alig"
-###   eos_dir="/eos/totem/data/ctpps/reconstruction/2018/alignment_run_April/version5"
-###
-###   GetOne "6554" "160" "0.30" "DS1" "run_314247"
-###   GetOne "6554" "131" "0.30" "DS1" "run_314248\|run_314250\|run_314255\|run_314267"
-###   GetOne "6554" "130" "0.30" "DS1" "run_314269\|run_314270\|run_314272\|run_314273"
-###   GetOne "6554" "130" "0.25" "DS1" "run_314274\|run_314275\|run_314276"
+top_dir="../data/alig-version1"
+eos_dir="/eos/totem/data/ctpps/reconstruction/2018/alignment_run_April/version6"
 
-# alignment run April 2018
-top_dir="../data/alig"
-eos_dir="/eos/totem/data/ctpps/reconstruction/2018/alignment_run_September/version4"
+GetOne "6554" "160" "0.30" "DS1" "run_314247"
+GetOne "6554" "131" "0.30" "DS1" "run_314248\|run_314250\|run_314255\|run_314267"
+GetOne "6554" "130" "0.30" "DS1" "run_314269\|run_314270\|run_314272\|run_314273"
+GetOne "6554" "130" "0.25" "DS1" "run_314274\|run_314275\|run_314276"
+
+# alignment run September 2018
+top_dir="../data/alig-version1"
+eos_dir="/eos/totem/data/ctpps/reconstruction/2018/alignment_run_September/version6"
 
 GetOne "7206" "130" "0.27" "DS1" "run_323311\|run_323312"
 GetOne "7206" "130" "0.25" "DS1" "run_323316"
