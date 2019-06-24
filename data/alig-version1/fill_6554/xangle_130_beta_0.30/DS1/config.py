@@ -18,3 +18,8 @@ config.beta = 0.30
 config.dataset = "DS1"
 
 ApplyDefaultSettingsAlignmentApril()
+
+config.sector_45.cut_h_c = 0.04
+config.sector_45.cut_v_c = +0.07
+config.sector_56.cut_h_c = 0.19
+config.sector_56.cut_v_c = +0.01
