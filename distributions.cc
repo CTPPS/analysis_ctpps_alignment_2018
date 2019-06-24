@@ -169,7 +169,7 @@ SectorData::SectorData(const string _name, unsigned int _rpIdUp, unsigned int _r
 	const double x_min_pix = pixel_x_offset, x_max_pix = pixel_x_offset + n_bins_x * bin_size_x;
 	const double x_min_str = 0., x_max_str = n_bins_x * bin_size_x;
 
-	const unsigned int n_bins_y = 200;
+	const unsigned int n_bins_y = 400;
 	const double y_min = -20., y_max = +20.;
 
 	// hit distributions
@@ -443,9 +443,8 @@ int main()
 		return 1;
 	}
 
-	// TODO
-	//if (cfg.input_files.size() > 15)
-	//	cfg.input_files.resize(15);
+	if (cfg.input_files.size() > 15)
+		cfg.input_files.resize(15);
 
 	printf("-------------------- config ----------------------\n");
 	cfg.Print(true);
