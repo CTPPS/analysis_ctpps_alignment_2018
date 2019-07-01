@@ -4,6 +4,8 @@ top_dir="../data/phys-version1"
 
 eos_dir="/eos/cms/store/group/phys_pps/reconstruction/2018/physics_runs/alignment-version4"
 
+buffer=()
+
 for f in `eos ls "$eos_dir"|grep ".root"`
 do
 	# parse file name
@@ -25,6 +27,19 @@ do
 	#then
 	#	continue
 	#fi
+
+	buffer+=("$fill/$xangle/$beta")
+done
+
+for tag in `for e in ${buffer[*]}; do echo $e; done|sort -u`
+do
+	fill=${tag%%/*}
+	tag=${tag#*/}
+
+	xangle=${tag%%/*}
+	tag=${tag#*/}
+
+	beta=${tag%%/*}
 
 	stream="ALL"
 
