@@ -17,9 +17,31 @@ using namespace std;
 
 //----------------------------------------------------------------------------------------------------
 
-TF1 *ff_gauss = new TF1("ff_gauss", "[0] * exp(-(x-[1])*(x-[1])/2./[2]/[2]) + [3]");
+double FindMax(TF1 *ff)
+{
+	const double mu = ff->GetParameter(1);
+	const double si = ff->GetParameter(2);
 
-TGraphErrors* BuildModeGraph(const TH2D *h2_y_vs_x)
+	double x_max = 0.;
+	double y_max = -1E100;
+	for (double x = mu - si; x <= mu + si; x += 0.001)
+	{
+		double y = ff->Eval(x);
+		if (y > y_max)
+		{
+			x_max = x;
+			y_max = y;
+		}
+	}
+
+	return x_max;
+}
+
+//----------------------------------------------------------------------------------------------------
+
+TF1 *ff_fit = new TF1("ff_fit", "[0] * exp(-(x-[1])*(x-[1])/2./[2]/[2]) + [3] + [4]*x");
+
+TGraphErrors* BuildModeGraph(const TH2D *h2_y_vs_x, bool aligned)
 {
 	TGraphErrors *g_y_mode_vs_x = new TGraphErrors();
 
@@ -46,28 +68,48 @@ TGraphErrors* BuildModeGraph(const TH2D *h2_y_vs_x)
 			}
 		}
 
-		ff_gauss->SetParameters(con_max, con_max_x, h_y->GetRMS(), 0.);
+		printf("x = %.3f\n", x);
 
-		h_y->Fit(ff_gauss, "Q", "", 3., +8.);
-		double w = min(2., 2. * ff_gauss->GetParameter(2));
-		h_y->Fit(ff_gauss, "Q", "", ff_gauss->GetParameter(1) - w, ff_gauss->GetParameter(1) + w);
+		ff_fit->SetParameters(con_max, con_max_x, h_y->GetRMS() * 0.75, 0., 0.);
+		ff_fit->FixParameter(4, 0.);
+
+		printf("    fit 1: mu = %.2f, si = %.2f\n", ff_fit->GetParameter(1), ff_fit->GetParameter(2));
+
+		double x_min = 3., x_max = +8.;
+		if (aligned)
+			x_min = -2., x_max = +3.;
+
+		h_y->Fit(ff_fit, "Q", "", x_min, x_max);
+
+		printf("    fit 1: mu = %.2f, si = %.2f\n", ff_fit->GetParameter(1), ff_fit->GetParameter(2));
+
+		ff_fit->ReleaseParameter(4);
+		double w = min(3., 2. * ff_fit->GetParameter(2));
+		h_y->Fit(ff_fit, "Q", "", ff_fit->GetParameter(1) - w, ff_fit->GetParameter(1) + w);
+
+		printf("    fit 2: mu = %.2f, si = %.2f\n", ff_fit->GetParameter(1), ff_fit->GetParameter(2));
+		printf("        chi^2 = %.1f, ndf = %u, chi^2/ndf = %.1f\n", ff_fit->GetChisquare(), ff_fit->GetNDF(), ff_fit->GetChisquare() / ff_fit->GetNDF());
+
 		/*
-		n_si = 2.;
-		h_y->Fit(ff_gauss, "Q", "", ff_gauss->GetParameter(1) - n_si*ff_gauss->GetParameter(2), ff_gauss->GetParameter(1) + n_si*ff_gauss->GetParameter(2));
-		n_si = 1.5;
-		h_y->Fit(ff_gauss, "Q", "", ff_gauss->GetParameter(1) - n_si*ff_gauss->GetParameter(2), ff_gauss->GetParameter(1) + n_si*ff_gauss->GetParameter(2));
-		n_si = 1.5;
-		h_y->Fit(ff_gauss, "Q", "", ff_gauss->GetParameter(1) - n_si*ff_gauss->GetParameter(2), ff_gauss->GetParameter(1) + n_si*ff_gauss->GetParameter(2));
+		w = min(2., 2. * ff_fit->GetParameter(2));
+		if (aligned)
+			w = min(2., 1. * ff_fit->GetParameter(2));
+		w = max(w, 0.3);
+		h_y->Fit(ff_fit, "Q", "", ff_fit->GetParameter(1) - w, ff_fit->GetParameter(1) + w);
 		*/
 
-		//h_y->Write();
+		h_y->Write();
 
-		//printf("x = %.3f mm, %f/%i = %.2f\n", x, ff_gauss->GetChisquare(), ff_gauss->GetNDF(), ff_gauss->GetChisquare() / ff_gauss->GetNDF());
+		//printf("x = %.3f mm, %f/%i = %.2f\n", x, ff_fit->GetChisquare(), ff_fit->GetNDF(), ff_fit->GetChisquare() / ff_fit->GetNDF());
 
-		double y_mode = ff_gauss->GetParameter(1);
-		double y_mode_unc = ff_gauss->GetParError(1);
+		double y_mode = FindMax(ff_fit);
+		const double y_mode_fit_unc = ff_fit->GetParError(1);
+		const double y_mode_sys_unc = 0.030;
+		double y_mode_unc = sqrt(y_mode_fit_unc*y_mode_fit_unc + y_mode_sys_unc*y_mode_sys_unc);
 
-		if (fabs(y_mode_unc) > 1. || ff_gauss->GetChisquare() / ff_gauss->GetNDF() > 5.)
+		const double chiSqThreshold = (aligned) ? 1000. : 15.;
+
+		if (fabs(y_mode_unc) > 1. || fabs(y_mode) > 20. || ff_fit->GetChisquare() / ff_fit->GetNDF() > chiSqThreshold)
 			continue;
 
 		int idx = g_y_mode_vs_x->GetN();
@@ -106,10 +148,10 @@ int main()
 	// TODO: update sh_x
 	// TODO: update slopes, make them cfg.xangle dependent
 	vector<RPData> rpData = {
-		{ "L_2_F", 23,  "sector 45", 0.18, -42. },
-		{ "L_1_F",  3,  "sector 45", 0.18, -3.6 },
-		{ "R_1_F", 103, "sector 56", 0.24, -2.8 },
-		{ "R_2_F", 123, "sector 56", 0.22, -41.9 }
+		{ "L_2_F", 23,  "sector 45", (cfg.xangle == 160) ? 0.19 : 0.17, -42. },
+		{ "L_1_F",  3,  "sector 45", (cfg.xangle == 160) ? 0.19 : 0.18, -3.6 },
+		{ "R_1_F", 103, "sector 56", (cfg.xangle == 160) ? 0.40 : 0.34, -2.8 },
+		{ "R_2_F", 123, "sector 56", (cfg.xangle == 160) ? 0.39 : 0.34, -41.9 }
 	};
 
 	// get input
@@ -142,7 +184,7 @@ int main()
 			continue;
 		}
 
-		TGraphErrors *g_y_cen_vs_x = BuildModeGraph(h2_y_vs_x);
+		TGraphErrors *g_y_cen_vs_x = BuildModeGraph(h2_y_vs_x, cfg.aligned);
 
 		if (g_y_cen_vs_x->GetN() < 5)
 			continue;
