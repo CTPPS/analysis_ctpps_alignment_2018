@@ -13,10 +13,12 @@ struct RPGraphs
 {
 	TGraphErrors *g_x_meth_o = NULL;
 	TGraphErrors *g_x_rel;
+	TGraphErrors *g_y_meth_f;
 	TGraphErrors *g_y_meth_s;
 
 	TF1 *f_x_meth_o;
 	TF1 *f_x_rel;
+	TF1 *f_y_meth_f;
 	TF1 *f_y_meth_s;
 
 	void Init()
@@ -26,6 +28,7 @@ struct RPGraphs
 
 		g_x_meth_o = new TGraphErrors();
 		g_x_rel = new TGraphErrors();
+		g_y_meth_f = new TGraphErrors();
 		g_y_meth_s = new TGraphErrors();
 	}
 };
@@ -94,25 +97,29 @@ int main()
 					signed int r = 0;
 
 					AlignmentResultsCollection arc_x_method_o;
-					r += arc_x_method_o.Load(dir + "/x_alignment_meth_o.out");
+					r += 1 * arc_x_method_o.Load(dir + "/x_alignment_meth_o.out");
 
 					AlignmentResultsCollection arc_x_rel;
-					r += arc_x_rel.Load(dir + "/x_alignment_relative.out");
+					r += 2 * arc_x_rel.Load(dir + "/x_alignment_relative.out");
 
-					AlignmentResultsCollection arc_y_method_s;
-					r += arc_y_method_s.Load(dir + "/y_alignment_alt.out");
+					AlignmentResultsCollection arc_y_meth_f;
+					r += 4 * arc_y_meth_f.Load(dir + "/y_alignment.out");
+
+					//AlignmentResultsCollection arc_y_meth_s;
+					//r += arc_y_meth_s.Load(dir + "/y_alignment_alt.out");
 
 					// check all input available
 					if (r != 0)
 					{
-						//printf("WARNING: some input files invailable in directory '%s'.\n", dir.c_str());
+						//printf("WARNING: some input files invailable (%u) in directory '%s'.\n", r, dir.c_str());
 						continue;
 					}
 
 					// extract corrections
 					const AlignmentResults &ar_x_method_o = arc_x_method_o["x_alignment_meth_o"];
 					const AlignmentResults &ar_x_rel = arc_x_rel["x_alignment_relative_sl_fix"];
-					const AlignmentResults &ar_y_method_s = arc_y_method_s["y_alignment_alt"];
+					const AlignmentResults &ar_y_meth_f = arc_y_meth_f["y_alignment_sl_fix"];
+					//const AlignmentResults &ar_y_meth_s = arc_y_meth_s["y_alignment_alt"];
 
 					bool found = true;
 
@@ -124,9 +131,15 @@ int main()
 					if (rit_x_rel == ar_x_rel.end())
 						found = false;
 
-					auto rit_y_method_s = ar_y_method_s.find(rp);
-					if (rit_y_method_s == ar_y_method_s.end())
+					auto rit_y_meth_f = ar_y_meth_f.find(rp);
+					if (rit_y_meth_f == ar_y_meth_f.end())
 						found = false;
+
+					/*
+					auto rit_y_meth_s = ar_y_meth_s.find(rp);
+					if (rit_y_meth_s == ar_y_meth_s.end())
+						found = false;
+					*/
 
 					if (!found)
 					{
@@ -147,9 +160,15 @@ int main()
 					g.g_x_rel->SetPoint(idx, fill, rit_x_rel->second.sh_x);
 					g.g_x_rel->SetPointError(idx, 0., 0.010);
 
+					idx = g.g_y_meth_f->GetN();
+					g.g_y_meth_f->SetPoint(idx, fill, rit_y_meth_f->second.sh_y);
+					g.g_y_meth_f->SetPointError(idx, 0., rit_y_meth_f->second.sh_y_unc);
+
+					/*
 					idx = g.g_y_meth_s->GetN();
-					g.g_y_meth_s->SetPoint(idx, fill, rit_y_method_s->second.sh_y);
-					g.g_y_meth_s->SetPointError(idx, 0., rit_y_method_s->second.sh_y_unc);
+					g.g_y_meth_s->SetPoint(idx, fill, rit_y_meth_s->second.sh_y);
+					g.g_y_meth_s->SetPointError(idx, 0., rit_y_meth_s->second.sh_y_unc);
+					*/
 				}
 
 				if (!rpsWithMissingData.empty())
@@ -172,8 +191,11 @@ int main()
 		g.second.f_x_rel = new TF1("", "([0] + [1]*x) + (x > 6670) * ([2] + [3]*x) + (x > 6800) * ([4] + [5]*x) + (x > 6980) * ([6] + [7]*x)  + (x > 7180) * ([8] + [9]*x)");
 		g.second.g_x_rel->Fit(g.second.f_x_rel, "Q");
 
-		g.second.f_y_meth_s = new TF1("", "([0] + [1]*x) + (x > 6670) * ([2] + [3]*x) + (x > 6800) * ([4] + [5]*x) + (x > 6980) * ([6] + [7]*x)  + (x > 7180) * ([8] + [9]*x)");
-		g.second.g_y_meth_s->Fit(g.second.f_y_meth_s, "Q");
+		g.second.f_y_meth_f = new TF1("", "([0] + [1]*x) + (x > 6670) * ([2] + [3]*x) + (x > 6800) * ([4] + [5]*x) + (x > 6980) * ([6] + [7]*x)  + (x > 7180) * ([8] + [9]*x)");
+		g.second.g_y_meth_f->Fit(g.second.f_y_meth_f, "Q");
+
+		//g.second.f_y_meth_s = new TF1("", "([0] + [1]*x) + (x > 6670) * ([2] + [3]*x) + (x > 6800) * ([4] + [5]*x) + (x > 6980) * ([6] + [7]*x)  + (x > 7180) * ([8] + [9]*x)");
+		//g.second.g_y_meth_s->Fit(g.second.f_y_meth_s, "Q");
 	}
 
 	// prepare output
@@ -202,10 +224,12 @@ int main()
 
 			double y_corr_N = 0., y_corr_F = 0.;
 			if (ad.name == "sector 45") y_corr_N += -0E-3, y_corr_F += +0E-3;
-			if (ad.name == "sector 56") y_corr_N += -12E-3, y_corr_F += +12E-3;
+			if (ad.name == "sector 56") y_corr_N += -0E-3, y_corr_F += +0E-3;
+			//if (ad.name == "sector 45") y_corr_N += -180E-3 - 200E-3, y_corr_F += +80E-3 - 370E-3;
+			//if (ad.name == "sector 56") y_corr_N += -80E-3 - 100E-3, y_corr_F += +80E-3 - 160E-3;
 
-			AlignmentResult ar_N(de_x_N + x_corr_rel/2., 150E-3, d_N.f_y_meth_s->Eval(fill) + y_corr_N, 150E-3);
-			AlignmentResult ar_F(de_x_F - x_corr_rel/2., 150E-3, d_F.f_y_meth_s->Eval(fill) + y_corr_F, 150E-3);
+			AlignmentResult ar_N(de_x_N + x_corr_rel/2., 150E-3, d_N.f_y_meth_f->Eval(fill) + y_corr_N, 150E-3);
+			AlignmentResult ar_F(de_x_F - x_corr_rel/2., 150E-3, d_F.f_y_meth_f->Eval(fill) + y_corr_F, 150E-3);
 
 			ars_combined[ad.rp_id_N] = ar_N;
 			ars_combined[ad.rp_id_F] = ar_F;
@@ -217,7 +241,7 @@ int main()
 	}
 
 	// save results
-	output.Write("fit_alignments_2019_05_09.1.out");
+	output.Write("fit_alignments_2019_07_01.out");
 
 	TFile *f_out = TFile::Open("fit_alignments.root", "recreate");
 
@@ -233,6 +257,9 @@ int main()
 
 		g.second.g_x_rel->Write("g_x_rel");
 		//g.second.f_x_rel->Write("f_x_rel");
+
+		g.second.g_y_meth_f->Write("g_y_meth_f");
+		//g.second.f_y_meth_f->Write("f_y_meth_f");
 
 		g.second.g_y_meth_s->Write("g_y_meth_s");
 		//g.second.f_y_meth_s->Write("f_y_meth_s");
