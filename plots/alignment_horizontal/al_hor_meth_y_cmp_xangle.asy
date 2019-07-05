@@ -3,69 +3,29 @@ import pad_layout;
 
 include "../common.asy";
 
-string topDir = "../../data/phys/";
-
-include "../fills_samples.asy";
-InitDataSets();
-
-//----------------------------------------------------------------------------------------------------
-
-string sample = "SingleMuon";
-
-string method = "method y";
-
-string xangles[];
-string betas[];
-string xangle_refs[];
-pen xangle_pens[];
-xangles.push("130"); betas.push("0.25"); xangle_refs.push("data_alig_fill_6554_xangle_130_beta_0.25_DS1"); xangle_pens.push(blue);
-xangles.push("130"); betas.push("0.30"); xangle_refs.push("data_alig_fill_6554_xangle_130_beta_0.30_DS1"); xangle_pens.push(red);
-xangles.push("160"); betas.push("0.30"); xangle_refs.push("data_alig_fill_6554_xangle_160_beta_0.30_DS1"); xangle_pens.push(heavygreen);
-xangles.push("ALL"); betas.push("ALL"); xangle_refs.push("data_alig_fill_6554_xangle_160_beta_0.30_DS1"); xangle_pens.push(magenta);
+string topDir = "../../";
 
 real xfa = 0.3;
-
-int rp_ids[];
-string rps[], rp_labels[];
-real rp_shift_m[];
-rp_ids.push(23); rps.push("L_2_F"); rp_labels.push("L-220-fr"); rp_shift_m.push(-42.05);
-rp_ids.push(3); rps.push("L_1_F"); rp_labels.push("L-210-fr"); rp_shift_m.push(-3.7);
-rp_ids.push(103); rps.push("R_1_F"); rp_labels.push("R-210-fr"); rp_shift_m.push(-2.75);
-rp_ids.push(123); rps.push("R_2_F"); rp_labels.push("R-220-fr"); rp_shift_m.push(-42.05);
 
 yTicksDef = RightTicks(0.2, 0.1);
 
 xSizeDef = x_size_fill_cmp;
 
-//----------------------------------------------------------------------------------------------------
-
-string TickLabels(real x)
-{
-	if (x >=0 && x < fill_data.length)
-	{
-		return format("%i", fill_data[(int) x].fill);
-	} else {
-		return "";
-	}
-}
-
-xTicksDef = LeftTicks(rotate(90)*Label(""), TickLabels, Step=1, step=0);
+xTicksDef = LeftTicks(rotate(90)*Label(""), FillTickLabels, Step=1, step=0);
 
 //----------------------------------------------------------------------------------------------------
 
 NewPad(false, 1, 1);
 
-AddToLegend("method = " + method);
+AddToLegend("version = " + version_phys);
 AddToLegend("sample = " + sample);
 
-for (int xai : xangles.keys)
+for (int cfgi : cfg_xangles.keys)
 {
-	AddToLegend("xangle = " + xangles[xai] + ", beta = " + betas[xai], xangle_pens[xai]);
+	AddToLegend("xangle = " + cfg_xangles[cfgi] + ", beta = " + cfg_betas[cfgi], cfg_pens[cfgi]);
 }
 
 AttachLegend();
-
-//----------------------------------------------------------------------------------------------------
 
 for (int rpi : rps.keys)
 {
@@ -80,7 +40,6 @@ for (int rpi : rps.keys)
 		write(format("    %i", fill_data[fdi].fill));
 
 		int fill = fill_data[fdi].fill; 
-		int rp_id = rp_ids[rpi];
 
 		for (int dsi : fill_data[fdi].datasets.keys)
 		{
@@ -90,16 +49,16 @@ for (int rpi : rps.keys)
 	
 			mark m = mCi+3pt;
 	
-			for (int xai : xangles.keys)
+			for (int cfgi : cfg_xangles.keys)
 			{
-				if (fill_data[fdi].datasets[dsi].xangle != xangles[xai])
+				if (fill_data[fdi].datasets[dsi].xangle != cfg_xangles[cfgi])
 					continue;
 
-				if (fill_data[fdi].datasets[dsi].beta != betas[xai])
+				if (fill_data[fdi].datasets[dsi].beta != cfg_betas[cfgi])
 					continue;
 
-				string f = topDir + dataset + "/" + sample + "/match.root";	
-				RootObject obj = RootGetObject(f, xangle_refs[xai] + "/" + rps[rpi] + "/" + method + "/g_results", error = false);
+				string f = topDir + "data/" + version_phys + "/" + dataset + "/" + sample + "/match.root";	
+				RootObject obj = RootGetObject(f, cfg_refs[cfgi] + "/" + rps[rpi] + "/method y/g_results", error = false);
 	
 				if (!obj.valid)
 					continue;
@@ -109,11 +68,13 @@ for (int rpi : rps.keys)
 				obj.vExec("GetPoint", 0, ax, ay); real bsh = ay[0];
 				obj.vExec("GetPoint", 1, ax, ay); real bsh_unc = ay[0];
 
-				real x = fdi + xai * xfa / (xangles.length - 1) - xfa/2;
+				real x = fdi;
+				if (cfg_xangles.length > 1)
+					x += cfgi * xfa / (cfg_xangles.length - 1) - xfa/2;
 
 				bool pointValid = (bsh == bsh && bsh_unc == bsh_unc && fabs(bsh) > 0.01);
 	
-				pen p = xangle_pens[xai];
+				pen p = cfg_pens[cfgi];
 	
 				if (pointValid)
 				{
@@ -125,10 +86,14 @@ for (int rpi : rps.keys)
 	}
 
 	real y_mean = GetMeanHorizontalAlignment(rps[rpi]);
-	draw((-1, y_mean)--(fill_data.length, y_mean), black);
+	//draw((-1, y_mean)--(fill_data.length, y_mean), black);
 
-	//xlimits(-1, fill_data.length, Crop);
-	limits((-1, y_mean-1), (fill_data.length, y_mean+1), Crop);
+	real y_min = y_mean - 1;
+	real y_max = y_mean + 1;
+
+	DrawFillMarkers(y_min, y_max);
+
+	limits((-1, y_min), (fill_data.length, y_max), Crop);
 
 	AttachLegend("{\SetFontSizesXX " + rp_labels[rpi] + "}");
 }

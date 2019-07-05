@@ -3,41 +3,47 @@ import pad_layout;
 
 include "../common.asy";
 
-string topDir = "../../data/phys/";
-
-string reference = reference_std;
-string datasets[] = datasets_std;
-
-string rps[], rp_labels[];
-rps.push("L_2_F"); rp_labels.push("L-220-fr");
-rps.push("L_1_F"); rp_labels.push("L-210-fr");
-rps.push("R_1_F"); rp_labels.push("R-210-fr");
-rps.push("R_2_F"); rp_labels.push("R-220-fr");
+string topDir = "../../";
 
 ySizeDef = 5cm;
 
+/*
+xangle = "130";
+beta = "0.25";
+ref = "data_alig-version1_fill_6554_xangle_130_beta_0.25_DS1";
+*/
 //----------------------------------------------------------------------------------------------------
 
-NewPad();
+NewPad(false);
+AddToLegend("version = " + version_phys);
+
+AddToLegend("sample = " + sample);
+AddToLegend("xangle = " + xangle);
+AddToLegend("beta = " + beta);
+
+AddToLegend("ref = " + replace(ref, "_", "\_"));
+
+AttachLegend();
+
 for (int rpi : rps.keys)
 	NewPadLabel(rp_labels[rpi]);
 
-for (int dsi : datasets.keys)
+for (int fi : fills_phys_short.keys)
 {
-	string dataset = datasets[dsi];
+	string fill = fills_phys_short[fi];
 
-	write("* " + dataset);
+	write("* " + fill);
 
 	NewRow();
-	NewPadLabel(replace(dataset, "_", "\_"));
+	NewPadLabel(fill);
 
 	for (int rpi : rps.keys)
 	{
 		NewPad("$x\ung{mm}$", "std.~dev.~of $y\ung{mm}$");
 		currentpad.yTicks = RightTicks(0.5, 0.1);
 
-		string f = topDir + dataset+"/match.root";
-		string p_base = reference + "/" + rps[rpi] + "/method y/c_cmp";
+		string f = topDir + "data/" + version_phys + "/fill_" + fill + "/xangle_" + xangle + "_beta_" + beta + "/" + sample + "/match.root";
+		string p_base = ref + "/" + rps[rpi] + "/method y/c_cmp";
 		RootObject obj_base = RootGetObject(f, p_base, error=false);
 		if (!obj_base.valid)
 			continue;

@@ -1,11 +1,12 @@
 import root;
 import pad_layout;
 
-string topDir = "../../data/phys/";
+include "../common.asy";
 
-string reference = "data_alig_fill_6228_xangle_150_DS1";
+string topDir = "../../data/phys-version1/";
 
-string dataset = "fill_7334/xangle_160_beta_0.30/ZeroBias";
+string reference = reference_std;
+string dataset = datasets_std[1];
 
 string rps[], rp_labels[];
 rps.push("L_2_F"); rp_labels.push("L-220-fr");
@@ -62,9 +63,11 @@ for (int rpi : rps.keys)
 	draw(RootGetObject(topDir + dataset+"/match.root", p_base + "/g_n_bins"), "p", magenta, mCi+1pt+magenta);
 
 	//limits((-5, 0), (+0, 80), Crop);
+	/*
 	yaxis(XEquals(sh_best - sh_best_unc, false), dashed);
 	yaxis(XEquals(sh_best, false), solid);
 	yaxis(XEquals(sh_best + sh_best_unc, false), dashed);
+	*/
 }
 
 NewRow();
@@ -85,9 +88,11 @@ for (int rpi : rps.keys)
 
 	//limits((-5, 0), (+0, 200), Crop);
 	//xlimits(-5, 0, Crop);
+	/*
 	yaxis(XEquals(sh_best - sh_best_unc, false), dashed);
 	yaxis(XEquals(sh_best, false), solid);
 	yaxis(XEquals(sh_best + sh_best_unc, false), dashed);
+	*/
 
 	AddToLegend(format("%.2f", sh_best), black);
 	AttachLegend();

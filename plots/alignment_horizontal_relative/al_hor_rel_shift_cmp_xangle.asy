@@ -5,11 +5,11 @@ include "../common.asy";
 
 string topDir = "../../";
 
-real xfa = 0.3;
-
-yTicksDef = RightTicks(0.5, 0.1);
+real sfa = 0.3;
 
 xSizeDef = x_size_fill_cmp;
+
+yTicksDef = RightTicks(0.1, 0.05);
 
 xTicksDef = LeftTicks(rotate(90)*Label(""), FillTickLabels, Step=1, step=0);
 
@@ -27,13 +27,13 @@ AttachLegend();
 
 //----------------------------------------------------------------------------------------------------
 
-for (int rpi : rps.keys)
+for (int ai : a_sectors.keys)
 {
-	write(rps[rpi]);
+	write(a_sectors[ai]);
 
 	NewRow();
 
-	NewPad("fill", "vertical shift $\ung{mm}$");
+	NewPad("fill", "$x_F - x_N\ung{mm}$");
 
 	for (int fdi : fill_data.keys)
 	{
@@ -57,41 +57,43 @@ for (int rpi : rps.keys)
 				if (fill_data[fdi].datasets[dsi].beta != cfg_betas[cfgi])
 					continue;
 
-				string f = topDir + "data/" + version_phys + "/" + dataset + "/" + sample + "/y_alignment_alt.root";	
-				RootObject results = RootGetObject(f, rp_dirs[rpi] + "/g_results", error=false);
-	
-				if (!results.valid)
+				string f = topDir + "data/" + version_phys + "/" + dataset + "/" + sample + "/x_alignment_relative.root";
+				RootObject obj = RootGetObject(f, a_sectors[ai] + "/g_results", error = false);
+
+				if (!obj.valid)
 					continue;
-	
-				real ax[] = {0.};
-				real ay[] = {0.};
-				results.vExec("GetPoint", 2, ax, ay); real sh_y = ax[0], sh_y_unc = ay[0];
+
+				real ax[] = { 0. };
+				real ay[] = { 0. };
+				
+				obj.vExec("GetPoint", 2, ax, ay); real b = ax[0], b_unc = ay[0];
+				obj.vExec("GetPoint", 3, ax, ay); real b_fs = ax[0], b_fs_unc = ay[0];
 
 				real x = fdi;
 				if (cfg_xangles.length > 1)
-					x += cfgi * xfa / (cfg_xangles.length - 1) - xfa/2;
+					x += cfgi * sfa / (cfg_xangles.length - 1) - sfa/2;
 
 				pen p = cfg_pens[cfgi];
 
-				if (sh_y_unc > 0 && sh_y_unc < 1)
+				if (b_fs == b_fs && b_fs_unc == b_fs_unc && b_fs > 1.)
 				{
-					draw((x, sh_y), m + p);
-					draw((x, sh_y - sh_y_unc)--(x, sh_y + sh_y_unc), p);
+					draw((x, b_fs), m + p);
+					draw((x, b_fs-b_fs_unc)--(x, b_fs+b_fs_unc), p);
 				}
 			}
 		}
 	}
 
-	real y_mean = GetMeanVerticalAlignment(rps[rpi]);
+	real y_mean = GetMeanHorizontalRelativeAlignment(a_sectors[ai]);
 
-	real y_min = y_mean - 1.5;
-	real y_max = y_mean + 1.5;
+	real y_min = y_mean - 0.3;
+	real y_max = y_mean + 0.6;
 
 	DrawFillMarkers(y_min, y_max);
 
 	limits((-1, y_min), (fill_data.length, y_max), Crop);
 
-	AttachLegend("{\SetFontSizesXX " + rp_labels[rpi] + "}");
+	AttachLegend("{\SetFontSizesXX " + a_labels[ai] + "}");
 }
 
 //----------------------------------------------------------------------------------------------------

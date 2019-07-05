@@ -7,11 +7,7 @@ include "../io_alignment_format.asy";
 include "../fills_samples.asy";
 InitDataSets();
 
-string files[], f_labels[];
-pen f_pens[];
-
-files.push("/afs/cern.ch/work/j/jkaspar/software/ctpps/development/ctpps_initial_proton_reconstruction_CMSSW_10_2_0/CMSSW_10_2_0/src/RecoCTPPS/ProtonReconstruction/data/alignment/2018/collect_alignments_2018_11_02.3.out"); f_labels.push("old"); f_pens.push(blue);
-files.push("../../export/fit_alignments_2019_05_09.1.out"); f_labels.push("new"); f_pens.push(red);
+include "result_list.asy";
 
 int rp_ids[];
 string rps[], rp_labels[];

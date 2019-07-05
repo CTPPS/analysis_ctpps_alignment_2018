@@ -1,51 +1,49 @@
 import root;
 import pad_layout;
 
-string topDir = "../../";
+include "../common.asy";
 
-string sectors[];
-sectors.push("sector 45");
-sectors.push("sector 56");
+string topDir = "../../";
 
 string cuts[], c_labels[], c_x_labels[], c_y_labels[];
 real c_ranges[];
 cuts.push("cut_h"); c_labels.push("cut h"); c_ranges.push(0.4); c_x_labels.push("$x(\hbox{210-fr})\ung{mm}$"); c_y_labels.push("$x(\hbox{220-fr})\ung{mm}$");
-//cuts.push("cut_v"); c_labels.push("cut v"); c_ranges.push(0.2); c_x_labels.push("$y(\hbox{210-fr})\ung{mm}$"); c_y_labels.push("$y(\hbox{220-fr})\ung{mm}$");
-
-string datasets[] = {
-	"fill_6583/xangle_ALL_beta_ALL/ZeroBias",
-	"fill_6719/xangle_ALL_beta_ALL/EGamma",
-	"fill_6860/xangle_ALL_beta_ALL/ZeroBias",
-	"fill_7005/xangle_ALL_beta_ALL/ZeroBias",
-	"fill_7145/xangle_ALL_beta_ALL/ZeroBias",
-	"fill_7334/xangle_ALL_beta_ALL/ZeroBias",
-};
+cuts.push("cut_v"); c_labels.push("cut v"); c_ranges.push(0.2); c_x_labels.push("$y(\hbox{210-fr})\ung{mm}$"); c_y_labels.push("$y(\hbox{220-fr})\ung{mm}$");
 
 TH2_palette = Gradient(blue, heavygreen, yellow, red);
+
+xangle = "130";
+beta = "0.25";
+sample = "DS1";
 
 //----------------------------------------------------------------------------------------------------
 
 NewPad(false);
 
-for (int sci : sectors.keys)
+AddToLegend("version = " + version_alig);
+AddToLegend("sample = " + sample);
+AddToLegend("xangle = " + xangle);
+AddToLegend("beta = " + beta);
+
+AttachLegend();
+
+for (int ai : a_sectors.keys)
 {
 	for (int cti : cuts.keys)
-	{
-		NewPad(false);
-		label("\vbox{\SetFontSizesXX\hbox{"+sectors[sci]+"}\hbox{"+c_labels[cti]+"}}");
-	}
+		NewPadLabel("\vbox{\hbox{"+a_sectors[ai]+"}\hbox{"+c_labels[cti]+"}}");
 }
 
-for (int dsi : datasets.keys)
+for (int fi : fills_alig.keys)
 {
+	string fill = fills_alig[fi];
+
 	NewRow();
 
-	NewPad(false);
-	label("{\SetFontSizesXX " + replace(datasets[dsi], "_", "\_") + "}");
+	NewPadLabel(fill);
 
-	string f = topDir + "data/phys/" + datasets[dsi] + "/distributions.root";
+	string f = topDir + "data/" + version_alig + "/fill_" + fill + "/xangle_" + xangle + "_beta_" + beta + "/" + sample + "/distributions.root";
 
-	for (int sci : sectors.keys)
+	for (int ai : a_sectors.keys)
 	{
 		for (int cti : cuts.keys)
 		{
@@ -58,7 +56,7 @@ for (int dsi : datasets.keys)
 			//TH1_x_min = -r;
 			//TH1_x_max = +r;
 
-			string obj_path_base = sectors[sci] + "/cuts/" + cuts[cti] + "/canvas_before";
+			string obj_path_base = a_sectors[ai] + "/cuts/" + cuts[cti] + "/canvas_before";
 
 			RootObject hist = RootGetObject(f, obj_path_base + "#0");
 			hist.vExec("Rebin2D", 3, 3);
@@ -70,10 +68,13 @@ for (int dsi : datasets.keys)
 			//xlimits(-r, r, Crop);
 
 			if (cuts[cti] == "cut_h")
-				limits((0, 40), (30, 70), Crop);
+				limits((0, 0), (30, 30), Crop);
+			else
+				limits((-10, -10), (+10, +10), Crop);
 
 			//AttachLegend(format("%u", fill), NW, NW);
 		}
 	}
-
 }
+
+GShipout(vSkip=1mm);

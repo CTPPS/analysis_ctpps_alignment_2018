@@ -3,56 +3,28 @@ import pad_layout;
 
 include "../common.asy";
 
-string topDir = "../../data/phys-version1/";
-
-include "../fills_samples.asy";
-InitDataSets();
-
-//----------------------------------------------------------------------------------------------------
-
-string sample = "ALL";
+string topDir = "../../";
 
 real mfa = 0.3;
 
 string methods[];
 pen m_pens[];
 //methods.push("method x"); m_pens.push(blue);
-//methods.push("method y"); m_pens.push(red);
+methods.push("method y"); m_pens.push(red);
 methods.push("method o"); m_pens.push(heavygreen);
-
-string xangle = "160";
-string beta = "0.30";
-string ref_label = "data_alig-version-old_fill_6554_xangle_160_beta_0.30_DS1";
-
-int rp_ids[];
-string rps[], rp_labels[];
-real rp_shift_m[];
-rp_ids.push(23); rps.push("L_2_F"); rp_labels.push("L-220-fr"); rp_shift_m.push(-42.05);
-rp_ids.push(3); rps.push("L_1_F"); rp_labels.push("L-210-fr"); rp_shift_m.push(-3.7);
-rp_ids.push(103); rps.push("R_1_F"); rp_labels.push("R-210-fr"); rp_shift_m.push(-2.75);
-rp_ids.push(123); rps.push("R_2_F"); rp_labels.push("R-220-fr"); rp_shift_m.push(-42.05);
 
 yTicksDef = RightTicks(0.2, 0.1);
 
 xSizeDef = x_size_fill_cmp;
 
-//----------------------------------------------------------------------------------------------------
-
-string TickLabels(real x)
-{
-	if (x >=0 && x < fill_data.length)
-	{
-		return format("%i", fill_data[(int) x].fill);
-	} else {
-		return "";
-	}
-}
-
-xTicksDef = LeftTicks(rotate(90)*Label(""), TickLabels, Step=1, step=0);
+xTicksDef = LeftTicks(rotate(90)*Label(""), FillTickLabels, Step=1, step=0);
 
 //----------------------------------------------------------------------------------------------------
 
 NewPad(false, 1, 1);
+
+AddToLegend("version = " + version_phys);
+AddToLegend("ref = " + replace(ref, "_", "\_"));
 
 AddToLegend("sample = " + sample);
 AddToLegend("xangle = " + xangle);
@@ -67,7 +39,7 @@ AttachLegend();
 
 for (int rpi : rps.keys)
 {
-	write(rps[rpi]);
+	write("* " + rps[rpi]);
 
 	NewRow();
 
@@ -78,7 +50,6 @@ for (int rpi : rps.keys)
 		write(format("    %i", fill_data[fdi].fill));
 
 		int fill = fill_data[fdi].fill; 
-		int rp_id = rp_ids[rpi];
 
 		for (int dsi : fill_data[fdi].datasets.keys)
 		{
@@ -101,15 +72,17 @@ for (int rpi : rps.keys)
 				string method = methods[mi];
 
 				RootObject obj;
+
 				if (method == "method x" || method == "method y")
 				{
-					string f = topDir + dataset + "/" + sample + "/match.root";	
-					obj = RootGetObject(f, ref_label + "/" + rps[rpi] + "/" + method + "/g_results", error = false);
+					string f = topDir + "data/" + version_phys + "/" + dataset + "/" + sample + "/match.root";	
+					obj = RootGetObject(f, ref + "/" + rps[rpi] + "/" + method + "/g_results", error = false);
 				}
+
 				if (method == "method o")
 				{
-					string f = topDir + dataset + "/" + sample + "/x_alignment_meth_o.root";	
-					obj = RootGetObject(f, ref_label + "/" + rps[rpi] + "/g_results", error = false);
+					string f = topDir + "data/" + version_phys + "/" + dataset + "/" + sample + "/x_alignment_meth_o.root";	
+					obj = RootGetObject(f, ref + "/" + rps[rpi] + "/g_results", error = false);
 				}
 
 				if (obj.valid)
@@ -143,8 +116,8 @@ for (int rpi : rps.keys)
 	real y_mean = GetMeanHorizontalAlignment(rps[rpi]);
 	//draw((-1, y_mean)--(fill_data.length, y_mean), black);
 
-	real y_min = y_mean-0.5;
-	real y_max = y_mean+1.0;
+	real y_min = y_mean - 1.0;
+	real y_max = y_mean + 1.0;
 
 	DrawFillMarkers(y_min, y_max);
 

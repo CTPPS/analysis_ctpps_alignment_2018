@@ -3,15 +3,7 @@ import pad_layout;
 
 include "../common.asy";
 
-string topDir = "../../data/phys-version1/";
-
-include "../fills_samples.asy";
-InitDataSets();
-
-//----------------------------------------------------------------------------------------------------
-
-//string sample = "SingleMuon";
-string sample = "ALL";
+string topDir = "../../";
 
 real mfa = 0.3;
 
@@ -21,37 +13,18 @@ pen am_pens[];
 //abs_methods.push("method y"); am_pens.push(red);
 abs_methods.push("method o"); am_pens.push(heavygreen);
 
-string xangle = "160";
-string beta = "0.30";
-string ref_label = "data_alig-version-old_fill_6554_xangle_160_beta_0.30_DS1";
-
-string sectors[], s_labels[];
-real s_y_mins[], s_y_maxs[], s_y_cens[];
-string s_rp_Ns[], s_rp_Fs[];
-sectors.push("45"); s_labels.push("sector 45"); s_y_mins.push(38.0); s_y_maxs.push(39.0); s_y_cens.push(+0.008); s_rp_Ns.push("L_1_F"); s_rp_Fs.push("L_2_F");
-sectors.push("56"); s_labels.push("sector 56"); s_y_mins.push(38.8); s_y_maxs.push(39.8); s_y_cens.push(-0.012); s_rp_Ns.push("R_1_F"); s_rp_Fs.push("R_2_F");
-
 yTicksDef = RightTicks(0.2, 0.1);
 
 xSizeDef = x_size_fill_cmp;
 
-//----------------------------------------------------------------------------------------------------
-
-string TickLabels(real x)
-{
-	if (x >=0 && x < fill_data.length)
-	{
-		return format("%i", fill_data[(int) x].fill);
-	} else {
-		return "";
-	}
-}
-
-xTicksDef = LeftTicks(rotate(90)*Label(""), TickLabels, Step=1, step=0);
+xTicksDef = LeftTicks(rotate(90)*Label(""), FillTickLabels, Step=1, step=0);
 
 //----------------------------------------------------------------------------------------------------
 
 NewPad(false, 1, 1);
+
+AddToLegend("version = " + version_phys);
+AddToLegend("ref = " + replace(ref, "_", "\_"));
 
 AddToLegend("sample = " + sample);
 AddToLegend("xangle = " + xangle);
@@ -66,9 +39,9 @@ AttachLegend();
 
 //----------------------------------------------------------------------------------------------------
 
-for (int si : sectors.keys)
+for (int ai : arms.keys)
 {
-	write(sectors[si]);
+	write(a_sectors[ai]);
 
 	NewRow();
 
@@ -105,16 +78,16 @@ for (int si : sectors.keys)
 
 				if (method == "method x" || method == "method y")
 				{
-					string f = topDir + dataset + "/" + sample + "/match.root";	
-					obj_N = RootGetObject(f, ref_label + "/" + s_rp_Ns[si] + "/" + method + "/g_results", error = false);
-					obj_F = RootGetObject(f, ref_label + "/" + s_rp_Fs[si] + "/" + method + "/g_results", error = false);
+					string f = topDir + "data/" + version_phys + "/" + dataset + "/" + sample + "/match.root";
+					obj_N = RootGetObject(f, ref + "/" + a_nr_rps[ai] + "/" + method + "/g_results", error = false);
+					obj_F = RootGetObject(f, ref + "/" + a_fr_rps[ai] + "/" + method + "/g_results", error = false);
 				}
 
 				if (method == "method o")
 				{
-					string f = topDir + dataset + "/" + sample + "/x_alignment_meth_o.root";	
-					obj_N = RootGetObject(f, ref_label + "/" + s_rp_Ns[si] + "/g_results", error = false);
-					obj_F = RootGetObject(f, ref_label + "/" + s_rp_Fs[si] + "/g_results", error = false);
+					string f = topDir + "data/" + version_phys + "/" + dataset + "/" + sample + "/x_alignment_meth_o.root";
+					obj_N = RootGetObject(f, ref + "/" + a_nr_rps[ai] + "/g_results", error = false);
+					obj_F = RootGetObject(f, ref + "/" + a_fr_rps[ai] + "/g_results", error = false);
 				}
 
 				real ax[] = { 0. };
@@ -157,8 +130,8 @@ for (int si : sectors.keys)
 
 			// relative methods
 			{
-				string f = topDir + dataset + "/" + sample + "/x_alignment_relative.root";	
-				RootObject obj = RootGetObject(f, "sector " + sectors[si] + "/g_results", error = false);
+				string f = topDir + "data/" + version_phys + "/" + dataset + "/" + sample + "/x_alignment_relative.root";
+				RootObject obj = RootGetObject(f, a_sectors[ai] + "/g_results", error = false);
 
 				if (!obj.valid)
 					continue;
@@ -166,8 +139,8 @@ for (int si : sectors.keys)
 				real ax[] = { 0. };
 				real ay[] = { 0. };
 				
-				obj.vExec("GetPoint", 1, ax, ay); real b = ax[0], b_unc = ay[0];
-				obj.vExec("GetPoint", 2, ax, ay); real b_fs = ax[0], b_fs_unc = ay[0];
+				obj.vExec("GetPoint", 2, ax, ay); real b = ax[0], b_unc = ay[0];
+				obj.vExec("GetPoint", 3, ax, ay); real b_fs = ax[0], b_fs_unc = ay[0];
 
 				if (b_fs == b_fs && b_fs_unc == b_fs_unc && b_fs > 1.)
 				{
@@ -179,18 +152,17 @@ for (int si : sectors.keys)
 		}
 	}
 
-	real y_mean = GetMeanHorizontalRelativeAlignment(sectors[si]);
+	real y_mean = GetMeanHorizontalRelativeAlignment(a_sectors[ai]);
 	draw((-1, y_mean)--(fill_data.length, y_mean), black);
 
-	real y_min = y_mean-0.5;
-	real y_max = y_mean+1.0;
+	real y_min = y_mean - 0.5;
+	real y_max = y_mean + 1.0;
 
 	DrawFillMarkers(y_min, y_max);
 
-	//xlimits(-1, fill_data.length, Crop);
 	limits((-1, y_min), (fill_data.length, y_max), Crop);
 
-	AttachLegend("{\SetFontSizesXX " + s_labels[si] + "}");
+	AttachLegend("{\SetFontSizesXX " + a_labels[ai] + "}");
 }
 
 //----------------------------------------------------------------------------------------------------

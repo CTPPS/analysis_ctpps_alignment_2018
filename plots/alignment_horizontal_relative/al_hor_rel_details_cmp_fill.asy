@@ -3,61 +3,74 @@ import pad_layout;
 
 include "../common.asy";
 
-string topDir = "../../data/phys/";
-
-string datasets[] = datasets_std;
-//string datasets[] = {
-//	"fill_6239/xangle_150/DoubleEG",
-//};
-
-string sectors[], s_labels[];
-real s_y_mins[], s_y_maxs[];
-sectors.push("45"); s_labels.push("sector 45"); s_y_mins.push(37.5); s_y_maxs.push(38.5);
-sectors.push("56"); s_labels.push("sector 56"); s_y_mins.push(38.5); s_y_maxs.push(39.5);
+string topDir = "../../";
 
 ySizeDef = 5cm;
 
 TGraph_errorBar = None;
 
+yTicksDef = RightTicks(0.5, 0.1);
+
 //----------------------------------------------------------------------------------------------------
 
-NewPad();
-for (int si : sectors.keys)
-	NewPadLabel(s_labels[si]);
+NewPad(false);
 
-for (int dsi : datasets.keys)
+AddToLegend("version = " + version_phys);
+AddToLegend("sample = " + sample);
+AddToLegend("xangle = " + xangle);
+AddToLegend("beta = " + beta);
+
+AttachLegend();
+
+for (int ai : a_sectors.keys)
+	NewPadLabel(a_labels[ai]);
+
+for (int fi : fills_phys_short.keys)
 {
-	string dataset = datasets[dsi];
+	string fill = fills_phys_short[fi];
 
 	NewRow();
-	NewPadLabel(replace(dataset, "_", "\_"));
+	NewPadLabel(fill);
 
-	for (int si : sectors.keys)
+	for (int ai : a_sectors.keys)
 	{
 		NewPad("$x_N\ung{mm}$", "$x_F - x_N\ung{mm}$");
 		//currentpad.yTicks = RightTicks(0.5, 0.1);
 
-		string f = topDir + dataset+"/x_alignment_relative.root";
-		string p_base = "sector " + sectors[si] + "/p_x_diffFN_vs_x_N";
+		string f = topDir + "data/" + version_phys + "/fill_" + fill + "/xangle_" + xangle + "_beta_" + beta + "/" + sample + "/x_alignment_relative.root";
+		string p_base = a_sectors[ai] + "/p_x_diffFN_vs_x_N";
 
 		RootObject hist = RootGetObject(f, p_base, error=false);
 		RootObject fit = RootGetObject(f, p_base + "|ff_sl_fix", error=false);
+		RootObject results = RootGetObject(f, a_sectors[ai] + "/g_results", error=false);
 
-		if (!hist.valid || !fit.valid)
+		if (!hist.valid || !fit.valid || !results.valid)
 			continue;
 
-		draw(hist, "eb", black);
+		real ax[] = {0.};
+		real ay[] = {0.};
+		results.vExec("GetPoint", 0, ax, ay); real sh_x = ax[0];
+		results.vExec("GetPoint", 1, ax, ay); real a = ax[0], a_unc = ay[0];
+		results.vExec("GetPoint", 2, ax, ay); real b = ax[0], b_unc = ay[0];
+		results.vExec("GetPoint", 3, ax, ay); real b_fs = ax[0], b_fs_unc = ay[0];
 
 		TF1_x_min = -inf;
 		TF1_x_max = +inf;
-		draw(fit, "p,l", red+1pt);
+		draw(fit, "p,l", blue+1.5pt);
 
 		TF1_x_min = 0;
 		TF1_x_max = +inf;
-		draw(fit, "p,l", red+dashed);
+		draw(fit, "p,l", blue+dashed);
 
-		//xlimits(0, 15., Crop);
-		limits((0, s_y_mins[si]), (15, s_y_maxs[si]), Crop);
+		draw(hist, "eb", red);
+
+		draw((-sh_x, b), mCi+3pt+magenta);
+
+		real y_min = 37.5, y_max = 40;
+
+		limits((0, y_min), (15, y_max), Crop);
+
+		yaxis(XEquals(-sh_x, false), heavygreen);
 	}
 }
 

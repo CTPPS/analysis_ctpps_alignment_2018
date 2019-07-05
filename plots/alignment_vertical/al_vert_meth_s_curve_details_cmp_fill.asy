@@ -3,7 +3,7 @@ import pad_layout;
 
 include "../common.asy";
 
-string topDir = "../../data/phys-version1/";
+string topDir = "../../";
 
 string plots[], p_arms[], p_rps[], p_x_axis[], p_y_axis[];
 plots.push("sector 45/N/p_y_diffFN_vs_y"); p_arms.push("sector 45"); p_rps.push("near"); p_x_axis.push("y_{LN}\ung{mm}"); p_y_axis.push("y_{LF} - y_{LN}\ung{mm}");
@@ -16,32 +16,36 @@ xSizeDef = 9cm;
 xTicksDef = LeftTicks(1., 0.5);
 yTicksDef = RightTicks(0.1, 0.05);
 
-string datasets[] = datasets_std;
-//string datasets[] = {
-//	"fill_6239/xangle_150/DoubleEG",
-//};
-
 //----------------------------------------------------------------------------------------------------
 
 NewPad(false);
+
+AddToLegend("version = " + version_phys);
+AddToLegend("xangle = " + xangle);
+AddToLegend("beta = " + beta);
+AddToLegend("sample = " + sample);
+
+AttachLegend();
+
 for (int pli : plots.keys)
 	NewPadLabel(p_arms[pli] + ", " + p_rps[pli]);
 
-
-for (int dsi : datasets.keys)
+for (int fi : fills_phys_short.keys)
 {
-	string dataset = datasets[dsi];
+	string fill = fills_phys_short[fi];
 	
 	NewRow();
 
-	NewPadLabel(replace(dataset, "_", "\_"));
+	NewPadLabel(fill);
 
 	for (int pli : plots.keys)
 	{
 		NewPad("$" + p_x_axis[pli] + "$", "mean of $" + p_y_axis[pli] + "$");
+
+		string f = topDir + "data/" + version_phys + "/fill_" + fill + "/xangle_" + xangle + "_beta_" + beta + "/" + sample + "/y_alignment_alt.root";
 	
-		RootObject profile = RootGetObject(topDir + dataset + "/y_alignment_alt.root", plots[pli], error=false);
-		RootObject fit = RootGetObject(topDir + dataset + "/y_alignment_alt.root", plots[pli] + "|ff", error=false);
+		RootObject profile = RootGetObject(f, plots[pli], error=false);
+		RootObject fit = RootGetObject(f, plots[pli] + "|ff", error=false);
 
 		if (!fit.valid)
 			continue;

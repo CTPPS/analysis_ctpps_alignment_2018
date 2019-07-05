@@ -3,42 +3,48 @@ import pad_layout;
 
 include "../common.asy";
 
-//string topDir = "../../data/phys-version-old/";
-string topDir = "../../data/phys-version1/";
-
-int rp_ids[];
-string rps[], rp_labels[];
-rp_ids.push(23); rps.push("L_2_F"); rp_labels.push("L-220-fr");
-rp_ids.push(3); rps.push("L_1_F"); rp_labels.push("L-210-fr");
-rp_ids.push(103); rps.push("R_1_F"); rp_labels.push("R-210-fr");
-rp_ids.push(123); rps.push("R_2_F"); rp_labels.push("R-220-fr");
+string topDir = "../../";
 
 xSizeDef = 9cm;
 
 xTicksDef = LeftTicks(1., 0.5);
-yTicksDef = RightTicks(0.2, 0.1);
-
-string datasets[] = datasets_std;
+yTicksDef = RightTicks(0.5, 0.1);
 
 TGraph_errorBar = None;
 
 //----------------------------------------------------------------------------------------------------
 
-for (int dsi : datasets.keys)
+NewPad(false);
+
+AddToLegend("version = " + version_phys);
+AddToLegend("xangle = " + xangle);
+AddToLegend("beta = " + beta);
+AddToLegend("sample = " + sample);
+
+AttachLegend();
+
+for (int rpi : rps.keys)
+	NewPadLabel(rp_labels[rpi]);
+
+//----------------------------------------------------------------------------------------------------
+
+for (int fi : fills_phys_short.keys)
 {
-	string dataset = datasets[dsi];
+	string fill = fills_phys_short[fi];
 	
 	NewRow();
 
-	NewPadLabel(replace(dataset, "_", "\_"));
+	NewPadLabel(fill);
 
 	for (int rpi : rps.keys)
 	{
 		NewPad("$x\ung{mm}$", "mean of $y\ung{mm}$");
+
+		string f = topDir + "data/" + version_phys + "/fill_" + fill + "/xangle_" + xangle + "_beta_" + beta + "/" + sample + "/y_alignment.root";
 	
-		RootObject graph = RootGetObject(topDir + dataset + "/y_alignment.root", rps[rpi] + "/g_y_cen_vs_x");
-		RootObject fit = RootGetObject(topDir + dataset + "/y_alignment.root", rps[rpi] + "/g_y_cen_vs_x|ff", error=false);
-		RootObject results = RootGetObject(topDir + dataset + "/y_alignment.root", rps[rpi] + "/g_results", error=false);
+		RootObject graph = RootGetObject(f, rps[rpi] + "/g_y_cen_vs_x", error=true);
+		RootObject fit = RootGetObject(f, rps[rpi] + "/g_y_cen_vs_x|ff", error=false);
+		RootObject results = RootGetObject(f, rps[rpi] + "/g_results", error=false);
 
 		if (!fit.valid)
 			continue;
@@ -66,10 +72,10 @@ for (int dsi : datasets.keys)
 
 		draw((-sh_x, b), mCi+3pt+magenta);
 	
-		limits((x_min, y_cen - 1.5), (x_max, y_cen + 1.5), Crop);
+		limits((x_min, y_cen - 2.0), (x_max, y_cen + 2.0), Crop);
 
 		yaxis(XEquals(-sh_x, false), heavygreen);
 	
-		AttachLegend(rp_labels[rpi]);
+		AttachLegend(BuildLegend(rp_labels[rpi], N), N);
 	}
 }

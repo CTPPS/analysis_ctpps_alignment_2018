@@ -3,9 +3,8 @@ import pad_layout;
 
 include "../common.asy";
 
-string topDir = "../../data/phys-version1/";
+string topDir = "../../";
 
-include "../fills_samples.asy";
 InitDataSets();
 
 //----------------------------------------------------------------------------------------------------
@@ -13,39 +12,18 @@ InitDataSets();
 pen p_meth_fit = red;
 pen p_meth_s_curve = blue;
 
-//string sample = "SingleMuon";
-string sample = "ALL";
-
-string xangle = "160";
-string beta = "0.30";
-
-string sectors[], s_labels[];
-real s_y_mins[], s_y_maxs[], s_y_cens[];
-string s_rp_Ns[], s_rp_Fs[];
-sectors.push("45"); s_labels.push("sector 45"); s_y_mins.push(-2.0); s_y_maxs.push(+1.0); s_y_cens.push(+0.008); s_rp_Ns.push("L_1_F"); s_rp_Fs.push("L_2_F");
-sectors.push("56"); s_labels.push("sector 56"); s_y_mins.push(-2.0); s_y_maxs.push(+1.0); s_y_cens.push(-0.012); s_rp_Ns.push("R_1_F"); s_rp_Fs.push("R_2_F");
-
 yTicksDef = RightTicks(0.2, 0.1);
 
 xSizeDef = x_size_fill_cmp;
 
-//----------------------------------------------------------------------------------------------------
+xTicksDef = LeftTicks(rotate(90)*Label(""), FillTickLabels, Step=1, step=0);
 
-string TickLabels(real x)
-{
-	if (x >=0 && x < fill_data.length)
-	{
-		return format("%i", fill_data[(int) x].fill);
-	} else {
-		return "";
-	}
-}
-
-xTicksDef = LeftTicks(rotate(90)*Label(""), TickLabels, Step=1, step=0);
 
 //----------------------------------------------------------------------------------------------------
 
 NewPad(false, 1, 1);
+
+AddToLegend("version = " + version_phys);
 
 AddToLegend("sample = " + sample);
 AddToLegend("xangle = " + xangle);
@@ -58,9 +36,9 @@ AttachLegend();
 
 //----------------------------------------------------------------------------------------------------
 
-for (int si : sectors.keys)
+for (int ai : arms.keys)
 {
-	write(sectors[si]);
+	write(arms[ai]);
 
 	NewRow();
 
@@ -90,9 +68,9 @@ for (int si : sectors.keys)
 
 			// "fit" method
 			{
-				string f = topDir + dataset + "/" + sample + "/y_alignment.root";
-				RootObject results_N = RootGetObject(f, s_rp_Ns[si] + "/g_results", error = false);
-				RootObject results_F = RootGetObject(f, s_rp_Fs[si] + "/g_results", error = false);
+				string f = topDir + "data/" + version_phys + "/" + dataset + "/" + sample + "/y_alignment.root";
+				RootObject results_N = RootGetObject(f, a_nr_rps[ai] + "/g_results", error = false);
+				RootObject results_F = RootGetObject(f, a_fr_rps[ai] + "/g_results", error = false);
 		
 				if (results_N.valid && results_F.valid)
 				{
@@ -119,9 +97,9 @@ for (int si : sectors.keys)
 
 			// get "s curve" method result
 			{
-				string f = topDir + dataset + "/" + sample + "/y_alignment_alt.root";
-				RootObject results_N = RootGetObject(f, "sector " + sectors[si] + "/N/g_results", error=false);
-				RootObject results_F = RootGetObject(f, "sector " + sectors[si] + "/F/g_results", error=false);
+				string f = topDir + "data/" + version_phys + "/" + dataset + "/" + sample + "/y_alignment_alt.root";
+				RootObject results_N = RootGetObject(f, a_sectors[ai] + "/N/g_results", error=false);
+				RootObject results_F = RootGetObject(f, a_sectors[ai] + "/F/g_results", error=false);
 		
 				if (results_N.valid && results_F.valid)
 				{
@@ -143,14 +121,16 @@ for (int si : sectors.keys)
 		}
 	}
 
-	real y_mean = GetMeanVerticalRelativeAlignment(sectors[si]);
-	draw((-1, y_mean)--(fill_data.length, y_mean), black);
+	real y_mean = GetMeanVerticalRelativeAlignment(a_sectors[ai]);
 
-	DrawFillMarkers(s_y_mins[si], s_y_maxs[si]);
+	real y_min = y_mean - 1.5;
+	real y_max = y_mean + 1.5;
 
-	limits((-1, s_y_mins[si]), (fill_data.length, s_y_maxs[si]), Crop);
+	DrawFillMarkers(y_min, y_max);
 
-	AttachLegend("{\SetFontSizesXX " + s_labels[si] + "}");
+	limits((-1, y_min), (fill_data.length, y_max), Crop);
+
+	AttachLegend("{\SetFontSizesXX " + a_labels[ai] + "}");
 }
 
 //----------------------------------------------------------------------------------------------------
