@@ -35,11 +35,13 @@ int main()
 		string name;
 		unsigned int id_N, id_F;
 		double slope;
+		double sh_x_N;
 	};
 
+	// TODO: update sh_x, make them fill dependent
 	vector<SectorData> sectorData = {
-		{ "sector 45", 3, 23, +0.004 },
-		{ "sector 56", 103, 123, -0.014 }
+		{ "sector 45",   3,  23, (cfg.xangle == 160) ? +0.006 : +0.008, -3.6 },
+		{ "sector 56", 103, 123, (cfg.xangle == 160) ? -0.015 : -0.012, -2.8 }
 	};
 
 	// get input
@@ -51,8 +53,8 @@ int main()
 	// prepare results
 	AlignmentResultsCollection results;
 
-	TF1 *ff = new TF1("ff", "[0] + [1]*x");
-	TF1 *ff_sl_fix = new TF1("ff_sl_fix", "[0] + [1]*x");
+	TF1 *ff = new TF1("ff", "[0] + [1]*(x - [2])");
+	TF1 *ff_sl_fix = new TF1("ff_sl_fix", "[0] + [1]*(x - [2])");
 
 	// processing
 	for (const auto &sd : sectorData)
@@ -81,7 +83,8 @@ int main()
 
 		printf("    x_min = %.3f, x_max = %.3f\n", x_min, x_max);
 
-		ff->SetParameters(0., sd.slope);
+		ff->SetParameters(0., sd.slope, 0.);
+		ff->FixParameter(2, -sd.sh_x_N);
 		ff->SetLineColor(2);
 		p_x_diffFN_vs_x_N->Fit(ff, "Q", "", x_min, x_max);
 
@@ -91,8 +94,9 @@ int main()
 		results["x_alignment_relative"][sd.id_N] = AlignmentResult(+b/2., b_unc/2., 0., 0., 0., 0.);
 		results["x_alignment_relative"][sd.id_F] = AlignmentResult(-b/2., b_unc/2., 0., 0., 0., 0.);
 
-		ff_sl_fix->SetParameters(0., sd.slope);
+		ff_sl_fix->SetParameters(0., sd.slope, 0.);
 		ff_sl_fix->FixParameter(1, sd.slope);
+		ff_sl_fix->FixParameter(2, -sd.sh_x_N);
 		ff_sl_fix->SetLineColor(4);
 		p_x_diffFN_vs_x_N->Fit(ff_sl_fix, "Q+", "", x_min, x_max);
 
@@ -104,9 +108,10 @@ int main()
 		p_x_diffFN_vs_x_N->Write("p_x_diffFN_vs_x_N");
 
 		TGraph *g_results = new TGraph();
-		g_results->SetPoint(0, a, a_unc);
-		g_results->SetPoint(1, b, b_unc);
-		g_results->SetPoint(2, b_fs, b_fs_unc);
+		g_results->SetPoint(0, sd.sh_x_N, 0.);
+		g_results->SetPoint(1, a, a_unc);
+		g_results->SetPoint(2, b, b_unc);
+		g_results->SetPoint(3, b_fs, b_fs_unc);
 		g_results->Write("g_results");
 	}
 
