@@ -34,18 +34,27 @@ function GetOne()
 	fi
 }
 
+#----------------------------------------------------------------------------------------------------
 # alignment run April 2018
+
 top_dir="../data/alig-version1"
 eos_dir="/eos/cms/store/group/phys_pps/reconstruction/2018/alignment_run_April/version7"
 
-GetOne "6554" "160" "0.30" "DS1" "run_314247"
-GetOne "6554" "131" "0.30" "DS1" "run_314248\|run_314250\|run_314255\|run_314267"
-GetOne "6554" "130" "0.30" "DS1" "run_314269\|run_314270\|run_314272\|run_314273"
-GetOne "6554" "130" "0.25" "DS1" "run_314274\|run_314275\|run_314276"
+#GetOne "6554" "160" "0.30" "DS1" "run_314247"
+#GetOne "6554" "131" "0.30" "DS1" "run_314248\|run_314250\|run_314255\|run_314267"
+#GetOne "6554" "130" "0.30" "DS1" "run_314269\|run_314270\|run_314272\|run_314273"
+#GetOne "6554" "130" "0.25" "DS1" "run_314274\|run_314275\|run_314276"
 
+top_dir="../data/alig-version2"
+eos_dir="/eos/cms/store/group/phys_pps/reconstruction/2018/alignment_run_April/version8-test"
+
+GetOne "6554" "160" "0.30" "DS1" "run_314247"
+
+#----------------------------------------------------------------------------------------------------
 # alignment run September 2018
+
 top_dir="../data/alig-version1"
 eos_dir="/eos/cms/store/group/phys_pps/reconstruction/2018/alignment_run_September/version7"
 
-GetOne "7206" "130" "0.27" "DS1" "run_323311\|run_323312"
-GetOne "7206" "130" "0.25" "DS1" "run_323316"
+#GetOne "7206" "130" "0.27" "DS1" "run_323311\|run_323312"
+#GetOne "7206" "130" "0.25" "DS1" "run_323316"
