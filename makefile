@@ -8,7 +8,7 @@ distributions: distributions.cc config.h stat.h
 		-lDataFormatsFWLite -lDataFormatsCommon -lDataFormatsCTPPSDetId -lFWCoreParameterSet -lFWCorePythonParameterSet \
 			distributions.cc -o distributions
 
-match: match.cc config.h stat.h alignment_classes.h
+match: match.cc config.h stat.h alignment_classes.h default_reference.h
 	g++ `root-config --libs` -lMinuit `root-config --cflags` \
 		-g -O3 --std=c++1z -Wall -Wextra -Wno-attributes\
 		-I$(CMSSW_RELEASE_BASE)/src \
@@ -16,7 +16,7 @@ match: match.cc config.h stat.h alignment_classes.h
 		-lDataFormatsFWLite -lDataFormatsCommon -lDataFormatsCTPPSDetId -lFWCoreParameterSet -lFWCorePythonParameterSet \
 			match.cc -o match
 
-x_alignment_meth_o: x_alignment_meth_o.cc config.h stat.h alignment_classes.h
+x_alignment_meth_o: x_alignment_meth_o.cc config.h stat.h alignment_classes.h default_reference.h
 	g++ `root-config --libs` -lMinuit `root-config --cflags` \
 		-g -O3 --std=c++1z -Wall -Wextra -Wno-attributes\
 		-I$(CMSSW_RELEASE_BASE)/src \

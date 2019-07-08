@@ -1,6 +1,7 @@
 #include "config.h"
 #include "stat.h"
 #include "alignment_classes.h"
+#include "default_reference.h"
 
 #include "TFile.h"
 #include "TH1D.h"
@@ -442,13 +443,7 @@ int main()
 	for (auto &ref : cfg.matching_reference_datasets)
 	{
 		if (ref == "default")
-		{
-			char buf[100];
-			unsigned int xangle_def = (cfg.xangle > 0) ? cfg.xangle : 160;
-			double beta_def = (cfg.beta > 0) ? cfg.beta : 0.3;
-			sprintf(buf, "data/alig-version1/fill_6554/xangle_%u_beta_%.2f/DS1", xangle_def, beta_def);
-			ref = buf;
-		}
+			ref = GetDefaultReference(cfg.fill, cfg.xangle, cfg.beta);
 
 		printf("-------------------- reference dataset: %s\n", ref.c_str());
 

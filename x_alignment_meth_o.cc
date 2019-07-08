@@ -1,6 +1,7 @@
 #include "config.h"
 #include "stat.h"
 #include "alignment_classes.h"
+#include "default_reference.h"
 
 #include "TFile.h"
 #include "TH1D.h"
@@ -16,7 +17,7 @@
 
 using namespace std;
 
-bool debug_slope_fits = false;
+bool debug_slope_fits = true;
 
 //----------------------------------------------------------------------------------------------------
 
@@ -41,7 +42,7 @@ TF1 *ff_pol2 = new TF1("ff_pol2", "[0] + [1]*x + [2]*x*x");
 
 //----------------------------------------------------------------------------------------------------
 
-int FitProfile(TProfile *p, bool aligned, double &sl, double &sl_unc)
+int FitProfile(TProfile *p, bool /*aligned*/, double x_mean, double x_rms, double &sl, double &sl_unc)
 {
 	if (p->GetEntries() < 50)
 		return 1;
@@ -61,8 +62,9 @@ int FitProfile(TProfile *p, bool aligned, double &sl, double &sl_unc)
 	if (n_reasonable < 10)
 		return 2;
 
-	double x_min = 1., x_max = 7.;
-	if (aligned) x_min = -3., x_max = +3.;
+	//double x_min = 1., x_max = 7.;
+	//if (aligned) x_min = -3., x_max = +3.;
+	double x_min = x_mean - x_rms, x_max = x_mean + x_rms;
 
 	ff_pol1->SetParameter(0., 0.);
 	p->Fit(ff_pol1, "Q", "", x_min, x_max);
@@ -75,7 +77,7 @@ int FitProfile(TProfile *p, bool aligned, double &sl, double &sl_unc)
 
 //----------------------------------------------------------------------------------------------------
 
-TGraphErrors* BuildGraphFromDirectory(TDirectory *dir, bool aligned)
+TGraphErrors* BuildGraphFromDirectory(TDirectory *dir, bool aligned, unsigned int rpId)
 {
 	TGraphErrors *g = new TGraphErrors();
 
@@ -92,15 +94,29 @@ TGraphErrors* BuildGraphFromDirectory(TDirectory *dir, bool aligned)
 
 		//printf("  %s, %.3f, %.3f\n", name.c_str(), x_min, x_max);
 
-		TProfile *p = (TProfile *) k->ReadObj();
+		TDirectory *d_slice = (TDirectory *) k->ReadObj();
+
+		TH1D *h_y = (TH1D *) d_slice->Get("h_y");
+		TProfile *p_y_diffFN_vs_y = (TProfile *) d_slice->Get("p_y_diffFN_vs_y");
+
+		double y_cen = h_y->GetMean();
+		double y_width = h_y->GetRMS();
+
+		if (aligned)
+		{
+			y_cen += ((rpId < 100) ? -0.2 : -0.4);
+		} else {
+			y_cen += ((rpId < 100) ? -0.3 : -0.8);
+			y_width *= ((rpId < 100) ? 1.1 : 1.0);
+		}
 
 		double sl=0., sl_unc=0.;
-		int fr = FitProfile(p, aligned, sl, sl_unc);
+		int fr = FitProfile(p_y_diffFN_vs_y, aligned, y_cen, y_width, sl, sl_unc);
 		if (fr != 0)
 			continue;
 
 		if (debug_slope_fits)
-			p->Write(name.c_str());
+			p_y_diffFN_vs_y->Write(name.c_str());
 
 		int idx = g->GetN();
 		g->SetPoint(idx, (x_max + x_min)/2., sl);
@@ -226,12 +242,15 @@ int DoMatch(TGraphErrors *g_ref, TGraphErrors *g_test, const SelectionRange &ran
 
 	TCanvas *c_cmp = new TCanvas("c_cmp");
 	g_ref->SetLineColor(1);
+	g_ref->SetName("g_ref");
 	g_ref->Draw("apl");
 
-	g_test->SetLineColor(6);
+	g_test->SetLineColor(4);
+	g_test->SetName("g_test");
 	g_test->Draw("pl");
 
 	g_test_shifted->SetLineColor(2);
+	g_test_shifted->SetName("g_test_shifted");
 	g_test_shifted->Draw("pl");
 	c_cmp->Write();
 
@@ -285,14 +304,7 @@ int main()
 	for (auto ref : cfg.matching_reference_datasets)
 	{
 		if (ref == "default")
-		{
-			char buf[100];
-			unsigned int xangle_def = (cfg.xangle > 0) ? cfg.xangle : 160;
-			double beta_def = (cfg.beta > 0) ? cfg.beta : 0.3;
-			// TODO: update
-			sprintf(buf, "data/alig-version-old/fill_6554/xangle_%u_beta_%.2f/DS1", xangle_def, beta_def);
-			ref = buf;
-		}
+			ref = GetDefaultReference(cfg.fill, cfg.xangle, cfg.beta);
 
 		printf("-------------------- reference dataset: %s\n", ref.c_str());
 
@@ -310,17 +322,23 @@ int main()
 			printf("* %s\n", rpd.name.c_str());
 
 			// get input
-			TDirectory *d_ref = (TDirectory *) f_ref->Get((rpd.sectorName + "/near_far/p_y_diffFN_vs_y_" + rpd.position + ", x slices").c_str());
-			TDirectory *d_test = (TDirectory *) f_in->Get((rpd.sectorName + "/near_far/p_y_diffFN_vs_y_" + rpd.position + ", x slices").c_str());
+			TDirectory *d_ref = (TDirectory *) f_ref->Get((rpd.sectorName + "/near_far/x slices, " + rpd.position).c_str());
+			TDirectory *d_test = (TDirectory *) f_in->Get((rpd.sectorName + "/near_far/x slices, " + rpd.position).c_str());
+
+			if (d_ref == NULL || d_test == NULL)
+			{
+				printf("ERROR: d_ref = %p, d_test = %p\n", d_ref, d_test);
+				continue;
+			}
 
 			// prepare output directory
 			TDirectory *rp_dir = ref_dir->mkdir(rpd.name.c_str());
 
 			// build graphs for matching
 			gDirectory = rp_dir->mkdir("fits_ref");
-			TGraphErrors *g_ref = BuildGraphFromDirectory(d_ref, true);
+			TGraphErrors *g_ref = BuildGraphFromDirectory(d_ref, cfg_ref.aligned, rpd.id);
 			gDirectory = rp_dir->mkdir("fits_test");
-			TGraphErrors *g_test = BuildGraphFromDirectory(d_test, false);
+			TGraphErrors *g_test = BuildGraphFromDirectory(d_test, cfg.aligned, rpd.id);
 
 			gDirectory = rp_dir;
 			g_ref->Write("g_ref");
