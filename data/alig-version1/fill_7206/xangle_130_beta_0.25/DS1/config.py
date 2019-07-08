@@ -18,3 +18,62 @@ config.aligned = True
 config.input_files = input_files
 
 ApplyDefaultSettingsAlignmentSeptember()
+
+config.matching = cms.PSet(
+  reference_datasets = cms.vstring("default"),
+
+  rp_L_2_F = cms.PSet(
+    sh_min = cms.double(-1),
+    sh_max = cms.double(+1)
+  ),
+  rp_L_1_F = cms.PSet(
+    sh_min = cms.double(-1),
+    sh_max = cms.double(+1)
+  ),
+  rp_R_1_F = cms.PSet(
+    sh_min = cms.double(-1),
+    sh_max = cms.double(+1)
+  ),
+  rp_R_2_F = cms.PSet(
+    sh_min = cms.double(-1),
+    sh_max = cms.double(+1)
+  )
+)
+
+config.x_alignment_meth_o = cms.PSet(
+  rp_L_2_F = cms.PSet(
+    x_min = cms.double(3.5),
+    x_max = cms.double(15.),
+  ),
+  rp_L_1_F = cms.PSet(
+    x_min = cms.double(3.5),
+    x_max = cms.double(15.),
+  ),
+  rp_R_1_F = cms.PSet(
+    x_min = cms.double(3.5),
+    x_max = cms.double(15.),
+  ),
+  rp_R_2_F = cms.PSet(
+    x_min = cms.double(3.5),
+    x_max = cms.double(15.),
+  )
+)
+
+config.y_alignment = cms.PSet(
+  rp_L_2_F = cms.PSet(
+    x_min = cms.double(3.),
+    x_max = cms.double(8.),
+  ),
+  rp_L_1_F = cms.PSet(
+    x_min = cms.double(3.),
+    x_max = cms.double(7.),
+  ),
+  rp_R_1_F = cms.PSet(
+    x_min = cms.double(2.3),
+    x_max = cms.double(5.5),
+  ),
+  rp_R_2_F = cms.PSet(
+    x_min = cms.double(2.3),
+    x_max = cms.double(5.5),
+  )
+)
