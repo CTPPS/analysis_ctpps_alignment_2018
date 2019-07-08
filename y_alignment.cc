@@ -22,7 +22,10 @@ double FindMax(TF1 *ff)
 	const double mu = ff->GetParameter(1);
 	const double si = ff->GetParameter(2);
 
-	double x_max = 0.;
+	if (si > 25.)
+		return 1E100;
+
+	double x_max = 1E100;
 	double y_max = -1E100;
 	for (double x = mu - si; x <= mu + si; x += 0.001)
 	{
@@ -41,8 +44,19 @@ double FindMax(TF1 *ff)
 
 TF1 *ff_fit = new TF1("ff_fit", "[0] * exp(-(x-[1])*(x-[1])/2./[2]/[2]) + [3] + [4]*x");
 
-TGraphErrors* BuildModeGraph(const TH2D *h2_y_vs_x, bool aligned)
+TGraphErrors* BuildModeGraph(const TH2D *h2_y_vs_x, bool aligned, unsigned int rp)
 {
+	bool saveDetails = true;
+	TDirectory *d_top = gDirectory;
+
+	double y_max_fit = 10.;
+
+	// 2018 settings
+	if (rp ==  23) y_max_fit = 3.5 + ((aligned) ? 0. : 3.7);
+	if (rp ==   3) y_max_fit = 4.5 + ((aligned) ? 0. : 3.8);
+	if (rp == 103) y_max_fit = 5.5 + ((aligned) ? 0. : 3.2);
+	if (rp == 123) y_max_fit = 4.8 + ((aligned) ? 0. : 3.1);
+
 	TGraphErrors *g_y_mode_vs_x = new TGraphErrors();
 
 	for (int bix = 1; bix <= h2_y_vs_x->GetNbinsX(); ++bix)
@@ -56,6 +70,12 @@ TGraphErrors* BuildModeGraph(const TH2D *h2_y_vs_x, bool aligned)
 
 		if (h_y->GetEntries() < 300)
 			continue;
+
+		if (saveDetails)
+		{
+			sprintf(buf, "x=%.3f", x);
+			gDirectory = d_top->mkdir(buf);
+		}
 
 		double con_max = -1.;
 		double con_max_x = 0.;
@@ -73,9 +93,9 @@ TGraphErrors* BuildModeGraph(const TH2D *h2_y_vs_x, bool aligned)
 		ff_fit->SetParameters(con_max, con_max_x, h_y->GetRMS() * 0.75, 0., 0.);
 		ff_fit->FixParameter(4, 0.);
 
-		printf("    fit 1: mu = %.2f, si = %.2f\n", ff_fit->GetParameter(1), ff_fit->GetParameter(2));
+		printf("    init : mu = %.2f, si = %.2f\n", ff_fit->GetParameter(1), ff_fit->GetParameter(2));
 
-		double x_min = 3., x_max = +8.;
+		double x_min = 2., x_max = y_max_fit;
 		if (aligned)
 			x_min = -2., x_max = +3.;
 
@@ -84,38 +104,47 @@ TGraphErrors* BuildModeGraph(const TH2D *h2_y_vs_x, bool aligned)
 		printf("    fit 1: mu = %.2f, si = %.2f\n", ff_fit->GetParameter(1), ff_fit->GetParameter(2));
 
 		ff_fit->ReleaseParameter(4);
-		double w = min(3., 2. * ff_fit->GetParameter(2));
-		h_y->Fit(ff_fit, "Q", "", ff_fit->GetParameter(1) - w, ff_fit->GetParameter(1) + w);
+		double w = min(4., 2. * ff_fit->GetParameter(2));
+		x_min = ff_fit->GetParameter(1) - w;
+		x_max = min(y_max_fit, ff_fit->GetParameter(1) + w);
+		printf("        x_min = %.3f, x_max = %.3f\n", x_min, x_max);
+		h_y->Fit(ff_fit, "Q", "", x_min, x_max);
 
 		printf("    fit 2: mu = %.2f, si = %.2f\n", ff_fit->GetParameter(1), ff_fit->GetParameter(2));
 		printf("        chi^2 = %.1f, ndf = %u, chi^2/ndf = %.1f\n", ff_fit->GetChisquare(), ff_fit->GetNDF(), ff_fit->GetChisquare() / ff_fit->GetNDF());
 
-		/*
-		w = min(2., 2. * ff_fit->GetParameter(2));
-		if (aligned)
-			w = min(2., 1. * ff_fit->GetParameter(2));
-		w = max(w, 0.3);
-		h_y->Fit(ff_fit, "Q", "", ff_fit->GetParameter(1) - w, ff_fit->GetParameter(1) + w);
-		*/
-
-		h_y->Write();
-
-		//printf("x = %.3f mm, %f/%i = %.2f\n", x, ff_fit->GetChisquare(), ff_fit->GetNDF(), ff_fit->GetChisquare() / ff_fit->GetNDF());
+		if (saveDetails)
+			h_y->Write("h_y");
 
 		double y_mode = FindMax(ff_fit);
-		const double y_mode_fit_unc = ff_fit->GetParError(1);
+		const double y_mode_fit_unc = ff_fit->GetParameter(2) / 10;
 		const double y_mode_sys_unc = 0.030;
 		double y_mode_unc = sqrt(y_mode_fit_unc*y_mode_fit_unc + y_mode_sys_unc*y_mode_sys_unc);
 
-		const double chiSqThreshold = (aligned) ? 1000. : 15.;
+		const double chiSqThreshold = (aligned) ? 1000. : 50.;
 
-		if (fabs(y_mode_unc) > 1. || fabs(y_mode) > 20. || ff_fit->GetChisquare() / ff_fit->GetNDF() > chiSqThreshold)
+		const bool valid = ! (fabs(y_mode_unc) > 5. || fabs(y_mode) > 20. || ff_fit->GetChisquare() / ff_fit->GetNDF() > chiSqThreshold);
+
+		printf("    y_mode = %.3f, valid = %u\n", y_mode, valid);
+
+		if (saveDetails)
+		{
+			TGraph *g_data = new TGraph();
+			g_data->SetPoint(0, y_mode, y_mode_unc);
+			g_data->SetPoint(1, ff_fit->GetChisquare(), ff_fit->GetNDF());
+			g_data->SetPoint(2, valid, 0.);
+			g_data->Write("g_data");
+		}
+
+		if (!valid)
 			continue;
 
 		int idx = g_y_mode_vs_x->GetN();
 		g_y_mode_vs_x->SetPoint(idx, x, y_mode);
 		g_y_mode_vs_x->SetPointError(idx, x_unc, y_mode_unc);
 	}
+
+	gDirectory = d_top;
 
 	return g_y_mode_vs_x;
 }
@@ -145,7 +174,7 @@ int main()
 		double sh_x;
 	};
 
-	// TODO: update sh_x
+	// TODO: update sh_x, make them fill dependent
 	// TODO: update slopes, make them cfg.xangle dependent
 	vector<RPData> rpData = {
 		{ "L_2_F", 23,  "sector 45", (cfg.xangle == 160) ? 0.19 : 0.17, -42. },
@@ -184,7 +213,7 @@ int main()
 			continue;
 		}
 
-		TGraphErrors *g_y_cen_vs_x = BuildModeGraph(h2_y_vs_x, cfg.aligned);
+		TGraphErrors *g_y_cen_vs_x = BuildModeGraph(h2_y_vs_x, cfg.aligned, rpd.id);
 
 		if (g_y_cen_vs_x->GetN() < 5)
 			continue;
