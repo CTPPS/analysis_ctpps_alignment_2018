@@ -144,7 +144,34 @@ struct SectorData
 	TProfile *p_y_diffFN_vs_y_N;
 	TProfile *p_y_diffFN_vs_y_F;
 
-	map<unsigned int, TProfile *> x_slice_p_y_diffFN_vs_y_F, x_slice_p_y_diffFN_vs_y_N;
+	struct SlicePlots
+	{
+		TH1D *h_y;
+		TH2D *h2_y_diffFN_vs_y;
+		TProfile *p_y_diffFN_vs_y;
+
+		SlicePlots(bool init = false)
+		{
+			if (init)
+				Init();
+		}
+
+		void Init()
+		{
+			h_y = new TH1D("", ";y", 100, -10., +10.);
+			h2_y_diffFN_vs_y = new TH2D("", ";y;x_{F} - y_{N}", 100, -10., +10., 100, -2.0, +2.0);
+			p_y_diffFN_vs_y = new TProfile("", ";y;x_{F} - y_{N}", 100, -10., +10.);
+		}
+
+		void Write() const
+		{
+			h_y->Write("h_y");
+			h2_y_diffFN_vs_y->Write("h2_y_diffFN_vs_y");
+			p_y_diffFN_vs_y->Write("p_y_diffFN_vs_y");
+		}
+	};
+
+	map<unsigned int, SlicePlots> x_slice_plots_N, x_slice_plots_F;
 
 	SectorData(const string _name, unsigned int _rpIdUp, unsigned int _rpIdDw, const SectorConfig &_scfg);
 
@@ -208,10 +235,10 @@ SectorData::SectorData(const string _name, unsigned int _rpIdUp, unsigned int _r
 	p_y_diffFN_vs_y_F = new TProfile("", ";y_{F};y_{F} - y_{N}", 200, -10., 10.);
 
 	for (int i = 0; i < scfg.nr_x_slice_n; ++i)
-		x_slice_p_y_diffFN_vs_y_N[i] = new TProfile("", ";y_{N};x_{F} - y_{N}", 100, -10., +10.);
+		x_slice_plots_N[i] = SlicePlots(true);
 
 	for (int i = 0; i < scfg.fr_x_slice_n; ++i)
-		x_slice_p_y_diffFN_vs_y_F[i] = new TProfile("", ";y_{F};x_{F} - y_{N}", 100, -10., +10.);
+		x_slice_plots_F[i] = SlicePlots(true);
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -323,11 +350,19 @@ unsigned int SectorData::Process(const vector<CTPPSLocalTrackLite> &tracks)
 
 				idx = (trUp.getX() - scfg.nr_x_slice_min) / scfg.nr_x_slice_w;
 				if (idx >= 0 && idx < scfg.nr_x_slice_n)
-					x_slice_p_y_diffFN_vs_y_N[idx]->Fill(trUp.getY(), trDw.getY() - trUp.getY());
+				{
+					x_slice_plots_N[idx].h_y->Fill(trUp.getY());
+					x_slice_plots_N[idx].h2_y_diffFN_vs_y->Fill(trUp.getY(), trDw.getY() - trUp.getY());
+					x_slice_plots_N[idx].p_y_diffFN_vs_y->Fill(trUp.getY(), trDw.getY() - trUp.getY());
+				}
 
 				idx = (trDw.getX() - scfg.fr_x_slice_min) / scfg.fr_x_slice_w;
 				if (idx >= 0 && idx < scfg.fr_x_slice_n)
-					x_slice_p_y_diffFN_vs_y_F[idx]->Fill(trDw.getY(), trDw.getY() - trUp.getY());
+				{
+					x_slice_plots_F[idx].h_y->Fill(trDw.getY());
+					x_slice_plots_F[idx].h2_y_diffFN_vs_y->Fill(trDw.getY(), trDw.getY() - trUp.getY());
+					x_slice_plots_F[idx].p_y_diffFN_vs_y->Fill(trDw.getY(), trDw.getY() - trUp.getY());
+				}
 			}
 		}
 	}
@@ -405,26 +440,28 @@ void SectorData::Write() const
 	p_y_diffFN_vs_y_N->Write("p_y_diffFN_vs_y_N");
 	p_y_diffFN_vs_y_F->Write("p_y_diffFN_vs_y_F");
 
-	gDirectory = d_near_far->mkdir("p_y_diffFN_vs_y_N, x slices");
-	for (const auto &p : x_slice_p_y_diffFN_vs_y_N)
+	TDirectory *d_x_slices_N = d_near_far->mkdir("x slices, N");
+	for (const auto &p : x_slice_plots_N)
 	{
 		const double x_min = scfg.nr_x_slice_min + p.first * scfg.nr_x_slice_w;
 		const double x_max = scfg.nr_x_slice_min + (p.first+1) * scfg.nr_x_slice_w;
 
 		char buf[100];
 		sprintf(buf, "%.1f-%.1f", x_min, x_max);
-		p.second->Write(buf);
+		gDirectory = d_x_slices_N->mkdir(buf);
+		p.second.Write();
 	}
 
-	gDirectory = d_near_far->mkdir("p_y_diffFN_vs_y_F, x slices");
-	for (const auto &p : x_slice_p_y_diffFN_vs_y_F)
+	TDirectory *d_x_slices_F = d_near_far->mkdir("x slices, F");
+	for (const auto &p : x_slice_plots_F)
 	{
 		const double x_min = scfg.fr_x_slice_min + p.first * scfg.fr_x_slice_w;
 		const double x_max = scfg.fr_x_slice_min + (p.first+1) * scfg.fr_x_slice_w;
 
 		char buf[100];
 		sprintf(buf, "%.1f-%.1f", x_min, x_max);
-		p.second->Write(buf);
+		gDirectory = d_x_slices_F->mkdir(buf);
+		p.second.Write();
 	}
 
 	// clean up
