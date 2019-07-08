@@ -18,6 +18,8 @@ using namespace std;
 
 int main()
 {
+	bool useAuxFits = true;
+
 	// load config
 	if (cfg.LoadFrom("config.py") != 0)
 	{
@@ -34,18 +36,20 @@ int main()
 	{
 		string name;
 		unsigned int id_N, id_F;
+		string rp_N, rp_F;
 		double slope;
 		double sh_x_N;
 	};
 
-	// TODO: update sh_x, make them fill dependent
 	vector<SectorData> sectorData = {
-		{ "sector 45",   3,  23, (cfg.xangle == 160) ? +0.006 : +0.008, -3.6 },
-		{ "sector 56", 103, 123, (cfg.xangle == 160) ? -0.015 : -0.012, -2.8 }
+		{ "sector 45",   3,  23, "L_1_F", "L_2_F", (cfg.xangle == 160) ? +0.006 : +0.008, -3.6 },
+		{ "sector 56", 103, 123, "R_1_F", "R_2_F", (cfg.xangle == 160) ? -0.015 : -0.012, -2.8 }
 	};
 
 	// get input
 	TFile *f_in = new TFile("distributions.root");
+
+	TFile *f_in_aux = (useAuxFits) ? TFile::Open("../../../../../aux_fits/fits.root") : NULL;
 
 	// ouput file
 	TFile *f_out = new TFile("x_alignment_relative.root", "recreate");
@@ -83,8 +87,22 @@ int main()
 
 		printf("    x_min = %.3f, x_max = %.3f\n", x_min, x_max);
 
-		ff->SetParameters(0., sd.slope, 0.);
-		ff->FixParameter(2, -sd.sh_x_N);
+		double slope = sd.slope;
+		double sh_x_N = sd.sh_x_N;
+
+		if (useAuxFits)
+		{
+			char path[100];
+
+			sprintf(path, "xangle_%u_beta_%.2f/%s/f_x_sh", 160, 0.30, sd.rp_N.c_str());
+			sh_x_N = ((TF1*) f_in_aux->Get(path))->Eval(cfg.fill);
+
+			sprintf(path, "xangle_%u_beta_%.2f/%s/f_x_slope", cfg.xangle, cfg.beta, sd.name.c_str());
+			slope = ((TF1*) f_in_aux->Get(path))->Eval(cfg.fill);
+		}
+
+		ff->SetParameters(0., slope, 0.);
+		ff->FixParameter(2, -sh_x_N);
 		ff->SetLineColor(2);
 		p_x_diffFN_vs_x_N->Fit(ff, "Q", "", x_min, x_max);
 
@@ -94,9 +112,9 @@ int main()
 		results["x_alignment_relative"][sd.id_N] = AlignmentResult(+b/2., b_unc/2., 0., 0., 0., 0.);
 		results["x_alignment_relative"][sd.id_F] = AlignmentResult(-b/2., b_unc/2., 0., 0., 0., 0.);
 
-		ff_sl_fix->SetParameters(0., sd.slope, 0.);
-		ff_sl_fix->FixParameter(1, sd.slope);
-		ff_sl_fix->FixParameter(2, -sd.sh_x_N);
+		ff_sl_fix->SetParameters(0., slope, 0.);
+		ff_sl_fix->FixParameter(1, slope);
+		ff_sl_fix->FixParameter(2, -sh_x_N);
 		ff_sl_fix->SetLineColor(4);
 		p_x_diffFN_vs_x_N->Fit(ff_sl_fix, "Q+", "", x_min, x_max);
 
@@ -108,7 +126,7 @@ int main()
 		p_x_diffFN_vs_x_N->Write("p_x_diffFN_vs_x_N");
 
 		TGraph *g_results = new TGraph();
-		g_results->SetPoint(0, sd.sh_x_N, 0.);
+		g_results->SetPoint(0, sh_x_N, 0.);
 		g_results->SetPoint(1, a, a_unc);
 		g_results->SetPoint(2, b, b_unc);
 		g_results->SetPoint(3, b_fs, b_fs_unc);
