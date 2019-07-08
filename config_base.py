@@ -108,19 +108,19 @@ config = cms.PSet(
     x_alignment_meth_y = cms.PSet(
       rp_L_2_F = cms.PSet(
         x_min = cms.double(46.),
-        x_max = cms.double(56.),
+        x_max = cms.double(49.),
       ),
       rp_L_1_F = cms.PSet(
-        x_min = cms.double(7.),
-        x_max = cms.double(18.),
+        x_min = cms.double(7.5),
+        x_max = cms.double(10.5),
       ),
       rp_R_1_F = cms.PSet(
         x_min = cms.double(6),
-        x_max = cms.double(13.),
+        x_max = cms.double(9.),
       ),
       rp_R_2_F = cms.PSet(
         x_min = cms.double(45.),
-        x_max = cms.double(52.),
+        x_max = cms.double(49.),
       )
     ),
 
@@ -164,20 +164,20 @@ config = cms.PSet(
 
     y_alignment = cms.PSet(
       rp_L_2_F = cms.PSet(
-        x_min = cms.double(45.0),
+        x_min = cms.double(45.3),
         x_max = cms.double(49.0),
       ),
       rp_L_1_F = cms.PSet(
-        x_min = cms.double(7.0),
+        x_min = cms.double(7.3),
         x_max = cms.double(11.0),
       ),
       rp_R_1_F = cms.PSet(
-        x_min = cms.double(6.0),
-        x_max = cms.double(10.0),
+        x_min = cms.double(6.3),
+        x_max = cms.double(9.0),
       ),
       rp_R_2_F = cms.PSet(
-        x_min = cms.double(45.0),
-        x_max = cms.double(49.0),
+        x_min = cms.double(45.3),
+        x_max = cms.double(48.5),
       )
     ),
 
@@ -242,10 +242,10 @@ def ApplyDefaultSettingsAlignmentApril():
   config.x_alignment_meth_y.rp_L_1_F.x_min = 2.
   config.x_alignment_meth_y.rp_L_1_F.x_max = 15.
 
-  config.x_alignment_meth_y.rp_R_1_F.x_min = 3.
+  config.x_alignment_meth_y.rp_R_1_F.x_min = 2.
   config.x_alignment_meth_y.rp_R_1_F.x_max = 16.
 
-  config.x_alignment_meth_y.rp_R_2_F.x_min = 3.
+  config.x_alignment_meth_y.rp_R_2_F.x_min = 2.
   config.x_alignment_meth_y.rp_R_2_F.x_max = 16.
 
   config.x_alignment_meth_o.rp_L_2_F.x_min = 6.
