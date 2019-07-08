@@ -446,8 +446,7 @@ int main()
 			char buf[100];
 			unsigned int xangle_def = (cfg.xangle > 0) ? cfg.xangle : 160;
 			double beta_def = (cfg.beta > 0) ? cfg.beta : 0.3;
-			// TODO: update
-			sprintf(buf, "data/alig-version-old/fill_6554/xangle_%u_beta_%.2f/DS1", xangle_def, beta_def);
+			sprintf(buf, "data/alig-version1/fill_6554/xangle_%u_beta_%.2f/DS1", xangle_def, beta_def);
 			ref = buf;
 		}
 
@@ -493,6 +492,7 @@ int main()
 			const auto &range_test_x = cfg.alignment_x_meth_x_ranges[rpd.id];
 			const auto &range_ref_x = cfg_ref.alignment_x_meth_x_ranges[rpd.id];
 
+			// TODO: why this ?
 			const unsigned int bin_number = (rpd.id == 23 || rpd.id == 123) ? 98 : 140;
 
 			double r_method_x = 0.;
