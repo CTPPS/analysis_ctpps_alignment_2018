@@ -22,7 +22,8 @@ double FindMax(TF1 *ff)
 	const double mu = ff->GetParameter(1);
 	const double si = ff->GetParameter(2);
 
-	if (si > 25.)
+	// unreasonable fit?
+	if (si > 25. || fabs(mu) > 100.)
 		return 1E100;
 
 	double x_max = 1E100;
@@ -153,6 +154,8 @@ TGraphErrors* BuildModeGraph(const TH2D *h2_y_vs_x, bool aligned, unsigned int r
 
 int main()
 {
+	bool useAuxFits = true;
+
 	// load config
 	if (cfg.LoadFrom("config.py") != 0)
 	{
@@ -174,8 +177,6 @@ int main()
 		double sh_x;
 	};
 
-	// TODO: update sh_x, make them fill dependent
-	// TODO: update slopes, make them cfg.xangle dependent
 	vector<RPData> rpData = {
 		{ "L_2_F", 23,  "sector 45", (cfg.xangle == 160) ? 0.19 : 0.17, -42. },
 		{ "L_1_F",  3,  "sector 45", (cfg.xangle == 160) ? 0.19 : 0.18, -3.6 },
@@ -185,6 +186,8 @@ int main()
 
 	// get input
 	TFile *f_in = new TFile("distributions.root");
+
+	TFile *f_in_aux = (useAuxFits) ? TFile::Open("../../../../../aux_fits/fits.root") : NULL;
 
 	// ouput file
 	TFile *f_out = new TFile("y_alignment.root", "recreate");
@@ -218,7 +221,11 @@ int main()
 		if (g_y_cen_vs_x->GetN() < 5)
 			continue;
 
-		const double sh_x = rpd.sh_x;
+		char auxDir[100];
+		sprintf(auxDir, "xangle_%u_beta_%.2f/%s", cfg.xangle, cfg.beta, rpd.name.c_str());
+
+		const double sh_x = (useAuxFits) ? ((TF1 *) f_in_aux->Get((auxDir + string("/f_x_sh")).c_str()))->Eval(cfg.fill) : rpd.sh_x;
+		const double slope = (useAuxFits) ? ((TF1 *) f_in_aux->Get((auxDir + string("/f_y_tilt")).c_str()))->Eval(cfg.fill) : rpd.slope;
 
 		const double x_min = cfg.alignment_y_ranges[rpd.id].x_min;
 		const double x_max = cfg.alignment_y_ranges[rpd.id].x_max;
@@ -236,7 +243,7 @@ int main()
 		results["y_alignment"][rpd.id] = AlignmentResult(0., 0., b, b_unc, 0., 0.);
 
 		ff_sl_fix->SetParameters(0., 0., 0.);
-		ff_sl_fix->FixParameter(1, rpd.slope);
+		ff_sl_fix->FixParameter(1, slope);
 		ff_sl_fix->FixParameter(2, -sh_x);
 		ff_sl_fix->SetLineColor(4);
 		g_y_cen_vs_x->Fit(ff_sl_fix, "Q+", "", x_min, x_max);
