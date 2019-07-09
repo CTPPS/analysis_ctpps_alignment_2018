@@ -191,7 +191,7 @@ int main()
 		g.second.f_x_rel = new TF1("", "([0] + [1]*x) + (x > 6670) * ([2] + [3]*x) + (x > 6800) * ([4] + [5]*x) + (x > 6980) * ([6] + [7]*x)  + (x > 7180) * ([8] + [9]*x)");
 		g.second.g_x_rel->Fit(g.second.f_x_rel, "Q");
 
-		g.second.f_y_meth_f = new TF1("", "([0] + [1]*x) + (x > 6670) * ([2] + [3]*x) + (x > 6800) * ([4] + [5]*x) + (x > 6980) * ([6] + [7]*x)  + (x > 7180) * ([8] + [9]*x)");
+		g.second.f_y_meth_f = new TF1("", "(x <= 6666) * ([0] + [1]*x) + (x > 6666 && x <= 6778) * ([2]) + (x > 6778 && x <= 7145) * ([3] + [4]*x) + (x > 7145) * ([5])");
 		g.second.g_y_meth_f->Fit(g.second.f_y_meth_f, "Q");
 
 		//g.second.f_y_meth_s = new TF1("", "([0] + [1]*x) + (x > 6670) * ([2] + [3]*x) + (x > 6800) * ([4] + [5]*x) + (x > 6980) * ([6] + [7]*x)  + (x > 7180) * ([8] + [9]*x)");
@@ -212,21 +212,22 @@ int main()
 			auto &d_N = rpGraphs[ad.rp_id_N];
 			auto &d_F = rpGraphs[ad.rp_id_F];
 
-			// b = mean (x_F - x_N) with no correction
-			const double de_x_N = d_N.f_x_meth_o->Eval(fill);
-			const double de_x_F = d_F.f_x_meth_o->Eval(fill);
+			double de_x_N = d_N.f_x_meth_o->Eval(fill);
+			double de_x_F = d_F.f_x_meth_o->Eval(fill);
 
+			if (ad.name == "sector 45") { de_x_N += -0.250; de_x_F += -0.200; }
+			if (ad.name == "sector 56") { de_x_N += +0.250; de_x_F += +0.200; }
+
+			// b = mean (x_F - x_N) with basic correction only
 			const double b = d_N.f_x_rel->Eval(fill) - d_F.f_x_rel->Eval(fill);
 			double x_corr_rel = b + de_x_F - de_x_N;
 
-			if (ad.name == "sector 45") x_corr_rel += 13E-3;
-			if (ad.name == "sector 56") x_corr_rel += 0E-3;
+			if (ad.name == "sector 45") x_corr_rel += 20E-3;
+			if (ad.name == "sector 56") x_corr_rel += 31E-3;
 
 			double y_corr_N = 0., y_corr_F = 0.;
-			if (ad.name == "sector 45") y_corr_N += -0E-3, y_corr_F += +0E-3;
-			if (ad.name == "sector 56") y_corr_N += -0E-3, y_corr_F += +0E-3;
-			//if (ad.name == "sector 45") y_corr_N += -180E-3 - 200E-3, y_corr_F += +80E-3 - 370E-3;
-			//if (ad.name == "sector 56") y_corr_N += -80E-3 - 100E-3, y_corr_F += +80E-3 - 160E-3;
+			if (ad.name == "sector 45") y_corr_N += +0E-3, y_corr_F += -0E-3;
+			if (ad.name == "sector 56") y_corr_N += +0E-3, y_corr_F += -0E-3;
 
 			AlignmentResult ar_N(de_x_N + x_corr_rel/2., 150E-3, d_N.f_y_meth_f->Eval(fill) + y_corr_N, 150E-3);
 			AlignmentResult ar_F(de_x_F - x_corr_rel/2., 150E-3, d_F.f_y_meth_f->Eval(fill) + y_corr_F, 150E-3);
@@ -241,7 +242,7 @@ int main()
 	}
 
 	// save results
-	output.Write("fit_alignments_2019_07_01.out");
+	output.Write("fit_alignments_2019_07_08.out");
 
 	TFile *f_out = TFile::Open("fit_alignments.root", "recreate");
 
@@ -261,7 +262,7 @@ int main()
 		g.second.g_y_meth_f->Write("g_y_meth_f");
 		//g.second.f_y_meth_f->Write("f_y_meth_f");
 
-		g.second.g_y_meth_s->Write("g_y_meth_s");
+		//g.second.g_y_meth_s->Write("g_y_meth_s");
 		//g.second.f_y_meth_s->Write("f_y_meth_s");
 	}
 
