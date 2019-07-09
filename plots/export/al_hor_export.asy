@@ -6,9 +6,6 @@ include "../io_alignment_format.asy";
 
 string topDir = "../../data/phys/";
 
-include "../fills_samples.asy";
-InitDataSets();
-
 //----------------------------------------------------------------------------------------------------
 
 string fn_export = "../../export/collect_alignments.out";

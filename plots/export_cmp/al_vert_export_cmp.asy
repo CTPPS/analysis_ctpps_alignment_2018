@@ -3,10 +3,6 @@ import pad_layout;
 
 include "../common.asy";
 include "../io_alignment_format.asy";
-
-include "../fills_samples.asy";
-InitDataSets();
-
 include "result_list.asy";
 
 int rp_ids[];

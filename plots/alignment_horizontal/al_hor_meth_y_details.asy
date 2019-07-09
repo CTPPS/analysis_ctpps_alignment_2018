@@ -19,6 +19,7 @@ NewPad(false, -1, 0);
 
 AddToLegend("version = " + version_phys);
 AddToLegend("ref = " + replace(ref, "_", "\_"));
+AddToLegend("fill = " + fill);
 AddToLegend("xangle = " + xangle);
 AddToLegend("beta = " + beta);
 AddToLegend("sample = " + sample);
@@ -31,8 +32,6 @@ string f = topDir + "data/" + version_phys + "/fill_" + fill + "/xangle_" + xang
 
 for (int rpi : rps.keys)
 	NewPadLabel(rp_labels[rpi]);
-
-// TODO: legend
 
 NewRow();
 

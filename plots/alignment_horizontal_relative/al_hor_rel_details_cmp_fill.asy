@@ -67,6 +67,8 @@ for (int fi : fills_phys_short.keys)
 		draw((-sh_x, b), mCi+3pt+magenta);
 
 		real y_min = 37.5, y_max = 40;
+		if (a_sectors[ai] == "sector 45") { y_min = 37.5; y_max = 38.5; }
+		if (a_sectors[ai] == "sector 56") { y_min = 38.7; y_max = 39.7; }
 
 		limits((0, y_min), (15, y_max), Crop);
 

@@ -3,10 +3,6 @@ import pad_layout;
 
 include "../common.asy";
 include "../io_alignment_format.asy";
-
-include "../fills_samples.asy";
-InitDataSets();
-
 include "result_list.asy";
 
 int rp_ids[];
@@ -14,7 +10,7 @@ string rps[], rp_labels[];
 real rp_y_min[], rp_y_max[];
 rp_ids.push(23); rps.push("L_2_F"); rp_labels.push("L-220-fr"); rp_y_min.push(-42); rp_y_max.push(-41);
 rp_ids.push(3); rps.push("L_1_F"); rp_labels.push("L-210-fr"); rp_y_min.push(-4); rp_y_max.push(-3.);
-rp_ids.push(103); rps.push("R_1_F"); rp_labels.push("R-210-fr"); rp_y_min.push(-3); rp_y_max.push(-1.5);
+rp_ids.push(103); rps.push("R_1_F"); rp_labels.push("R-210-fr"); rp_y_min.push(-3.5); rp_y_max.push(-1.5);
 rp_ids.push(123); rps.push("R_2_F"); rp_labels.push("R-220-fr"); rp_y_min.push(-42.5); rp_y_max.push(-41.5);
 
 xSizeDef = 60cm;

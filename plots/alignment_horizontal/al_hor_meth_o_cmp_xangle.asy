@@ -77,6 +77,18 @@ for (int rpi : rps.keys)
 				{
 					draw((x, bsh), m + p);
 					draw((x, bsh-bsh_unc)--(x, bsh+bsh_unc), p);
+
+					if (cfg_xangles[cfgi] == "160" && cfg_betas[cfgi] == "0.30")
+					{
+						real sh = 0;
+
+						if (rps[rpi] == "L_2_F") sh = -0.200;
+						if (rps[rpi] == "L_1_F") sh = -0.250;
+						if (rps[rpi] == "R_1_F") sh = +0.250;
+						if (rps[rpi] == "R_2_F") sh = +0.200;
+
+						draw((x, bsh + sh), mSq+3pt+black);
+					}
 				}
 			}
 		}

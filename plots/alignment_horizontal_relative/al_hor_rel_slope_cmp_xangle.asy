@@ -86,8 +86,8 @@ for (int ai : a_sectors.keys)
 	if (a_sectors[ai] == "sector 45") { y_min = 0.003; y_max = 0.013; }
 	if (a_sectors[ai] == "sector 56") { y_min = -0.018; y_max = -0.008; }
 
-	if (a_sectors[ai] == "sector 45") { xaxis(YEquals(+0.008, false), black); }
-	if (a_sectors[ai] == "sector 56") { xaxis(YEquals(-0.012, false), black); }
+	//if (a_sectors[ai] == "sector 45") { xaxis(YEquals(+0.008, false), black); }
+	//if (a_sectors[ai] == "sector 56") { xaxis(YEquals(-0.012, false), black); }
 
 	DrawFillMarkers(y_min, y_max);
 
