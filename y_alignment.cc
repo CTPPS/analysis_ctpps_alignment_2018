@@ -47,7 +47,7 @@ TF1 *ff_fit = new TF1("ff_fit", "[0] * exp(-(x-[1])*(x-[1])/2./[2]/[2]) + [3] + 
 
 TGraphErrors* BuildModeGraph(const TH2D *h2_y_vs_x, bool aligned, unsigned int rp)
 {
-	bool saveDetails = true;
+	bool saveDetails = false;
 	TDirectory *d_top = gDirectory;
 
 	double y_max_fit = 10.;
@@ -89,12 +89,14 @@ TGraphErrors* BuildModeGraph(const TH2D *h2_y_vs_x, bool aligned, unsigned int r
 			}
 		}
 
-		printf("x = %.3f\n", x);
+		if (saveDetails)
+			printf("x = %.3f\n", x);
 
 		ff_fit->SetParameters(con_max, con_max_x, h_y->GetRMS() * 0.75, 0., 0.);
 		ff_fit->FixParameter(4, 0.);
 
-		printf("    init : mu = %.2f, si = %.2f\n", ff_fit->GetParameter(1), ff_fit->GetParameter(2));
+		if (saveDetails)
+			printf("    init : mu = %.2f, si = %.2f\n", ff_fit->GetParameter(1), ff_fit->GetParameter(2));
 
 		double x_min = 2., x_max = y_max_fit;
 		if (aligned)
@@ -102,17 +104,22 @@ TGraphErrors* BuildModeGraph(const TH2D *h2_y_vs_x, bool aligned, unsigned int r
 
 		h_y->Fit(ff_fit, "Q", "", x_min, x_max);
 
-		printf("    fit 1: mu = %.2f, si = %.2f\n", ff_fit->GetParameter(1), ff_fit->GetParameter(2));
+		if (saveDetails)
+			printf("    fit 1: mu = %.2f, si = %.2f\n", ff_fit->GetParameter(1), ff_fit->GetParameter(2));
 
 		ff_fit->ReleaseParameter(4);
 		double w = min(4., 2. * ff_fit->GetParameter(2));
 		x_min = ff_fit->GetParameter(1) - w;
 		x_max = min(y_max_fit, ff_fit->GetParameter(1) + w);
-		printf("        x_min = %.3f, x_max = %.3f\n", x_min, x_max);
+		if (saveDetails)
+			printf("        x_min = %.3f, x_max = %.3f\n", x_min, x_max);
 		h_y->Fit(ff_fit, "Q", "", x_min, x_max);
 
-		printf("    fit 2: mu = %.2f, si = %.2f\n", ff_fit->GetParameter(1), ff_fit->GetParameter(2));
-		printf("        chi^2 = %.1f, ndf = %u, chi^2/ndf = %.1f\n", ff_fit->GetChisquare(), ff_fit->GetNDF(), ff_fit->GetChisquare() / ff_fit->GetNDF());
+		if (saveDetails)
+		{
+			printf("    fit 2: mu = %.2f, si = %.2f\n", ff_fit->GetParameter(1), ff_fit->GetParameter(2));
+			printf("        chi^2 = %.1f, ndf = %u, chi^2/ndf = %.1f\n", ff_fit->GetChisquare(), ff_fit->GetNDF(), ff_fit->GetChisquare() / ff_fit->GetNDF());
+		}
 
 		if (saveDetails)
 			h_y->Write("h_y");
@@ -126,7 +133,8 @@ TGraphErrors* BuildModeGraph(const TH2D *h2_y_vs_x, bool aligned, unsigned int r
 
 		const bool valid = ! (fabs(y_mode_unc) > 5. || fabs(y_mode) > 20. || ff_fit->GetChisquare() / ff_fit->GetNDF() > chiSqThreshold);
 
-		printf("    y_mode = %.3f, valid = %u\n", y_mode, valid);
+		if (saveDetails)
+			printf("    y_mode = %.3f, valid = %u\n", y_mode, valid);
 
 		if (saveDetails)
 		{
@@ -221,16 +229,27 @@ int main()
 		if (g_y_cen_vs_x->GetN() < 5)
 			continue;
 
-		char auxDir[100];
-		sprintf(auxDir, "xangle_%u_beta_%.2f/%s", cfg.xangle, cfg.beta, rpd.name.c_str());
-
-		const double sh_x = (useAuxFits) ? ((TF1 *) f_in_aux->Get((auxDir + string("/f_x_sh")).c_str()))->Eval(cfg.fill) : rpd.sh_x;
-		const double slope = (useAuxFits) ? ((TF1 *) f_in_aux->Get((auxDir + string("/f_y_tilt")).c_str()))->Eval(cfg.fill) : rpd.slope;
-
 		const double x_min = cfg.alignment_y_ranges[rpd.id].x_min;
 		const double x_max = cfg.alignment_y_ranges[rpd.id].x_max;
 
 		printf("    x_min = %.3f, x_max = %.3f\n", x_min, x_max);
+
+		double sh_x = rpd.sh_x;
+		double slope = rpd.slope;
+
+		if (useAuxFits)
+		{
+			char path[100];
+
+			// to overcome the discrepancy in x-alignment results
+			sprintf(path, "xangle_%u_beta_%.2f/%s/f_x_sh", 160, 0.30, rpd.name.c_str());
+			sh_x = ((TF1*) f_in_aux->Get(path))->Eval(cfg.fill);
+
+			sprintf(path, "xangle_%u_beta_%.2f/%s/f_y_tilt", cfg.xangle, cfg.beta, rpd.name.c_str());
+			slope = ((TF1*) f_in_aux->Get(path))->Eval(cfg.fill);
+		}
+
+		printf("    sh_x = %.3f, slope = %.3f\n", sh_x, slope);
 
 		ff->SetParameters(0., 0., 0.);
 		ff->FixParameter(2, -sh_x);
