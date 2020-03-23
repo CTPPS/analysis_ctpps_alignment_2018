@@ -123,7 +123,7 @@ int main()
 			string dir = string(buf) + "/" + cfg + "/" + dataset;
 
 			TFile *f_in_x_sh = TFile::Open((dir + "/x_alignment_meth_o.root").c_str());
-			string ref_x_sh = "data_alig-version1_fill_6554_" + cfg + "_DS1";
+			string ref_x_sh = "data_alig-version3_fill_6554_" + cfg + "_DS1";
 
 			TFile *f_in_x_rel = TFile::Open((dir + "/x_alignment_relative.root").c_str());
 
@@ -148,10 +148,10 @@ int main()
 						const double x_sh_unc = g_results->GetY()[0];
 
 						double corr = 0;
-						if (rp == "L_2_F") corr = -0.200;
-						if (rp == "L_1_F") corr = -0.250;
-						if (rp == "R_1_F") corr = +0.250;
-						if (rp == "R_2_F") corr = +0.200;
+						if (rp == "L_2_F") corr = -0.100;
+						if (rp == "L_1_F") corr = -0.100;
+						if (rp == "R_1_F") corr = -0.100;
+						if (rp == "R_2_F") corr = -0.100;
 
 						int idx = g.g_x_sh->GetN();
 						g.g_x_sh->SetPoint(idx, fill, x_sh + corr);
@@ -216,7 +216,10 @@ int main()
 			p.second.f_x_sh = new TF1("", "([0] + [1]*x) + (x > 6670) * ([2] + [3]*x) + (x > 6800) * ([4] + [5]*x) + (x > 6980) * ([6] + [7]*x)  + (x > 7180) * ([8] + [9]*x)");
 			p.second.g_x_sh->Fit(p.second.f_x_sh, "Q");
 
-			p.second.f_y_tilt = new TF1("", "[0] + (x > 6854) * ([1]) + (x > 7213) * ([2])");
+			if (p.first == "R_1_F")
+				p.second.f_y_tilt = new TF1("", "(x < 6660) * ([3] + [4]*x) + [0] + (x > 6816) * ([1]) + (x > 7179) * ([2])");
+			else
+				p.second.f_y_tilt = new TF1("", "[0] + (x > 6816) * ([1]) + (x >= 7179) * ([2])");
 			p.second.g_y_tilt->Fit(p.second.f_y_tilt, "Q");
 
 			p.second.Write();
