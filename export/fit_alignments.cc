@@ -183,16 +183,20 @@ int main()
 	}
 
 	// fit graphs
-	for (auto &g : rpGraphs)
+	for (auto &p : rpGraphs)
 	{
-		g.second.f_x_meth_o = new TF1("", "([0] + [1]*x) + (x > 6670) * ([2] + [3]*x) + (x > 6800) * ([4] + [5]*x) + (x > 6980) * ([6] + [7]*x)  + (x > 7180) * ([8] + [9]*x)");
-		g.second.g_x_meth_o->Fit(g.second.f_x_meth_o, "Q");
+		string param = "([0] + [1]*x) + (x > 6800) * ([2] + [3]*x) + (x > 6980) * ([4] + [5]*x)  + (x > 7180) * ([6] + [7]*x)";
+		if (p.first >= 100)
+			param = "(x <= 6622)*([0] + [1]*x) + (x>6622 && x <= 6638)*([10]+[11]*x) + (x>6638 && x <= 6647)*([12]+[13]*x) + (x>6647 && x <= 6666)*([14]+[15]*x) + (x > 6666) * ([2] + [3]*x) + (x > 6800) * ([4] + [5]*x) + (x > 6980) * ([6] + [7]*x)  + (x > 7180) * ([8] + [9]*x)";
 
-		g.second.f_x_rel = new TF1("", "([0] + [1]*x) + (x > 6670) * ([2] + [3]*x) + (x > 6800) * ([4] + [5]*x) + (x > 6980) * ([6] + [7]*x)  + (x > 7180) * ([8] + [9]*x)");
-		g.second.g_x_rel->Fit(g.second.f_x_rel, "Q");
+		p.second.f_x_meth_o = new TF1("", param.c_str());
+		p.second.g_x_meth_o->Fit(p.second.f_x_meth_o, "Q");
 
-		g.second.f_y_meth_f = new TF1("", "(x <= 6666) * ([0] + [1]*x) + (x > 6666 && x <= 6778) * ([2]) + (x > 6778 && x <= 7145) * ([3] + [4]*x) + (x > 7145) * ([5])");
-		g.second.g_y_meth_f->Fit(g.second.f_y_meth_f, "Q");
+		p.second.f_x_rel = new TF1("", param.c_str());
+		p.second.g_x_rel->Fit(p.second.f_x_rel, "Q");
+
+		p.second.f_y_meth_f = new TF1("", "(x <= 6666) * ([0] + [1]*x) + (x > 6666 && x <= 6778) * ([2]) + (x > 6778 && x <= 7145) * ([3] + [4]*x) + (x > 7145) * ([5])");
+		p.second.g_y_meth_f->Fit(p.second.f_y_meth_f, "Q");
 
 		//g.second.f_y_meth_s = new TF1("", "([0] + [1]*x) + (x > 6670) * ([2] + [3]*x) + (x > 6800) * ([4] + [5]*x) + (x > 6980) * ([6] + [7]*x)  + (x > 7180) * ([8] + [9]*x)");
 		//g.second.g_y_meth_s->Fit(g.second.f_y_meth_s, "Q");
@@ -215,15 +219,15 @@ int main()
 			double de_x_N = d_N.f_x_meth_o->Eval(fill);
 			double de_x_F = d_F.f_x_meth_o->Eval(fill);
 
-			if (ad.name == "sector 45") { de_x_N += -0.250; de_x_F += -0.200; }
-			if (ad.name == "sector 56") { de_x_N += +0.250; de_x_F += +0.200; }
+			if (ad.name == "sector 45") { de_x_N += -0.100; de_x_F += -0.100; }
+			if (ad.name == "sector 56") { de_x_N += -0.100; de_x_F += -0.100; }
 
 			// b = mean (x_F - x_N) with basic correction only
 			const double b = d_N.f_x_rel->Eval(fill) - d_F.f_x_rel->Eval(fill);
 			double x_corr_rel = b + de_x_F - de_x_N;
 
 			if (ad.name == "sector 45") x_corr_rel += 20E-3;
-			if (ad.name == "sector 56") x_corr_rel += 31E-3;
+			if (ad.name == "sector 56") x_corr_rel += 29E-3;
 
 			double y_corr_N = 0., y_corr_F = 0.;
 			if (ad.name == "sector 45") y_corr_N += +0E-3, y_corr_F += -0E-3;
@@ -242,7 +246,7 @@ int main()
 	}
 
 	// save results
-	output.Write("fit_alignments_2019_07_08.out");
+	output.Write("fit_alignments_2020_03_23.out");
 
 	TFile *f_out = TFile::Open("fit_alignments.root", "recreate");
 
