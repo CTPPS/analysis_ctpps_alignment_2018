@@ -4,7 +4,7 @@ string GetDefaultReference(unsigned int /*fill*/, unsigned int xangle, double be
 	double beta_def = (cfg.beta > 0) ? beta : 0.3;
 
 	char buf[100];
-	sprintf(buf, "data/alig-version1/fill_6554/xangle_%u_beta_%.2f/DS1", xangle_def, beta_def);
+	sprintf(buf, "data/alig-version3/fill_6554/xangle_%u_beta_%.2f/DS1", xangle_def, beta_def);
 
 	/*
 	if (xangle == 160 && fabs(beta - 0.3) < 1E-3)
