@@ -45,18 +45,41 @@ double FindMax(TF1 *ff)
 
 TF1 *ff_fit = new TF1("ff_fit", "[0] * exp(-(x-[1])*(x-[1])/2./[2]/[2]) + [3] + [4]*x");
 
-TGraphErrors* BuildModeGraph(const TH2D *h2_y_vs_x, bool aligned, unsigned int rp)
+TGraphErrors* BuildModeGraph(const TH2D *h2_y_vs_x, bool aligned, unsigned int fill, unsigned int xangle, unsigned int rp)
 {
-	bool saveDetails = false;
+	bool saveDetails = true;
 	TDirectory *d_top = gDirectory;
 
-	double y_max_fit = 10.;
-
 	// 2018 settings
-	if (rp ==  23) y_max_fit = 3.5 + ((aligned) ? 0. : 3.7);
-	if (rp ==   3) y_max_fit = 4.5 + ((aligned) ? 0. : 3.8);
-	if (rp == 103) y_max_fit = 5.5 + ((aligned) ? 0. : 3.2);
-	if (rp == 123) y_max_fit = 4.8 + ((aligned) ? 0. : 3.1);
+	map<unsigned int, double> mymf;
+
+	if (aligned)
+	{
+		mymf[23] = 3.5; mymf[3] = 4.5; mymf[103] = 5.5; mymf[123] = 4.8;
+
+	} else {
+		if (fill <= 6778)
+		{ // before TS1
+			mymf[23] = 7.2; mymf[3] = 8.3;
+
+			if (xangle == 130) { mymf[103] = 9.0; mymf[123] = 8.0; }
+			if (xangle == 160) { mymf[103] = 9.0; mymf[123] = 8.0; }
+		} else if (fill <= 7145)
+		{ // after TS1
+			mymf[23] = 7.5; mymf[3] = 7.8;
+
+			if (xangle == 130) { mymf[103] = 8.2; mymf[123] = 8.0; }
+			if (xangle == 160) { mymf[103] = 8.2; mymf[123] = 8.0; }
+		} else
+		{ // after TS2
+			mymf[23] = 7.5; mymf[3] = 7.0;
+
+			if (xangle == 130) { mymf[103] = 7.4; mymf[123] = 8.0; }
+			if (xangle == 160) { mymf[103] = 7.4; mymf[123] = 8.0; }
+		}
+	}
+
+	const double y_max_fit = mymf[rp];
 
 	TGraphErrors *g_y_mode_vs_x = new TGraphErrors();
 
@@ -224,7 +247,7 @@ int main()
 			continue;
 		}
 
-		TGraphErrors *g_y_cen_vs_x = BuildModeGraph(h2_y_vs_x, cfg.aligned, rpd.id);
+		TGraphErrors *g_y_cen_vs_x = BuildModeGraph(h2_y_vs_x, cfg.aligned, cfg.fill, cfg.xangle, rpd.id);
 
 		if (g_y_cen_vs_x->GetN() < 5)
 			continue;
@@ -249,7 +272,7 @@ int main()
 			slope = ((TF1*) f_in_aux->Get(path))->Eval(cfg.fill);
 		}
 
-		printf("    sh_x = %.3f, slope = %.3f\n", sh_x, slope);
+		printf("    sh_x = %.3f, slope (fix) = %.3f\n", sh_x, slope);
 
 		ff->SetParameters(0., 0., 0.);
 		ff->FixParameter(2, -sh_x);
@@ -258,6 +281,8 @@ int main()
 
 		const double a = ff->GetParameter(1), a_unc = ff->GetParError(1);
 		const double b = ff->GetParameter(0), b_unc = ff->GetParError(0);
+
+		printf("    slope (fitted) = %.3f\n", a);
 
 		results["y_alignment"][rpd.id] = AlignmentResult(0., 0., b, b_unc, 0., 0.);
 
