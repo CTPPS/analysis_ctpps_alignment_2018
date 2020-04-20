@@ -76,6 +76,9 @@ int main()
 
 	for (const auto &fill : fills)
 	{
+		if (fill == 6761 || fill == 7040 || fill == 7317)
+			continue;
+
 		for (const auto &xangle : xangles)
 		{
 			for (const auto &dataset : datasets)
@@ -195,7 +198,11 @@ int main()
 		p.second.f_x_rel = new TF1("", param.c_str());
 		p.second.g_x_rel->Fit(p.second.f_x_rel, "Q");
 
-		p.second.f_y_meth_f = new TF1("", "(x <= 6666) * ([0] + [1]*x) + (x > 6666 && x <= 6778) * ([2]) + (x > 6778 && x <= 7145) * ([3] + [4]*x) + (x > 7145) * ([5])");
+		param = "(x <= 6810) * ([0] + [1]*x) + (x > 6810 && x <= 7170) * ([2] + [3]*x) + (x > 7170) * ([4])";
+		if (p.first == 103)
+			param = "(x <= 6617) * ([0]) + (x > 6617 && x <= 6663) * ([1] + [2]*x) + (x > 6663 && x <= 6810) * ([3] + [4]*x) + (x > 6810 && x <= 7170) * ([5] + [6]*x) + (x > 7170) * ([7])";
+
+		p.second.f_y_meth_f = new TF1("", param.c_str());
 		p.second.g_y_meth_f->Fit(p.second.f_y_meth_f, "Q");
 
 		//g.second.f_y_meth_s = new TF1("", "([0] + [1]*x) + (x > 6670) * ([2] + [3]*x) + (x > 6800) * ([4] + [5]*x) + (x > 6980) * ([6] + [7]*x)  + (x > 7180) * ([8] + [9]*x)");
@@ -236,6 +243,17 @@ int main()
 			AlignmentResult ar_N(de_x_N + x_corr_rel/2., 150E-3, d_N.f_y_meth_f->Eval(fill) + y_corr_N, 150E-3);
 			AlignmentResult ar_F(de_x_F - x_corr_rel/2., 150E-3, d_F.f_y_meth_f->Eval(fill) + y_corr_F, 150E-3);
 
+			// TODO: test
+			/*
+			if (ad.name == "sector 56" && fill < 6663)
+			{
+				const double sl_tar = 0.38;
+				const double sl_obs = (0.38 - 0.28) / (6663. - 6583.) * (fill - 6583.) + 0.28;
+
+				ar_N.rot_z = sl_obs - sl_tar;
+			}
+			*/
+
 			ars_combined[ad.rp_id_N] = ar_N;
 			ars_combined[ad.rp_id_F] = ar_F;
 		}
@@ -246,7 +264,7 @@ int main()
 	}
 
 	// save results
-	output.Write("fit_alignments_2020_03_23.out");
+	output.Write("fit_alignments_2020_04_20_TEST.out");
 
 	TFile *f_out = TFile::Open("fit_alignments.root", "recreate");
 

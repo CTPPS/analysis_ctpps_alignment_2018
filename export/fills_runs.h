@@ -465,6 +465,10 @@ void InitFillsRuns(bool useExceptionList = true)
 			if (fill >= 6579 && fill <= 6778) ref = { 6724, 6724 };
 			if (fill >= 6843 && fill <= 7145) ref = { 7039, 7039 };
 			if (fill >= 7271 && fill <= 7334) ref = { 7309, 7309 };
+
+			if (fill == 6761) ref = { 6759, 6761 };
+			if (fill == 7040) ref = { 7039, 7040 };
+			if (fill == 7317) ref = { 7315, 7317 };
 		}
 
 		fills_reference[fill] = ref;
