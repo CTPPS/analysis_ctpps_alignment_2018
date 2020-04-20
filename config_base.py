@@ -173,7 +173,7 @@ config = cms.PSet(
       ),
       rp_R_1_F = cms.PSet(
         x_min = cms.double(6.3),
-        x_max = cms.double(9.0),
+        x_max = cms.double(10.0),
       ),
       rp_R_2_F = cms.PSet(
         x_min = cms.double(45.3),
