@@ -168,7 +168,16 @@ int main()
 						const double y_tilt = g_results->GetX()[1];
 						const double y_tilt_unc = g_results->GetY()[1];
 
-						if (y_tilt > 0.1 && y_tilt < 0.6)
+						// skip outliers
+						bool skip = false;
+
+						if (y_tilt < 0.1 || y_tilt > 0.6)
+							skip = true;
+
+						if (rp == "R_2_F" && cfg != "xangle_160_beta_0.30" && y_tilt > 0.4)
+							skip = true;
+
+						if (!skip)
 						{
 							int idx = g.g_y_tilt->GetN();
 							g.g_y_tilt->SetPoint(idx, fill, y_tilt);
@@ -217,9 +226,19 @@ int main()
 			p.second.g_x_sh->Fit(p.second.f_x_sh, "Q");
 
 			if (p.first == "R_1_F")
-				p.second.f_y_tilt = new TF1("", "(x < 6660) * ([3] + [4]*x) + [0] + (x > 6816) * ([1]) + (x > 7179) * ([2])");
-			else
-				p.second.f_y_tilt = new TF1("", "[0] + (x > 6816) * ([1]) + (x >= 7179) * ([2])");
+			{
+				p.second.f_y_tilt = new TF1("", "(x < 6660) * ([3] + [4]*x) + (x <= 6816) * ([0]) + (x > 6816) * ([1]) + (x > 7179) * ([2])");
+				p.second.f_y_tilt->FixParameter(4, 0.00138);
+
+				if (cfg == "xangle_130_beta_0.30")
+					p.second.f_y_tilt->FixParameter(3, -9.171 - 0.016);
+			} else {
+				p.second.f_y_tilt = new TF1("", "(x <= 6816) * ([0]) + (x > 6816) * ([1]) + (x >= 7179) * ([2])");
+			}
+
+			if (p.first == "R_2_F" && cfg == "xangle_130_beta_0.30")
+				p.second.f_y_tilt->FixParameter(1, 0.334);
+
 			p.second.g_y_tilt->Fit(p.second.f_y_tilt, "Q");
 
 			p.second.Write();
