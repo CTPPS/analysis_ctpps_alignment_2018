@@ -76,9 +76,6 @@ int main()
 
 	for (const auto &fill : fills)
 	{
-		if (fill == 6761 || fill == 7040 || fill == 7317)
-			continue;
-
 		for (const auto &xangle : xangles)
 		{
 			for (const auto &dataset : datasets)
@@ -162,10 +159,13 @@ int main()
 					idx = g.g_x_rel->GetN();
 					g.g_x_rel->SetPoint(idx, fill, rit_x_rel->second.sh_x);
 					g.g_x_rel->SetPointError(idx, 0., 0.010);
-
-					idx = g.g_y_meth_f->GetN();
-					g.g_y_meth_f->SetPoint(idx, fill, rit_y_meth_f->second.sh_y);
-					g.g_y_meth_f->SetPointError(idx, 0., rit_y_meth_f->second.sh_y_unc);
+		
+					if (! (fill == 6761 || fill == 7040 || fill == 7317))
+					{
+						idx = g.g_y_meth_f->GetN();
+						g.g_y_meth_f->SetPoint(idx, fill, rit_y_meth_f->second.sh_y);
+						g.g_y_meth_f->SetPointError(idx, 0., rit_y_meth_f->second.sh_y_unc);
+					}
 
 					/*
 					idx = g.g_y_meth_s->GetN();
@@ -264,7 +264,7 @@ int main()
 	}
 
 	// save results
-	output.Write("fit_alignments_2020_04_20_TEST.out");
+	output.Write("fit_alignments_2020_04_20.out");
 
 	TFile *f_out = TFile::Open("fit_alignments.root", "recreate");
 
