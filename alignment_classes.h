@@ -46,7 +46,11 @@ struct AlignmentResult
         ROOT::Math::RotationZYX R(-rot_z, rot_y, rot_x);
         v = R * v + s;
 
-		return CTPPSLocalTrackLite(tr.getRPId(), v.x(), 0., v.y(), 0.);
+		return CTPPSLocalTrackLite(tr.getRPId(), v.x(), 0., v.y(), 0.,
+          tr.getTx(), tr.getTxUnc(), tr.getTy(), tr.getTyUnc(),
+          tr.getChiSquaredOverNDF(), tr.getPixelTrackRecoInfo(), tr.getNumberOfPointsUsedForFit(),
+          tr.getTime(), tr.getTimeUnc()
+		);
 	}
 };
 
