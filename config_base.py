@@ -8,16 +8,20 @@ config = cms.PSet(
 
     alignment_corrections = cms.PSet(
       rp_L_2_F = cms.PSet(
-        de_x = cms.double(0.)
+        de_x = cms.double(0.),
+        de_y = cms.double(0.)
       ),
       rp_L_1_F = cms.PSet(
-        de_x = cms.double(0.)
+        de_x = cms.double(0.),
+        de_y = cms.double(0.)
       ),
       rp_R_1_F = cms.PSet(
-        de_x = cms.double(0.)
+        de_x = cms.double(0.),
+        de_y = cms.double(0.)
       ),
       rp_R_2_F = cms.PSet(
-        de_x = cms.double(0.)
+        de_x = cms.double(0.),
+        de_y = cms.double(0.)
       )
     ),
 

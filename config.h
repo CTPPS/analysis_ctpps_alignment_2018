@@ -51,7 +51,7 @@ struct Config
 
 	vector<string> input_files;
 
-	map<unsigned int, double> alignment_corrections_x;
+	map<unsigned int, double> alignment_corrections_x, alignment_corrections_y;
 
 	bool aligned;
 
@@ -100,6 +100,7 @@ int Config::LoadFrom(const string &f_in)
 	{
 		const auto &ps = acc.getParameter<edm::ParameterSet>("rp_" + p.second);
 		alignment_corrections_x[p.first] = ps.getParameter<double>("de_x");
+		alignment_corrections_y[p.first] = ps.getParameter<double>("de_y");
 	}
 
 	aligned = config.getParameter<bool>("aligned");
