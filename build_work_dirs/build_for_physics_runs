@@ -1,8 +1,10 @@
 #!/bin/bash
 
-top_dir="../data/phys-version1"
+#top_dir="../data/phys-version1"
+#eos_dir="/eos/totem/data/ctpps/reconstruction/2018/physics_runs/alignment-version4"
 
-eos_dir="/eos/totem/data/ctpps/reconstruction/2018/physics_runs/alignment-version4"
+top_dir="../data/phys-version-UL-1"
+eos_dir="/eos/cms/store/group/phys_pps/reconstruction/2018/physics_runs/alignment-version-UL-1"
 
 for f in `eos ls "$eos_dir"|grep ".root"`
 do
