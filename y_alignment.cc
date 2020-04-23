@@ -237,11 +237,9 @@ int main()
 		TDirectory *rp_dir = f_out->mkdir(rpd.name.c_str());
 		gDirectory = rp_dir;
 		
-		TProfile *p_y_vs_x = (TProfile *) f_in->Get((rpd.sectorName + "/profiles/" + rpd.name + "/h_mean").c_str());
+		TH2D *h2_y_vs_x = (TH2D *) f_in->Get((rpd.sectorName + "/multiplicity selection/" + rpd.name + "/h2_y_vs_x").c_str());
 
-		TH2D *h2_y_vs_x = (TH2D *) f_in->Get((rpd.sectorName + "/after selection/" + rpd.name + "/h2_y_vs_x").c_str());
-
-		if (p_y_vs_x == NULL || h2_y_vs_x == NULL)
+		if (h2_y_vs_x == NULL)
 		{
 			printf("    cannot load data, skipping\n");
 			continue;
