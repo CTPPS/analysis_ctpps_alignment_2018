@@ -159,7 +159,7 @@ int main()
 					idx = g.g_x_rel->GetN();
 					g.g_x_rel->SetPoint(idx, fill, rit_x_rel->second.sh_x);
 					g.g_x_rel->SetPointError(idx, 0., 0.010);
-		
+
 					if (! (fill == 6761 || fill == 7040 || fill == 7317))
 					{
 						idx = g.g_y_meth_f->GetN();
@@ -264,7 +264,7 @@ int main()
 	}
 
 	// save results
-	output.Write("fit_alignments_2020_04_20.out");
+	output.Write("fit_alignments_2020_04_23.out");
 
 	TFile *f_out = TFile::Open("fit_alignments.root", "recreate");
 
