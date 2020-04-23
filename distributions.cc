@@ -124,6 +124,8 @@ struct SectorData
 
 	map<unsigned int, TH2D*> m_h2_y_vs_x_bef_sel;
 
+	map<unsigned int, TH2D*> m_h2_y_vs_x_mlt_sel;
+
 	map<unsigned int, TH2D*> m_h2_y_vs_x_aft_sel;
 	map<unsigned int, TGraph*> m_g_y_vs_x_aft_sel;
 
@@ -205,6 +207,9 @@ SectorData::SectorData(const string _name, unsigned int _rpIdUp, unsigned int _r
 
 	m_h2_y_vs_x_bef_sel[rpIdUp] = new TH2D("", ";x;y", n_bins_x, x_min_str, x_max_str, n_bins_y, y_min, y_max);
 	m_h2_y_vs_x_bef_sel[rpIdDw] = new TH2D("", ";x;y", n_bins_x, x_min_pix, x_max_pix, n_bins_y, y_min, y_max);
+
+	m_h2_y_vs_x_mlt_sel[rpIdUp] = new TH2D("", ";x;y", n_bins_x, x_min_str, x_max_str, n_bins_y, y_min, y_max);
+	m_h2_y_vs_x_mlt_sel[rpIdDw] = new TH2D("", ";x;y", n_bins_x, x_min_pix, x_max_pix, n_bins_y, y_min, y_max);
 
 	m_h2_y_vs_x_aft_sel[rpIdUp] = new TH2D("", ";x;y", n_bins_x, x_min_str, x_max_str, n_bins_y, y_min, y_max);
 	m_h2_y_vs_x_aft_sel[rpIdDw] = new TH2D("", ";x;y", n_bins_x, x_min_pix, x_max_pix, n_bins_y, y_min, y_max);
@@ -296,6 +301,13 @@ unsigned int SectorData::Process(const vector<CTPPSLocalTrackLite> &tracks)
 
 	if (tracksDw.size() > 2)
 		return 0;
+
+	// update plots with multiplicity selection
+	for (const auto &tr : tracksUp)
+		m_h2_y_vs_x_mlt_sel[rpIdUp]->Fill(tr.getX(), tr.getY());
+
+	for (const auto &tr : tracksDw)
+		m_h2_y_vs_x_mlt_sel[rpIdDw]->Fill(tr.getX(), tr.getY());
 
 	// do the selection
 	unsigned int pairs_selected = 0;
@@ -397,6 +409,15 @@ void SectorData::Write() const
 
 		const auto it = m_h1_x_bef_sel.find(p.first);
 		it->second->Write("h_x");
+
+		p.second->Write("h2_y_vs_x");
+	}
+
+	// with only multiplicity
+	TDirectory *d_mlt_sel = d_sector->mkdir("multiplicity selection");
+	for (const auto &p : m_h2_y_vs_x_mlt_sel)
+	{
+		gDirectory = d_mlt_sel->mkdir(cfg.rp_tags[p.first].c_str());
 
 		p.second->Write("h2_y_vs_x");
 	}
