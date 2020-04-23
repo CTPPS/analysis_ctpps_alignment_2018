@@ -168,20 +168,20 @@ config = cms.PSet(
 
     y_alignment = cms.PSet(
       rp_L_2_F = cms.PSet(
-        x_min = cms.double(45.3),
+        x_min = cms.double(44.5),
         x_max = cms.double(49.0),
       ),
       rp_L_1_F = cms.PSet(
-        x_min = cms.double(7.3),
+        x_min = cms.double(6.7),
         x_max = cms.double(11.0),
       ),
       rp_R_1_F = cms.PSet(
-        x_min = cms.double(6.3),
+        x_min = cms.double(5.9),
         x_max = cms.double(10.0),
       ),
       rp_R_2_F = cms.PSet(
-        x_min = cms.double(45.3),
-        x_max = cms.double(48.5),
+        x_min = cms.double(44.5),
+        x_max = cms.double(49.0),
       )
     ),
 
