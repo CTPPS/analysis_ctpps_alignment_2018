@@ -244,15 +244,12 @@ int main()
 			AlignmentResult ar_F(de_x_F - x_corr_rel/2., 150E-3, d_F.f_y_meth_f->Eval(fill) + y_corr_F, 150E-3);
 
 			// TODO: test
-			/*
-			if (ad.name == "sector 56" && fill < 6663)
+			if (ad.name == "sector 56" && fill < 6660)
 			{
-				const double sl_tar = 0.38;
-				const double sl_obs = (0.38 - 0.28) / (6663. - 6583.) * (fill - 6583.) + 0.28;
-
-				ar_N.rot_z = sl_obs - sl_tar;
+				// TODO: decide
+				//ar_N.rot_z = 0.0006 * (double(fill) - 6660.);
+				ar_N.rot_z = 0.0003 * (double(fill) - 6660.);
 			}
-			*/
 
 			ars_combined[ad.rp_id_N] = ar_N;
 			ars_combined[ad.rp_id_F] = ar_F;
@@ -264,7 +261,7 @@ int main()
 	}
 
 	// save results
-	output.Write("fit_alignments_2020_04_23.out");
+	output.Write("fit_alignments_2020_04_27.out");
 
 	TFile *f_out = TFile::Open("fit_alignments.root", "recreate");
 
