@@ -229,9 +229,6 @@ int main()
 			{
 				p.second.f_y_tilt = new TF1("", "(x < 6660) * ([3]*(x - 6660)) + (x <= 6816) * ([0]) + (x > 6816 && x < 7179) * ([1]) + (x > 7179) * ([2])");
 				p.second.f_y_tilt->FixParameter(3, 0.000601);
-
-				//if (cfg == "xangle_130_beta_0.30")
-				//	p.second.f_y_tilt->FixParameter(3, -9.171 - 0.016);
 			} else {
 				p.second.f_y_tilt = new TF1("", "(x <= 6816) * ([0]) + (x > 6816 && x < 7179) * ([1]) + (x >= 7179) * ([2])");
 			}
