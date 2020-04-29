@@ -237,17 +237,48 @@ int main()
 			if (ad.name == "sector 56") x_corr_rel += 29E-3;
 
 			double y_corr_N = 0., y_corr_F = 0.;
-			if (ad.name == "sector 45") y_corr_N += +0E-3, y_corr_F += -0E-3;
-			if (ad.name == "sector 56") y_corr_N += +0E-3, y_corr_F += -0E-3;
+
+			if (fill < 6800)
+			{
+				if (ad.name == "sector 45") y_corr_N += -10E-3, y_corr_F += +10E-3;
+				if (ad.name == "sector 56") y_corr_N += -40E-3, y_corr_F += +40E-3;
+			}
+
+			if (6800 <= fill && fill < 7200)
+			{
+				if (ad.name == "sector 45") y_corr_N += -15E-3, y_corr_F += +15E-3;
+				if (ad.name == "sector 56") y_corr_N += -80E-3, y_corr_F += +80E-3;
+			}
+
+			if (7200 <= fill)
+			{
+				if (ad.name == "sector 45") y_corr_N += -37E-3, y_corr_F += +37E-3;
+				if (ad.name == "sector 56") y_corr_N += -145E-3, y_corr_F += +145E-3;
+			}
+
+			if (ad.name == "sector 56")
+			{
+				if (fill == 6617) y_corr_N += -55E-3, y_corr_F += +55E-3;
+				if (fill == 6618) y_corr_N += -50E-3, y_corr_F += +50E-3;
+				if (fill == 6621) y_corr_N += -40E-3, y_corr_F += +40E-3;
+				if (fill == 6624) y_corr_N += -35E-3, y_corr_F += +35E-3;
+				if (fill == 6629) y_corr_N += -25E-3, y_corr_F += +25E-3;
+
+				if (fill >= 6636 && fill <= 6639) y_corr_N += -5E-3, y_corr_F += +5E-3;
+				if (fill >= 6640 && fill <= 6642) y_corr_N += -10E-3, y_corr_F += +10E-3;
+
+				if (fill >= 6643 && fill <= 6646) y_corr_N += -25E-3, y_corr_F += +25E-3;
+				if (fill >= 6647 && fill <= 6653) y_corr_N += -35E-3, y_corr_F += +35E-3;
+
+				if (fill == 6654) y_corr_N += -25E-3, y_corr_F += +25E-3;
+				if (fill == 6659) y_corr_N += -5E-3, y_corr_F += +5E-3;
+			}
 
 			AlignmentResult ar_N(de_x_N + x_corr_rel/2., 150E-3, d_N.f_y_meth_f->Eval(fill) + y_corr_N, 150E-3);
 			AlignmentResult ar_F(de_x_F - x_corr_rel/2., 150E-3, d_F.f_y_meth_f->Eval(fill) + y_corr_F, 150E-3);
 
-			// TODO: test
 			if (ad.name == "sector 56" && fill < 6660)
 			{
-				// TODO: decide
-				//ar_N.rot_z = 0.0006 * (double(fill) - 6660.);
 				ar_N.rot_z = 0.0003 * (double(fill) - 6660.);
 			}
 
@@ -261,7 +292,7 @@ int main()
 	}
 
 	// save results
-	output.Write("fit_alignments_2020_04_27.out");
+	output.Write("fit_alignments_2020_04_29.out");
 
 	TFile *f_out = TFile::Open("fit_alignments.root", "recreate");
 
